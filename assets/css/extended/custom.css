@@ -50,6 +50,18 @@
   margin-top: auto;
 }
 
+.post-single .main,
+.page-header,
+.post-header,
+.post-content,
+.post-footer {
+  max-width: 1000px;
+}
+
+:root {
+  --main-width: 1000px;
+}
+
 .post-entry {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
