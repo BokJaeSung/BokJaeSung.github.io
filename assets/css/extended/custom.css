@@ -3,9 +3,9 @@
   --radius: 16px;
 }
 
-/* Posts 2열 그리드 */
+/* Posts 2열 그리드 (목록 페이지만) */
 @media (min-width: 768px) {
-  .main {
+  body:not(:has(.post-single)) .main {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
@@ -14,20 +14,27 @@
     margin: 0 auto;
   }
 
-  .main .first-entry {
+  body:not(:has(.post-single)) .main .first-entry {
     grid-column: 1 / -1;
   }
 
-  .main .post-entry {
+  body:not(:has(.post-single)) .main .post-entry {
     margin-bottom: 0;
   }
 }
 
 @media (max-width: 768px) {
-  .main {
+  body:not(:has(.post-single)) .main {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+}
+
+/* 글 본문 너비 */
+.post-single {
+  max-width: 90vw;
+  width: 100%;
+  margin: 0 auto;
 }
 
 /* 카드 스타일 */
@@ -96,11 +103,6 @@
   margin-top: auto;
   border-top: 1px solid var(--border);
   font-size: 0.85rem;
-}
-
-/* 글 본문 너비 */
-body:has(.post-single) .main {
-  max-width: 90vw !important;
 }
 
 /* 글 본문 이미지 중앙 정렬 */
