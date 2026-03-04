@@ -10,7 +10,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
     align-items: start;
-    max-width: 90vw;
+    max-width: min(90vw, 1400px);
     margin: 0 auto;
   }
 
@@ -39,7 +39,7 @@
 
 /* 카드 스타일 */
 .post-entry {
-  height: 65vh;
+  height: 400px;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
