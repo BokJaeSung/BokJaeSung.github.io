@@ -99,9 +99,8 @@
 }
 
 /* 글 본문 너비 */
-.post-single {
+body:has(.post-single) .main {
   max-width: 90vw !important;
-  padding: 0 5vw !important;
 }
 
 /* 글 본문 이미지 중앙 정렬 */
