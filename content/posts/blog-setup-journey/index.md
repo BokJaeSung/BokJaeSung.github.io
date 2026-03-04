@@ -3,8 +3,9 @@ title: 'GitHub Pages 블로그 세팅 과정'
 date: 2026-03-04T12:00:00+09:00
 tags: ['blog', 'hugo', 'github-pages']
 cover:
-  image: 'https://picsum.photos/seed/blog/800/400'
+  image: 'images/cover.jpg'
   alt: 'Blog Setup'
+  relative: true
 ---
 
 Hugo + GitHub Pages로 블로그를 세팅하면서 겪은 문제들을 정리함.

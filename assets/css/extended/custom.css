@@ -1,30 +1,22 @@
 :root {
-  --main-width: 1400px;
+  --main-width: 1024px;
   --radius: 16px;
 }
 
-/* Posts 2열 그리드 (목록 페이지만) */
-@media (min-width: 768px) {
-  body:not(:has(.post-single)) .main {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    align-items: start;
-    max-width: min(90vw, 1400px);
-    margin: 0 auto;
-  }
+/* Posts 2열 그리드 */
+.posts-grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
 
-  body:not(:has(.post-single)) .main .first-entry {
-    grid-column: 1 / -1;
-  }
-
-  body:not(:has(.post-single)) .main .post-entry {
-    margin-bottom: 0;
-  }
+.posts-grid-container .post-entry {
+  margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
-  body:not(:has(.post-single)) .main {
+  .posts-grid-container {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
@@ -39,34 +31,33 @@
 
 /* 카드 스타일 */
 .post-entry {
-  height: 400px;
   display: flex;
   flex-direction: column;
+  height: 100%;
   border: 1px solid var(--border);
   border-radius: 1.25rem;
-  overflow: hidden;
+  padding: 1.5rem;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
   background-color: var(--theme);
 }
 
 .post-entry:hover {
   border-color: var(--primary);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 /* 커버 이미지 */
 .post-entry .entry-cover {
-  flex: 1;
+  border-radius: 1rem;
   overflow: hidden;
-  margin-bottom: 0;
+  margin-bottom: 1rem;
 }
 
 .post-entry .entry-cover img {
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
-  border-radius: 1.25rem 1.25rem 0 0;
   transition: transform 0.3s ease-in-out;
 }
 
@@ -75,30 +66,24 @@
 }
 
 /* 카드 내부 텍스트 */
-.post-entry .entry-header,
-.post-entry .entry-content,
-.post-entry .entry-footer {
-  padding: 0 var(--gap);
-  flex-shrink: 0;
-}
-
 .post-entry .entry-header {
-  padding-top: 16px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .post-entry .entry-header h2 {
   font-size: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .post-entry .entry-content {
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--secondary);
+  flex-grow: 1;
+  margin-bottom: 1rem;
 }
 
 .post-entry .entry-footer {
-  padding-bottom: 16px;
   padding-top: 1rem;
   margin-top: auto;
   border-top: 1px solid var(--border);
