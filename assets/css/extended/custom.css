@@ -1,11 +1,16 @@
 @media (min-width: 768px) {
-  .main .posts {
+  .main {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--gap);
+    align-items: start;
   }
 
-  .main .posts .post-entry {
+  .main .first-entry {
+    grid-column: 1 / -1;
+  }
+
+  .main .post-entry {
     margin-bottom: 0;
   }
 }
