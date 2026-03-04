@@ -6,6 +6,12 @@ theme = 'PaperMod'
 [params]
   description = '복재성의 기록 저장소'
   defaultTheme = 'auto'
+  ShowReadingTime = true
+  ShowPostNavLinks = true
+
+[params.cover]
+  hiddenInList = false
+  hiddenInSingle = false
 
 [params.author]
   name = '복재성'
