@@ -3,11 +3,12 @@
   --radius: 16px;
 }
 
+/* Posts 2열 그리드 */
 @media (min-width: 768px) {
   .main {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--gap);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
     align-items: start;
     max-width: 90vw;
     margin: 0 auto;
@@ -22,12 +23,32 @@
   }
 }
 
+@media (max-width: 768px) {
+  .main {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* 카드 스타일 */
 .post-entry {
   height: 65vh;
   display: flex;
   flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  overflow: hidden;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  background-color: var(--theme);
 }
 
+.post-entry:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+/* 커버 이미지 */
 .post-entry .entry-cover {
   flex: 1;
   overflow: hidden;
@@ -38,9 +59,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 16px 16px 0 0;
+  transition: transform 0.3s ease-in-out;
 }
 
+.post-entry:hover .entry-cover img {
+  transform: scale(1.05);
+}
+
+/* 카드 내부 텍스트 */
 .post-entry .entry-header,
 .post-entry .entry-content,
 .post-entry .entry-footer {
@@ -50,13 +76,28 @@
 
 .post-entry .entry-header {
   padding-top: 16px;
+  margin-bottom: 0.5rem;
+}
+
+.post-entry .entry-header h2 {
+  font-size: 1.25rem;
+}
+
+.post-entry .entry-content {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--secondary);
 }
 
 .post-entry .entry-footer {
   padding-bottom: 16px;
+  padding-top: 1rem;
   margin-top: auto;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
 }
 
+/* 글 본문 너비 */
 .post-single .main,
 .page-header,
 .post-header,
@@ -65,11 +106,40 @@
   max-width: 90vw;
 }
 
-.post-entry {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* 글 본문 이미지 중앙 정렬 */
+.post-content img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.post-entry:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+/* 테이블 스타일 */
+.post-content table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 1.5rem 0 !important;
+}
+
+.post-content table thead th,
+.post-content table tbody th {
+  border: 1px solid var(--border) !important;
+  padding: 16px 24px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.post-content table tbody td {
+  border: 1px solid var(--border) !important;
+  padding: 16px 24px !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+.post-content table thead th {
+  background-color: var(--code-bg) !important;
+  font-weight: 600 !important;
+}
+
+.post-content table tbody tr:hover {
+  background-color: var(--code-bg) !important;
 }
