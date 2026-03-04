@@ -5,4 +5,4 @@
 &amp;#39;stylesheet.css&amp;#39; with computed SHA-256 integrity &amp;#39;...&amp;#39;.
 The resource has been blocked.
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;SRI(Subresource Integrity)&lt;/strong&gt; 해시 불일치 문제였음.&lt;/p&gt;
-&lt;p&gt;Hugo는 빌드할 때 CSS 파일의 SHA-256 해시를 계산해서 HTML의 &lt;code&gt;integrity&lt;/code&gt; 속성에 자동으로 박아줌. 브라우저는 이 값을 실제 파일이랑 대조해서 위변조 여부를 검증하는데, 값이 다르면 보안상의 이유로 파일 로드를 차단함.&lt;/p&gt;</description></item><item><title>Test Post 2</title><link>https://BokJaeSung.github.io/posts/test-post2/</link><pubDate>Wed, 04 Mar 2026 12:00:00 +0900</pubDate><guid>https://BokJaeSung.github.io/posts/test-post2/</guid><description>&lt;p&gt;두 번째 테스트 글입니다.&lt;/p&gt;</description></item><item><title>Test Post</title><link>https://BokJaeSung.github.io/posts/test-post/</link><pubDate>Tue, 03 Feb 2026 20:47:57 +0900</pubDate><guid>https://BokJaeSung.github.io/posts/test-post/</guid><description/></item></channel></rss>
+&lt;p&gt;Hugo는 빌드할 때 CSS 파일의 SHA-256 해시를 계산해서 HTML의 &lt;code&gt;integrity&lt;/code&gt; 속성에 자동으로 박아줌. 브라우저는 이 값을 실제 파일이랑 대조해서 위변조 여부를 검증하는데, 값이 다르면 보안상의 이유로 파일 로드를 차단함.&lt;/p&gt;</description></item></channel></rss>
