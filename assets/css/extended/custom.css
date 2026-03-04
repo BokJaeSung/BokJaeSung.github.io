@@ -1,9 +1,15 @@
+:root {
+  --main-width: 1400px;
+}
+
 @media (min-width: 768px) {
   .main {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--gap);
     align-items: start;
+    max-width: 90vw;
+    margin: 0 auto;
   }
 
   .main .first-entry {
@@ -56,10 +62,6 @@
 .post-content,
 .post-footer {
   max-width: 1000px;
-}
-
-:root {
-  --main-width: 1000px;
 }
 
 .post-entry {
