@@ -32,7 +32,7 @@
 
 /* 글 본문 너비 */
 .post-single {
-  max-width: 90vw;
+  max-width: 70vw;
   width: 100%;
   margin: 0 auto;
 }
