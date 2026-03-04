@@ -10,6 +10,10 @@ theme = 'PaperMod'
 [params.author]
   name = '복재성'
 
+[params.homeInfoParams]
+  Title = ''
+  Content = ''
+
 [menu]
   [[menu.main]]
     name = 'Posts'
