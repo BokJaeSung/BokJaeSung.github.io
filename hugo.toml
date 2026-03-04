@@ -13,7 +13,8 @@ theme = 'PaperMod'
   hiddenInList = false
   hiddenInSingle = false
 
-author = '복재성'
+[params.author]
+  name = '복재성'
 
 [params.homeInfoParams]
   Title = ''
