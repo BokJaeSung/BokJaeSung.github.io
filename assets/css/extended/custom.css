@@ -1,0 +1,11 @@
+@media (min-width: 768px) {
+  .main .posts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap);
+  }
+
+  .main .posts .post-entry {
+    margin-bottom: 0;
+  }
+}
