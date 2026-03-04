@@ -1,0 +1,21 @@
+baseURL = 'https://BokJaeSung.github.io/'
+languageCode = 'ko-kr'
+title = 'History'
+theme = 'PaperMod'
+
+[params]
+  description = '복재성의 기록 저장소'
+  defaultTheme = 'auto'
+
+[params.author]
+  name = '복재성'
+
+[menu]
+  [[menu.main]]
+    name = 'Posts'
+    url = '/posts/'
+    weight = 10
+  [[menu.main]]
+    name = 'Tags'
+    url = '/tags/'
+    weight = 20
