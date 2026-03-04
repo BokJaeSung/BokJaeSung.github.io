@@ -99,12 +99,10 @@
 }
 
 /* 글 본문 너비 */
-.post-single .main,
-.page-header,
-.post-header,
-.post-content,
-.post-footer {
+.post-single .main {
   max-width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* 글 본문 이미지 중앙 정렬 */
