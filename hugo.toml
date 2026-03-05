@@ -3,6 +3,9 @@ languageCode = 'ko-kr'
 title = 'History'
 theme = 'PaperMod'
 
+[imaging]
+  quality = 95
+
 [params]
   description = '복재성의 기록 저장소'
   defaultTheme = 'auto'
