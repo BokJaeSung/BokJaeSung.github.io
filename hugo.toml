@@ -15,6 +15,7 @@ theme = 'PaperMod'
 [params.cover]
   hiddenInList = false
   hiddenInSingle = false
+  responsiveImages = false
 
 [params.author]
   name = '복재성'
