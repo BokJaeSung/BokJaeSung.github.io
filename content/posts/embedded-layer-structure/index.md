@@ -1,5 +1,5 @@
 ---
-title: '임베디드 시스템이란 뭔가, 그리고 개발 영역은 어떻게 나뉘는가'
+title: 'Embedded System : MCU, Soc'
 date: 2026-03-08T10:00:00+09:00
 tags: ['embedded', 'soc', 'mcu', 'firmware', 'rtos', 'arm', 'career']
 cover:
