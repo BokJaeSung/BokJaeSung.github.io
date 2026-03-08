@@ -2,6 +2,10 @@
 title: '임베디드 시스템이란 뭔가, 그리고 개발 영역은 어떻게 나뉘는가'
 date: 2026-03-08T10:00:00+09:00
 tags: ['embedded', 'soc', 'mcu', 'firmware', 'rtos', 'arm', 'career']
+cover:
+  image: 'images/cover.jpg'
+  alt: '임베디드 시스템 계층 구조'
+  relative: true
 summary: '임베디드 시스템, SOC/MCU 차이, ARM 아키텍처, 그리고 개발 계층이 어떻게 나뉘는지 정리'
 ---
 
