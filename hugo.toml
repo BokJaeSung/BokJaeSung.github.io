@@ -7,7 +7,7 @@ theme = 'PaperMod'
   quality = 95
 
 [params]
-  description = '복재성의 기록 저장소'
+  description = ''
   defaultTheme = 'auto'
   ShowReadingTime = true
   ShowPostNavLinks = true
@@ -17,8 +17,7 @@ theme = 'PaperMod'
   hiddenInSingle = false
   responsiveImages = false
 
-[params.author]
-  name = '복재성'
+author = 'AA'
 
 [params.homeInfoParams]
   Title = ''
