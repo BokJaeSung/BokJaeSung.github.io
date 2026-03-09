@@ -28,8 +28,13 @@ theme = 'PaperMod'
   url = '#'
 
 [[params.socialIcons]]
-  name = 'linkedin'
-  title = 'LinkedIn'
+  name = 'email'
+  title = 'Email'
+  url = '#'
+
+[[params.socialIcons]]
+  name = 'rss'
+  title = 'RSS'
   url = '#'
 
 [menu]
