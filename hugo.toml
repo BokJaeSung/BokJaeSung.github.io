@@ -19,7 +19,7 @@ theme = 'PaperMod'
   responsiveImages = false
 
 [params.homeInfoParams]
-  Title = 'Informal License'
+  Title = 'Informal Notice'
   Content = 'Copyright (c) 2026 AA. Permission is hereby granted, free of charge, to any person reading this blog. The contents of this site are created solely for personal archiving, with assistance from generative AI. Redistribution and use are permitted, provided that proper credit is given where applicable — though some posts may lack clear attribution, and your understanding is kindly requested. THE CONTENTS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. THE AUTHOR SHALL NOT BE LIABLE FOR ANY INACCURACIES OR OMISSIONS ARISING FROM THE USE OF GENERATIVE AI IN THE CREATION OF THIS CONTENT. (BY THE WAY, THIS NOTICE ITSELF IS ALSO A WORK OF GENERATIVE AI :)'
 
 [[params.socialIcons]]
