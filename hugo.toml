@@ -19,8 +19,8 @@ theme = 'PaperMod'
   responsiveImages = false
 
 [params.homeInfoParams]
-  Title = ''
-  Content = ''
+  Title = 'history'
+  Content = 'hello'
 
 [menu]
   [[menu.main]]
