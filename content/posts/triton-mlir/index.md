@@ -1,5 +1,5 @@
 ---
-title: 'GPU 딥러닝 컴파일러: MLIR과 Triton'
+title: 'GPU Kernel Compiler: Triton and MLIR'
 date: 2026-03-10T10:00:00+09:00
 tags: ['mlir', 'triton', 'gpu', 'compiler', 'deep-learning', 'cuda']
 cover:
