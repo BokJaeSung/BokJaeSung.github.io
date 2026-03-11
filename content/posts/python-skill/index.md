@@ -2,6 +2,10 @@
 title: 'Python skills'
 date: 2026-03-11T08:00:00+09:00
 tags: ['python', 'codingtest', 'string', 'while', 'switch']
+cover:
+  image: 'images/cover.jpg'
+  alt: '파이썬 코테 스킬 정리'
+  relative: true
 summary: '코테 풀면서 익힌 파이썬 스킬 - while 루프, 문자열 불변성, switch 대체, replace 동작, 리스트 컴프리헨션'
 ---
 
