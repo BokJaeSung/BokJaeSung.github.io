@@ -261,15 +261,13 @@ function draw(){
   const [g1,g2,g3,g4]=[p1,p2,p3,p4].map(gpx);
   const d1=ccwG(g1,g2,g3),d2=ccwG(g1,g2,g4),d3=ccwG(g3,g4,g1),d4=ccwG(g3,g4,g2);
   const hit=intersects(p1,p2,p3,p4);
-  if(hit){
-    if(hit.type==='general'){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,dv=dx*ey-dy*ex;if(dv!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/dv;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
-    else{// collinear: mark each touching endpoint
-      const seen=new Set();
-      hit.pts.forEach(p=>{const k=`${p.x},${p.y}`;if(seen.has(k))return;seen.add(k);ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();});}
-  }
   ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle='#ef5350';ctx.lineWidth=2.5;ctx.stroke();
   ctx.beginPath();ctx.moveTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;ctx.stroke();
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-16);});
+  if(hit){
+    if(hit.type==='general'){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,dv=dx*ey-dy*ex;if(dv!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/dv;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
+    else{const seen=new Set();hit.pts.forEach(p=>{const k=`${p.x},${p.y}`;if(seen.has(k))return;seen.add(k);ctx.beginPath();ctx.arc(p.x,p.y,9,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();});}
+  }
   document.getElementById('seg-d12').textContent=`d1 = CCW(p1,p2,p3) ${sgn(d1)}   d2 = CCW(p1,p2,p4) ${sgn(d2)}`;
   document.getElementById('seg-d34').textContent=`d3 = CCW(p3,p4,p1) ${sgn(d3)}   d4 = CCW(p3,p4,p2) ${sgn(d4)}`;
   const sgnProd=(a,b,sa,sb)=>a*b>0?'> 0':a*b<0?'< 0':a===0&&b===0?`= 0  (${sa}=0, ${sb}=0)`:a===0?`= 0  (${sa}=0)`:`= 0  (${sb}=0)`;
