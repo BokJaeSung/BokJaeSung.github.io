@@ -375,16 +375,16 @@ function build(){
   steps.push({lo:[],up:[],s,desc:'① x\uc88c\ud45c \uc815\ub82c',ex:'\ubaa8\ub4e0 \uc810\uc744 x\uc88c\ud45c \uc21c\uc73c\ub85c \uc815\ub82c\ud569\ub2c8\ub2e4.'});
   let lo=[];
   for(let i=0;i<s.length;i++){
-    while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],s[i])<=0){lo.pop();steps.push({lo:[...lo],up:[],s,cur:s[i],desc:'\u2462 \uc544\ub798\uacd1\uc9c8 - CW \uc81c\uac70',ex:'CCW \u2264 0 \u2192 \uc774\uc804 \uc810 \uc81c\uac70'});}
-    lo.push(s[i]);steps.push({lo:[...lo],up:[],s,cur:s[i],desc:'\u2461 \uc544\ub798 \uacd1\uc9c8',ex:`(${Math.round(s[i].x)}, ${Math.round(s[i].y)}) \ucd94\uac00`});
+    while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],s[i])<=0){lo.pop();steps.push({lo:[...lo],up:[],s,cur:s[i],desc:'\u2462 \uc544\ub798\uaecd\uc9c8 - CW \uc81c\uac70',ex:'CCW \u2264 0 \u2192 \uc774\uc804 \uc810 \uc81c\uac70'});}
+    lo.push(s[i]);steps.push({lo:[...lo],up:[],s,cur:s[i],desc:'\u2461 \uc544\ub798 \uaecd\uc9c8',ex:`(${Math.round(s[i].x)}, ${Math.round(s[i].y)}) \ucd94\uac00`});
   }
   let up=[];
   for(let i=s.length-1;i>=0;i--){
-    while(up.length>=2&&cross(up[up.length-2],up[up.length-1],s[i])<=0){up.pop();steps.push({lo:[...lo],up:[...up],s,cur:s[i],desc:'\u2462 \uc704\uacd1\uc9c8 - CW \uc81c\uac70',ex:'CCW \u2264 0 \u2192 \uc774\uc804 \uc810 \uc81c\uac70'});}
-    up.push(s[i]);steps.push({lo:[...lo],up:[...up],s,cur:s[i],desc:'\u2462 \uc704 \uacd1\uc9c8',ex:`(${Math.round(s[i].x)}, ${Math.round(s[i].y)}) \ucd94\uac00`});
+    while(up.length>=2&&cross(up[up.length-2],up[up.length-1],s[i])<=0){up.pop();steps.push({lo:[...lo],up:[...up],s,cur:s[i],desc:'\u2462 \uc704\uaecd\uc9c8 - CW \uc81c\uac70',ex:'CCW \u2264 0 \u2192 \uc774\uc804 \uc810 \uc81c\uac70'});}
+    up.push(s[i]);steps.push({lo:[...lo],up:[...up],s,cur:s[i],desc:'\u2462 \uc704 \uaecd\uc9c8',ex:`(${Math.round(s[i].x)}, ${Math.round(s[i].y)}) \ucd94\uac00`});
   }
   const hull=[...lo.slice(0,-1),...up.slice(0,-1)];
-  steps.push({lo:[...lo],up:[...up],hull,s,desc:'\u2713 \uc644\uc131!',ex:'\uc544\ub798 + \uc704 \ud569\uce58\uba74 \ubcfc\ub85d \uacd1\uc9c8 \uc644\uc131!'});
+  steps.push({lo:[...lo],up:[...up],hull,s,desc:'\u2713 \uc644\uc131!',ex:'\uc544\ub798 + \uc704 \ud569\uce58\uba74 \ubcfc\ub85d \uaecd\uc9c8 \uc644\uc131!'});
 }
 function render(){
   ctx.clearRect(0,0,W,H);
