@@ -29,14 +29,14 @@ def ccw(A, B, C):
 <canvas id="ccw-canvas" style="width:100%;border-radius:8px;cursor:crosshair;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:12px;align-items:stretch;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Formula</div>
-    <div id="ccw-coords" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#7986cb;letter-spacing:.03em;margin-bottom:4px;">-</div>
-    <div id="ccw-vecs" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#80cbc4;letter-spacing:.03em;margin-bottom:4px;">-</div>
-    <div id="ccw-formula" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#e0e0e0;letter-spacing:.03em;">-</div>
+    <div style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:8px;">Formula</div>
+    <div id="ccw-coords" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#7986cb;letter-spacing:.03em;margin-bottom:6px;">-</div>
+    <div id="ccw-vecs" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#80cbc4;letter-spacing:.03em;margin-bottom:6px;">-</div>
+    <div id="ccw-formula" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:18px;color:#e0e0e0;letter-spacing:.03em;">-</div>
   </div>
-  <div id="ccw-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:16px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
+  <div id="ccw-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:20px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
 </div>
-<p style="font-size:12px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">drag points to explore</p>
+<p style="font-size:14px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">drag points to explore</p>
 </div>
 <script>
 (function(){
@@ -189,14 +189,14 @@ $$d_3 = CCW(p_3, p_4, p_1), \quad d_4 = CCW(p_3, p_4, p_2)$$
 <canvas id="seg-canvas" style="width:100%;border-radius:8px;cursor:crosshair;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:12px;align-items:stretch;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Values</div>
-    <div id="seg-d12" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#ef9a9a;letter-spacing:.03em;margin-bottom:3px;">-</div>
-    <div id="seg-d34" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#90caf9;letter-spacing:.03em;margin-bottom:3px;">-</div>
-    <div id="seg-vals" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#e0e0e0;letter-spacing:.03em;">-</div>
+    <div style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:8px;">Values</div>
+    <div id="seg-d12" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#ef9a9a;letter-spacing:.03em;margin-bottom:5px;">-</div>
+    <div id="seg-d34" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#90caf9;letter-spacing:.03em;margin-bottom:5px;">-</div>
+    <div id="seg-vals" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:18px;color:#e0e0e0;letter-spacing:.03em;">-</div>
   </div>
-  <div id="seg-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:16px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
+  <div id="seg-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:20px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
 </div>
-<p style="font-size:12px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = seg1(p1p2) · blue = seg2(p3p4) · drag to explore</p>
+<p style="font-size:14px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = seg1(p1p2) · blue = seg2(p3p4) · drag to explore</p>
 </div>
 <script>
 (function(){
@@ -338,11 +338,11 @@ B가 새 껍질이 되는 게 아니라, **볼록성을 깨는 점 B를 제거**
   <button onclick="mcStep(-1)" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;transition:background .15s;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#9664;</button>
   <button onclick="mcStep(1)" style="padding:7px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:14px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">&#9654;</button>
   <button onclick="mcRestart()" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#8635;</button>
-  <span id="mc-desc" style="font-size:13px;font-weight:700;letter-spacing:.1em;color:#5c6bc0;margin-left:8px;text-transform:uppercase;"></span>
+  <span id="mc-desc" style="font-size:16px;font-weight:700;letter-spacing:.1em;color:#5c6bc0;margin-left:8px;text-transform:uppercase;"></span>
 </div>
 <div style="display:flex;gap:10px;margin-top:8px;align-items:stretch;">
-  <div id="mc-explain" style="flex:1;font-size:14px;color:#b0b8d0;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;min-height:36px;letter-spacing:.02em;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;"></div>
-  <div id="mc-stack" style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#b0b8d0;letter-spacing:.03em;">-</div>
+  <div id="mc-explain" style="flex:1;font-size:17px;color:#b0b8d0;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;min-height:36px;letter-spacing:.02em;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;"></div>
+  <div id="mc-stack" style="min-width:150px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;letter-spacing:.03em;">-</div>
 </div>
 <p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = lower hull · blue = upper hull · green = done · &#9654; to step · &#8635; to restart</p>
 </div>
@@ -404,7 +404,7 @@ function render(){
   document.getElementById('mc-desc').textContent=`${idx+1} / ${steps.length}  \u2014  ${st.desc}`;
   document.getElementById('mc-explain').textContent=st.ex;
   const sIdx=p=>st.s.indexOf(p)+1;
-  document.getElementById('mc-stack').innerHTML=`<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ef9a9a;margin-bottom:4px;">Lower [${loLen}]</div><div style="font-size:13px;color:#ef9a9a;margin-bottom:8px;">${st.lo&&st.lo.length?st.lo.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div><div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#90caf9;margin-bottom:4px;">Upper [${upLen}]</div><div style="font-size:13px;color:#90caf9;">${st.up&&st.up.length?st.up.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div>`;
+  document.getElementById('mc-stack').innerHTML=`<div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ef9a9a;margin-bottom:4px;">Lower [${loLen}]</div><div style="font-size:15px;color:#ef9a9a;margin-bottom:8px;">${st.lo&&st.lo.length?st.lo.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div><div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#90caf9;margin-bottom:4px;">Upper [${upLen}]</div><div style="font-size:15px;color:#90caf9;">${st.up&&st.up.length?st.up.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div>`;
 }
 window.mcStep=d=>{idx=Math.max(0,Math.min(steps.length-1,idx+d));render();};
 window.mcRestart=restart;
