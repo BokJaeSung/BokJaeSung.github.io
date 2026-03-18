@@ -188,50 +188,84 @@ $$d_3 = CCW(p_3, p_4, p_1), \quad d_4 = CCW(p_3, p_4, p_2)$$
 <div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);">
 <canvas id="seg-canvas" style="width:100%;border-radius:8px;cursor:crosshair;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:12px;align-items:stretch;">
-  <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:12px;color:#b0b8d0;letter-spacing:.03em;" id="seg-vals">-</div>
-  <div id="seg-result" style="min-width:110px;padding:10px 18px;border-radius:6px;text-align:center;font-size:14px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
+  <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Values</div>
+    <div id="seg-d12" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#ef9a9a;letter-spacing:.03em;margin-bottom:3px;">-</div>
+    <div id="seg-d34" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#90caf9;letter-spacing:.03em;margin-bottom:3px;">-</div>
+    <div id="seg-vals" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#e0e0e0;letter-spacing:.03em;">-</div>
+  </div>
+  <div id="seg-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:14px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
 </div>
 <p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = seg1(p1p2) · blue = seg2(p3p4) · drag to explore</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('seg-canvas');
-cv.style.aspectRatio='560/260';
+const RATIO=560/280;cv.style.aspectRatio=RATIO;
 const ctx=cv.getContext('2d');
-let W=560,H=260,dpr=1;
+let W=560,H=280,dpr=1;
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);draw();}
 new ResizeObserver(resize).observe(cv);
-const pts=[{x:100/560,y:200/260,label:'p1',c:'#e53935'},{x:300/560,y:90/260,label:'p2',c:'#e53935'},{x:90/560,y:100/260,label:'p3',c:'#1e88e5'},{x:310/560,y:210/260,label:'p4',c:'#1e88e5'}];
+function getStep(){return Math.round(W/11);}
+// initial positions in grid coords: p1=(-2,-2), p2=(2,1), p3=(-2,1), p4=(2,-2)
+const pts=[
+  {x:(280-2*51)/560,y:(140+2*51)/280,label:'p1',c:'#e53935'},
+  {x:(280+2*51)/560,y:(140-1*51)/280,label:'p2',c:'#e53935'},
+  {x:(280-2*51)/560,y:(140-1*51)/280,label:'p3',c:'#1e88e5'},
+  {x:(280+2*51)/560,y:(140+2*51)/280,label:'p4',c:'#1e88e5'}
+];
 let drag=null;
 function px(p){return{x:p.x*W,y:p.y*H};}
 function ccw(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
 function onSeg(p,q,r){return Math.min(p.x,q.x)<=r.x&&r.x<=Math.max(p.x,q.x)&&Math.min(p.y,q.y)<=r.y&&r.y<=Math.max(p.y,q.y);}
-function intersects(){
-  const [p1,p2,p3,p4]=pts.map(px);
+function intersects(p1,p2,p3,p4){
   const d1=ccw(p1,p2,p3),d2=ccw(p1,p2,p4),d3=ccw(p3,p4,p1),d4=ccw(p3,p4,p2);
   if(d1*d2<0&&d3*d4<0)return true;
   if(d1===0&&onSeg(p1,p2,p3))return true;if(d2===0&&onSeg(p1,p2,p4))return true;
   if(d3===0&&onSeg(p3,p4,p1))return true;if(d4===0&&onSeg(p3,p4,p2))return true;
   return false;
 }
+function drawGrid(){
+  const STEP=getStep();const ox=W/2,oy=H/2;
+  ctx.lineWidth=0.5;
+  for(let i=Math.ceil(-ox/STEP);i*STEP+ox<W;i++){const x=ox+i*STEP;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.strokeStyle=i===0?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.07)';ctx.stroke();}
+  for(let i=Math.ceil(-oy/STEP);i*STEP+oy<H;i++){const y=oy+i*STEP;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.strokeStyle=i===0?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.07)';ctx.stroke();}
+  ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(8,oy);ctx.lineTo(W-8,oy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W-8,oy);ctx.lineTo(W-15,oy-5);ctx.moveTo(W-8,oy);ctx.lineTo(W-15,oy+5);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,H-8);ctx.lineTo(ox,8);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,8);ctx.lineTo(ox-5,15);ctx.moveTo(ox,8);ctx.lineTo(ox+5,15);ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='bold 11px sans-serif';
+  ctx.textAlign='left';ctx.fillText('x',W-10,oy-6);
+  ctx.textAlign='center';ctx.fillText('y',ox+10,12);
+  ctx.fillStyle='rgba(255,255,255,0.25)';ctx.font='9px sans-serif';
+  for(let x=ox+STEP;x<W-20;x+=STEP){const v=Math.round((x-ox)/STEP);ctx.textAlign='center';ctx.fillText(v,x,oy+12);}
+  for(let x=ox-STEP;x>20;x-=STEP){const v=Math.round((x-ox)/STEP);ctx.textAlign='center';ctx.fillText(v,x,oy+12);}
+  for(let y=oy-STEP;y>12;y-=STEP){const v=Math.round((oy-y)/STEP);ctx.textAlign='right';ctx.fillText(v,ox-4,y+3);}
+  for(let y=oy+STEP;y<H-8;y+=STEP){const v=Math.round((oy-y)/STEP);ctx.textAlign='right';ctx.fillText(v,ox-4,y+3);}
+}
+function sgn(v){return v>0?'> 0':v<0?'< 0':'= 0';}
 function draw(){
   ctx.clearRect(0,0,W,H);
+  drawGrid();
   const [p1,p2,p3,p4]=pts.map(px);
   const d1=ccw(p1,p2,p3),d2=ccw(p1,p2,p4),d3=ccw(p3,p4,p1),d4=ccw(p3,p4,p2);
-  const hit=intersects();
-  if(hit){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,d=dx*ey-dy*ex;if(d!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/d;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,7,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();}}
+  const hit=intersects(p1,p2,p3,p4);
+  if(hit){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,dv=dx*ey-dy*ex;if(dv!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/dv;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
   ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle='#ef5350';ctx.lineWidth=2.5;ctx.stroke();
   ctx.beginPath();ctx.moveTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;ctx.stroke();
-  pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,9,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-14);});
-  document.getElementById('seg-vals').textContent=`d1·d2 ${d1*d2>0?'> 0':d1*d2<0?'< 0':'= 0'}   d3·d4 ${d3*d4>0?'> 0':d3*d4<0?'< 0':'= 0'}`;
+  pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-16);});
+  document.getElementById('seg-d12').textContent=`d1 = CCW(p1,p2,p3) ${sgn(d1)}   d2 = CCW(p1,p2,p4) ${sgn(d2)}`;
+  document.getElementById('seg-d34').textContent=`d3 = CCW(p3,p4,p1) ${sgn(d3)}   d4 = CCW(p3,p4,p2) ${sgn(d4)}`;
+  document.getElementById('seg-vals').textContent=`d1\u00b7d2 ${sgn(d1*d2)}   d3\u00b7d4 ${sgn(d3*d4)}`;
   const res=document.getElementById('seg-result');
-  if(hit){res.innerHTML='<span style="font-size:22px">✕</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">INTERSECT</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
-  else{res.innerHTML='<span style="font-size:22px">∥</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">NO CROSS</span>';res.style.background='#3a1a1a';res.style.color='#ff5252';}
+  if(hit){res.innerHTML='<span style="font-size:22px">\u2715</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">INTERSECT</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
+  else{res.innerHTML='<span style="font-size:22px">\u2225</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">NO CROSS</span>';res.style.background='#3a1a1a';res.style.color='#ff5252';}
 }
 function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height};}
 cv.addEventListener('mousedown',e=>{const p=pos(e);drag=pts.reduce((b,pt,i)=>{const q=px(pt),pp={x:p.x*W,y:p.y*H};const d=Math.hypot(q.x-pp.x,q.y-pp.y);return d<(b?b.d:22)?{i,d}:b;},null);});
 cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16/W,Math.min(1-16/W,p.x));pts[drag.i].y=Math.max(16/H,Math.min(1-16/H,p.y));draw();});
-cv.addEventListener('mouseup',()=>drag=null);
+cv.addEventListener('mouseup',e=>{if(!drag)return;const p=pos(e);const S=getStep();const rx=Math.round((p.x*W-W/2)/S),ry=Math.round((p.y*H-H/2)/S);pts[drag.i].x=Math.max(16/W,Math.min(1-16/W,(W/2+rx*S)/W));pts[drag.i].y=Math.max(16/H,Math.min(1-16/H,(H/2+ry*S)/H));drag=null;draw();});
 })();
 </script>
 {{< /rawhtml >}}
@@ -286,60 +320,73 @@ B가 새 껍질이 되는 게 아니라, **볼록성을 깨는 점 B를 제거**
 <div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);">
 <canvas id="mc-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:6px;margin-top:12px;align-items:center;">
-  <button onclick="mcStep(-1)" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;transition:background .15s;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">◀</button>
-  <button onclick="mcStep(1)" style="padding:7px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:14px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">▶</button>
-  <button onclick="mcReset()" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">↺</button>
+  <button onclick="mcStep(-1)" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;transition:background .15s;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#9664;</button>
+  <button onclick="mcStep(1)" style="padding:7px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:14px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">&#9654;</button>
+  <button onclick="mcReset()" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#8635;</button>
   <span id="mc-desc" style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#5c6bc0;margin-left:8px;text-transform:uppercase;"></span>
 </div>
-<div id="mc-explain" style="margin-top:8px;font-size:12px;color:#b0b8d0;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;min-height:36px;letter-spacing:.02em;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;"></div>
-<p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = lower hull · blue = upper hull · green = done</p>
+<div style="display:flex;gap:10px;margin-top:8px;align-items:stretch;">
+  <div id="mc-explain" style="flex:1;font-size:12px;color:#b0b8d0;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;min-height:36px;letter-spacing:.02em;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;"></div>
+  <div id="mc-stack" style="min-width:130px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#b0b8d0;letter-spacing:.03em;">-</div>
+</div>
+<p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = lower hull · blue = upper hull · green = done · drag points · &#9654; to step</p>
 </div>
 <script>
 (function(){
 let pts=[],steps=[],idx=0;
 const cv=document.getElementById('mc-canvas');
-cv.style.aspectRatio='560/240';
+cv.style.aspectRatio='560/260';
 const ctx=cv.getContext('2d');
-let W=560,H=240,dpr=1;
+let W=560,H=260,dpr=1;
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(steps.length)render();}
 new ResizeObserver(resize).observe(cv);
 function cross(O,A,B){return (A.x-O.x)*(B.y-O.y)-(A.y-O.y)*(B.x-O.x);}
+function drawGrid(){
+  ctx.lineWidth=0.5;
+  const GX=Math.round(W/10),GY=Math.round(H/8);
+  for(let x=GX/2;x<W;x+=GX){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.stroke();}
+  for(let y=GY/2;y<H;y+=GY){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.stroke();}
+}
 function rand(){
-  pts=[];for(let i=0;i<10;i++)pts.push({x:50+Math.random()*(W-100),y:25+Math.random()*(H-50)});
+  pts=[];for(let i=0;i<10;i++)pts.push({x:50+Math.random()*(W-100),y:30+Math.random()*(H-60)});
   build();idx=0;render();
 }
 function build(){
   steps=[];
   const s=[...pts].sort((a,b)=>a.x===b.x?a.y-b.y:a.x-b.x);
-  steps.push({lo:[],up:[],s,desc:'① x좌표 정렬',ex:'모든 점을 x좌표 순으로 정렬합니다.'});
+  steps.push({lo:[],up:[],s,desc:'① x\uc88c\ud45c \uc815\ub82c',ex:'\ubaa8\ub4e0 \uc810\uc744 x\uc88c\ud45c \uc21c\uc73c\ub85c \uc815\ub82c\ud569\ub2c8\ub2e4.'});
   let lo=[];
   for(let i=0;i<s.length;i++){
-    while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],s[i])<=0){lo.pop();steps.push({lo:[...lo],up:[],s,cur:s[i],desc:'② 아래껍질 - CW 제거',ex:'CCW ≤ 0 → 이전 점 제거'});}
-    lo.push(s[i]);steps.push({lo:[...lo],up:[],s,cur:s[i],desc:'② 아래 껍질',ex:`(${Math.round(s[i].x)}, ${Math.round(s[i].y)}) 추가`});
+    while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],s[i])<=0){lo.pop();steps.push({lo:[...lo],up:[],s,cur:s[i],desc:'\u2462 \uc544\ub798\uacd1\uc9c8 - CW \uc81c\uac70',ex:'CCW \u2264 0 \u2192 \uc774\uc804 \uc810 \uc81c\uac70'});}
+    lo.push(s[i]);steps.push({lo:[...lo],up:[],s,cur:s[i],desc:'\u2461 \uc544\ub798 \uacd1\uc9c8',ex:`(${Math.round(s[i].x)}, ${Math.round(s[i].y)}) \ucd94\uac00`});
   }
   let up=[];
   for(let i=s.length-1;i>=0;i--){
-    while(up.length>=2&&cross(up[up.length-2],up[up.length-1],s[i])<=0){up.pop();steps.push({lo:[...lo],up:[...up],s,cur:s[i],desc:'③ 위껍질 - CW 제거',ex:'CCW ≤ 0 → 이전 점 제거'});}
-    up.push(s[i]);steps.push({lo:[...lo],up:[...up],s,cur:s[i],desc:'③ 위 껍질',ex:`(${Math.round(s[i].x)}, ${Math.round(s[i].y)}) 추가`});
+    while(up.length>=2&&cross(up[up.length-2],up[up.length-1],s[i])<=0){up.pop();steps.push({lo:[...lo],up:[...up],s,cur:s[i],desc:'\u2462 \uc704\uacd1\uc9c8 - CW \uc81c\uac70',ex:'CCW \u2264 0 \u2192 \uc774\uc804 \uc810 \uc81c\uac70'});}
+    up.push(s[i]);steps.push({lo:[...lo],up:[...up],s,cur:s[i],desc:'\u2462 \uc704 \uacd1\uc9c8',ex:`(${Math.round(s[i].x)}, ${Math.round(s[i].y)}) \ucd94\uac00`});
   }
   const hull=[...lo.slice(0,-1),...up.slice(0,-1)];
-  steps.push({lo:[...lo],up:[...up],hull,s,desc:'✓ 완성!',ex:'아래 + 위 합치면 볼록 껍질 완성!'});
+  steps.push({lo:[...lo],up:[...up],hull,s,desc:'\u2713 \uc644\uc131!',ex:'\uc544\ub798 + \uc704 \ud569\uce58\uba74 \ubcfc\ub85d \uacd1\uc9c8 \uc644\uc131!'});
 }
 function render(){
   ctx.clearRect(0,0,W,H);
+  drawGrid();
   const st=steps[idx];
   if(st.hull){ctx.beginPath();st.hull.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.closePath();ctx.fillStyle='rgba(105,240,174,0.1)';ctx.fill();ctx.strokeStyle='#69f0ae';ctx.lineWidth=2.5;ctx.stroke();}
   if(st.lo&&st.lo.length>1){ctx.beginPath();st.lo.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.strokeStyle='#ef5350';ctx.lineWidth=2.5;ctx.stroke();}
   if(st.up&&st.up.length>1){ctx.beginPath();st.up.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;ctx.stroke();}
   st.s.forEach((p,i)=>{
     const inLo=st.lo&&st.lo.some(q=>q===p),inUp=st.up&&st.up.some(q=>q===p);
-    const col=st.hull?'#69f0ae':inLo?'#ef5350':inUp?'#42a5f5':'#555';
-    ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
-    ctx.fillStyle=st.hull||inLo||inUp?'#e0e0e0':'#666';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillText(i+1,p.x,p.y-11);
+    const col=st.hull?'#69f0ae':inLo?'#ef5350':inUp?'#42a5f5':'#4a4e5e';
+    ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=st.hull||inLo||inUp?'#e0e0e0':'#777';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillText(i+1,p.x,p.y-13);
   });
-  if(st.cur){ctx.beginPath();ctx.arc(st.cur.x,st.cur.y,11,0,Math.PI*2);ctx.strokeStyle='#ffd740';ctx.lineWidth=2.5;ctx.stroke();}
-  document.getElementById('mc-desc').textContent=`${idx+1} / ${steps.length}  —  ${st.desc}`;
+  if(st.cur){ctx.beginPath();ctx.arc(st.cur.x,st.cur.y,12,0,Math.PI*2);ctx.strokeStyle='#ffd740';ctx.lineWidth=2.5;ctx.stroke();}
+  const loLen=st.lo?st.lo.length:0,upLen=st.up?st.up.length:0;
+  document.getElementById('mc-desc').textContent=`${idx+1} / ${steps.length}  \u2014  ${st.desc}`;
   document.getElementById('mc-explain').textContent=st.ex;
+  const sIdx=p=>st.s.indexOf(p)+1;
+  document.getElementById('mc-stack').innerHTML=`<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ef9a9a;margin-bottom:4px;">Lower [${loLen}]</div><div style="color:#ef9a9a;margin-bottom:8px;">${st.lo&&st.lo.length?st.lo.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div><div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#90caf9;margin-bottom:4px;">Upper [${upLen}]</div><div style="color:#90caf9;">${st.up&&st.up.length?st.up.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div>`;
 }
 window.mcStep=d=>{idx=Math.max(0,Math.min(steps.length-1,idx+d));render();};
 window.mcReset=rand;
