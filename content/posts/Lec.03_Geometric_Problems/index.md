@@ -86,9 +86,10 @@ function draw(){
   ctx.clearRect(0,0,W,H);
   drawGrid();
   const [A,B,C]=pts.map(px);
-  const val=cross(A,B,C);
+  const STEP=getStep();
+  const bx=Math.round((B.x-A.x)/STEP),by=Math.round(-(B.y-A.y)/STEP),cx=Math.round((C.x-A.x)/STEP),cy=Math.round(-(C.y-A.y)/STEP),rv=bx*cy-by*cx;
   ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);ctx.closePath();
-  ctx.fillStyle=val===0?'rgba(150,150,150,0.08)':val>0?'rgba(67,160,71,0.18)':'rgba(229,57,53,0.18)';ctx.fill();
+  ctx.fillStyle=rv===0?'rgba(150,150,150,0.08)':rv>0?'rgba(67,160,71,0.18)':'rgba(229,57,53,0.18)';ctx.fill();
   const arr=(x1,y1,x2,y2,col)=>{
     const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);if(len<1)return;
     const ux=dx/len,uy=dy/len,r=12;
@@ -99,11 +100,10 @@ function draw(){
   };
   arr(A.x,A.y,B.x,B.y,'#ef5350');arr(B.x,B.y,C.x,C.y,'#66bb6a');arr(C.x,C.y,A.x,A.y,'#42a5f5');
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-17);});
-  const STEP=getStep();const bx=Math.round((B.x-A.x)/STEP),by=Math.round(-(B.y-A.y)/STEP),cx=Math.round((C.x-A.x)/STEP),cy=Math.round(-(C.y-A.y)/STEP),rv=bx*cy-by*cx;
   document.getElementById('ccw-formula').textContent=`(${bx})(${cy}) − (${by})(${cx}) = ${rv}`;
   const res=document.getElementById('ccw-result');
-  if(val===0){res.innerHTML='<span style="font-size:20px">—</span><span style="font-size:11px;font-weight:600;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#9e9e9e';}
-  else if(val>0){res.innerHTML='<span style="font-size:22px">↺</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">CCW</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
+  if(rv===0){res.innerHTML='<span style="font-size:20px">—</span><span style="font-size:11px;font-weight:600;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#9e9e9e';}
+  else if(rv>0){res.innerHTML='<span style="font-size:22px">↺</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">CCW</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
   else{res.innerHTML='<span style="font-size:22px">↻</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">CW</span>';res.style.background='#3a1a1a';res.style.color='#ff5252';}
 }
 function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height};}
