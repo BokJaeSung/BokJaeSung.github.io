@@ -72,7 +72,7 @@ function draw(){
   };
   arr(A.x,A.y,B.x,B.y,'#ef5350');arr(B.x,B.y,C.x,C.y,'#66bb6a');arr(C.x,C.y,A.x,A.y,'#42a5f5');
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-17);});
-  const bx=Math.round(B.x-A.x),by=Math.round(B.y-A.y),cx=Math.round(C.x-A.x),cy=Math.round(C.y-A.y),rv=Math.round(val);
+  const bx=Math.round(B.x-A.x),by=Math.round(B.y-A.y),cx=Math.round(C.x-A.x),cy=Math.round(C.y-A.y),rv=bx*cy-by*cx;
   document.getElementById('ccw-formula').textContent=`(${bx})(${cy}) − (${by})(${cx}) = ${rv}`;
   const res=document.getElementById('ccw-result');
   if(val===0){res.innerHTML='<span style="font-size:20px">—</span><span style="font-size:11px;font-weight:600;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#9e9e9e';}
