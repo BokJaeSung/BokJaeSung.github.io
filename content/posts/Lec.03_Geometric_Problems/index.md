@@ -27,14 +27,14 @@ def ccw(A, B, C):
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;">
 <canvas id="ccw-canvas" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;cursor:crosshair;"></canvas>
-<div style="display:flex;gap:10px;margin-top:8px;">
-  <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:8px 12px;font-size:13px;">
-    <div style="color:#888;font-size:11px;margin-bottom:2px;">공식 계산</div>
-    <div id="ccw-formula" style="font-family:monospace;">-</div>
+<div style="display:flex;gap:10px;margin-top:10px;align-items:stretch;">
+  <div style="flex:1;background:#fafafa;border:1px solid #ebebeb;border-radius:8px;padding:10px 14px;">
+    <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:5px;">Formula</div>
+    <div id="ccw-formula" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#333;letter-spacing:.02em;">-</div>
   </div>
-  <div id="ccw-result" style="min-width:130px;padding:8px 14px;border-radius:6px;text-align:center;font-weight:500;font-size:14px;background:#e8f5e9;color:#2e7d32;">-</div>
+  <div id="ccw-result" style="min-width:120px;padding:10px 16px;border-radius:8px;text-align:center;font-size:13px;font-weight:600;letter-spacing:.04em;background:#e8f5e9;color:#2e7d32;display:flex;align-items:center;justify-content:center;">-</div>
 </div>
-<p style="font-size:12px;color:#888;margin-top:6px;">점을 드래그해서 방향이 바뀌는 걸 확인해보자</p>
+<p style="font-size:11px;color:#bbb;margin-top:8px;letter-spacing:.02em;">drag the points to explore</p>
 </div>
 <script>
 (function(){
@@ -153,11 +153,11 @@ $$d_3 = CCW(p_3, p_4, p_1), \quad d_4 = CCW(p_3, p_4, p_2)$$
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;">
 <canvas id="seg-canvas" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;cursor:crosshair;"></canvas>
-<div style="display:flex;gap:10px;margin-top:8px;">
-  <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:8px 12px;font-size:12px;font-family:monospace;" id="seg-vals">-</div>
-  <div id="seg-result" style="min-width:100px;padding:8px 14px;border-radius:6px;text-align:center;font-weight:500;font-size:14px;">-</div>
+<div style="display:flex;gap:10px;margin-top:10px;align-items:stretch;">
+  <div style="flex:1;background:#fafafa;border:1px solid #ebebeb;border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:12px;color:#555;letter-spacing:.02em;" id="seg-vals">-</div>
+  <div id="seg-result" style="min-width:100px;padding:10px 16px;border-radius:8px;text-align:center;font-size:13px;font-weight:600;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;">-</div>
 </div>
-<p style="font-size:12px;color:#888;margin-top:6px;">빨강=선분1(p1p2), 파랑=선분2(p3p4). 점을 드래그해서 확인.</p>
+<p style="font-size:11px;color:#bbb;margin-top:8px;letter-spacing:.02em;">red = seg1(p1p2) · blue = seg2(p3p4) · drag to explore</p>
 </div>
 <script>
 (function(){
@@ -249,14 +249,14 @@ B가 새 껍질이 되는 게 아니라, **볼록성을 깨는 점 B를 제거**
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;">
 <canvas id="mc-canvas" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;"></canvas>
-<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
-  <button onclick="mcStep(-1)" style="padding:5px 12px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;">◀</button>
-  <button onclick="mcStep(1)" style="padding:5px 12px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;">▶</button>
-  <button onclick="mcReset()" style="padding:5px 12px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;">🔀</button>
-  <span id="mc-desc" style="font-size:12px;color:#888;margin-left:4px;"></span>
+<div style="display:flex;gap:6px;margin-top:10px;align-items:center;">
+  <button onclick="mcStep(-1)" style="padding:5px 13px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;color:#555;">◀</button>
+  <button onclick="mcStep(1)" style="padding:5px 13px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;color:#555;">▶</button>
+  <button onclick="mcReset()" style="padding:5px 13px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;color:#555;">↺</button>
+  <span id="mc-desc" style="font-size:11px;font-weight:600;letter-spacing:.06em;color:#aaa;margin-left:6px;text-transform:uppercase;"></span>
 </div>
-<div id="mc-explain" style="margin-top:6px;font-size:12px;color:#555;background:#f9f9f9;border-radius:6px;padding:8px 12px;min-height:28px;"></div>
-<p style="font-size:12px;color:#888;margin-top:4px;">빨강=아래껍질, 파랑=위껍질, 초록=완성</p>
+<div id="mc-explain" style="margin-top:8px;font-size:12px;color:#666;background:#fafafa;border:1px solid #ebebeb;border-radius:8px;padding:9px 14px;min-height:32px;letter-spacing:.01em;"></div>
+<p style="font-size:11px;color:#bbb;margin-top:6px;letter-spacing:.02em;">red = lower hull · blue = upper hull · green = done</p>
 </div>
 <script>
 (function(){
