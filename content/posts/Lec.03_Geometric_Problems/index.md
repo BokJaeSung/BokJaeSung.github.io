@@ -26,7 +26,7 @@ def ccw(A, B, C):
 
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;">
-<canvas id="ccw-canvas" width="560" height="280" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;cursor:crosshair;"></canvas>
+<canvas id="ccw-canvas" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;cursor:crosshair;"></canvas>
 <div style="display:flex;gap:10px;margin-top:8px;">
   <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:8px 12px;font-size:13px;">
     <div style="color:#888;font-size:11px;margin-bottom:2px;">공식 계산</div>
@@ -39,12 +39,15 @@ def ccw(A, B, C):
 <script>
 (function(){
 const cv=document.getElementById('ccw-canvas');
-const ctx=cv.getContext('2d');
+const dpr=window.devicePixelRatio||1;
+const W=560,H=280;
+cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';
+const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
 const pts=[{x:140,y:210,label:'A',color:'#e53935'},{x:320,y:210,label:'B',color:'#1e88e5'},{x:230,y:80,label:'C',color:'#43a047'}];
 let drag=null;
 function cross(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
 function draw(){
-  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.clearRect(0,0,W,H);
   const [A,B,C]=pts;
   const val=cross(A,B,C);
   ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);ctx.closePath();
@@ -66,9 +69,9 @@ function draw(){
   else if(val>0){res.textContent='> 0  반시계 ↺';res.style.background='#e8f5e9';res.style.color='#2e7d32';}
   else{res.textContent='< 0  시계방향 ↻';res.style.background='#ffebee';res.style.color='#c62828';}
 }
-function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}
+function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(W/r.width),y:(t.clientY-r.top)*(H/r.height)};}
 cv.addEventListener('mousedown',e=>{const p=pos(e);drag=pts.reduce((b,pt,i)=>{const d=Math.hypot(pt.x-p.x,pt.y-p.y);return d<(b?b.d:22)?{i,d}:b;},null);});
-cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16,Math.min(cv.width-16,p.x));pts[drag.i].y=Math.max(16,Math.min(cv.height-16,p.y));draw();});
+cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16,Math.min(W-16,p.x));pts[drag.i].y=Math.max(16,Math.min(H-16,p.y));draw();});
 cv.addEventListener('mouseup',()=>drag=null);
 draw();
 })();
@@ -140,7 +143,7 @@ $$d_3 = CCW(p_3, p_4, p_1), \quad d_4 = CCW(p_3, p_4, p_2)$$
 
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;">
-<canvas id="seg-canvas" width="560" height="260" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;cursor:crosshair;"></canvas>
+<canvas id="seg-canvas" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;cursor:crosshair;"></canvas>
 <div style="display:flex;gap:10px;margin-top:8px;">
   <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:8px 12px;font-size:12px;font-family:monospace;" id="seg-vals">-</div>
   <div id="seg-result" style="min-width:100px;padding:8px 14px;border-radius:6px;text-align:center;font-weight:500;font-size:14px;">-</div>
@@ -150,7 +153,10 @@ $$d_3 = CCW(p_3, p_4, p_1), \quad d_4 = CCW(p_3, p_4, p_2)$$
 <script>
 (function(){
 const cv=document.getElementById('seg-canvas');
-const ctx=cv.getContext('2d');
+const dpr=window.devicePixelRatio||1;
+const W=560,H=260;
+cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';
+const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
 const pts=[{x:100,y:200,label:'p1',c:'#e53935'},{x:300,y:90,label:'p2',c:'#e53935'},{x:90,y:100,label:'p3',c:'#1e88e5'},{x:310,y:210,label:'p4',c:'#1e88e5'}];
 let drag=null;
 function ccw(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
@@ -164,7 +170,7 @@ function intersects(){
   return false;
 }
 function draw(){
-  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.clearRect(0,0,W,H);
   const [p1,p2,p3,p4]=pts;
   const d1=ccw(p3,p4,p1),d2=ccw(p3,p4,p2),d3=ccw(p1,p2,p3),d4=ccw(p1,p2,p4);
   const hit=intersects();
@@ -175,9 +181,9 @@ function draw(){
   const res=document.getElementById('seg-result');
   res.textContent=hit?'교차 O':'교차 X';res.style.background=hit?'#e8f5e9':'#ffebee';res.style.color=hit?'#2e7d32':'#c62828';
 }
-function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};}
+function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(W/r.width),y:(t.clientY-r.top)*(H/r.height)};}
 cv.addEventListener('mousedown',e=>{const p=pos(e);drag=pts.reduce((b,pt,i)=>{const d=Math.hypot(pt.x-p.x,pt.y-p.y);return d<(b?b.d:22)?{i,d}:b;},null);});
-cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16,Math.min(cv.width-16,p.x));pts[drag.i].y=Math.max(16,Math.min(cv.height-16,p.y));draw();});
+cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16,Math.min(W-16,p.x));pts[drag.i].y=Math.max(16,Math.min(H-16,p.y));draw();});
 cv.addEventListener('mouseup',()=>drag=null);
 draw();
 })();
@@ -232,7 +238,7 @@ B가 새 껍질이 되는 게 아니라, **볼록성을 깨는 점 B를 제거**
 
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;">
-<canvas id="mc-canvas" width="560" height="240" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;"></canvas>
+<canvas id="mc-canvas" style="width:100%;border:1px solid #e0e0e0;border-radius:8px;"></canvas>
 <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
   <button onclick="mcStep(-1)" style="padding:5px 12px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;">◀</button>
   <button onclick="mcStep(1)" style="padding:5px 12px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;">▶</button>
@@ -246,10 +252,13 @@ B가 새 껍질이 되는 게 아니라, **볼록성을 깨는 점 B를 제거**
 (function(){
 let pts=[],steps=[],idx=0;
 const cv=document.getElementById('mc-canvas');
-const ctx=cv.getContext('2d');
+const dpr=window.devicePixelRatio||1;
+const W=560,H=240;
+cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';
+const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
 function cross(O,A,B){return (A.x-O.x)*(B.y-O.y)-(A.y-O.y)*(B.x-O.x);}
 function rand(){
-  pts=[];for(let i=0;i<10;i++)pts.push({x:50+Math.random()*(cv.width-100),y:25+Math.random()*(cv.height-50)});
+  pts=[];for(let i=0;i<10;i++)pts.push({x:50+Math.random()*(W-100),y:25+Math.random()*(H-50)});
   build();idx=0;render();
 }
 function build(){
@@ -270,7 +279,7 @@ function build(){
   steps.push({lo:[...lo],up:[...up],hull,s,desc:'✓ 완성!',ex:'아래 + 위 합치면 볼록 껍질 완성!'});
 }
 function render(){
-  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.clearRect(0,0,W,H);
   const st=steps[idx];
   if(st.hull){ctx.beginPath();st.hull.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.closePath();ctx.fillStyle='rgba(67,160,71,0.12)';ctx.fill();ctx.strokeStyle='#43a047';ctx.lineWidth=2;ctx.stroke();}
   if(st.lo&&st.lo.length>1){ctx.beginPath();st.lo.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.strokeStyle='#e53935';ctx.lineWidth=2;ctx.stroke();}
