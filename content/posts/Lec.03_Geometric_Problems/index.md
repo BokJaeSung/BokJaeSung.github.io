@@ -337,14 +337,14 @@ B가 새 껍질이 되는 게 아니라, **볼록성을 깨는 점 B를 제거**
 <div style="display:flex;gap:6px;margin-top:12px;align-items:center;">
   <button onclick="mcStep(-1)" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;transition:background .15s;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#9664;</button>
   <button onclick="mcStep(1)" style="padding:7px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:14px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">&#9654;</button>
-  <button onclick="mcReset()" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#8635;</button>
+  <button onclick="mcRestart()" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#8635;</button>
   <span id="mc-desc" style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#5c6bc0;margin-left:8px;text-transform:uppercase;"></span>
 </div>
 <div style="display:flex;gap:10px;margin-top:8px;align-items:stretch;">
   <div id="mc-explain" style="flex:1;font-size:12px;color:#b0b8d0;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;min-height:36px;letter-spacing:.02em;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;"></div>
   <div id="mc-stack" style="min-width:130px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#b0b8d0;letter-spacing:.03em;">-</div>
 </div>
-<p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = lower hull · blue = upper hull · green = done · drag points · &#9654; to step</p>
+<p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = lower hull · blue = upper hull · green = done · &#9654; to step · &#8635; to restart</p>
 </div>
 <script>
 (function(){
@@ -353,7 +353,7 @@ const cv=document.getElementById('mc-canvas');
 cv.style.aspectRatio='560/260';
 const ctx=cv.getContext('2d');
 let W=560,H=260,dpr=1;
-function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(steps.length)render();}
+function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);initPts();build();if(steps.length)render();}
 new ResizeObserver(resize).observe(cv);
 function cross(O,A,B){return (A.x-O.x)*(B.y-O.y)-(A.y-O.y)*(B.x-O.x);}
 function drawGrid(){
@@ -362,10 +362,13 @@ function drawGrid(){
   for(let x=GX/2;x<W;x+=GX){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.stroke();}
   for(let y=GY/2;y<H;y+=GY){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.stroke();}
 }
-function rand(){
-  pts=[];for(let i=0;i<10;i++)pts.push({x:50+Math.random()*(W-100),y:30+Math.random()*(H-60)});
-  build();idx=0;render();
-}
+// fixed example — ratios of 560×260, good spread with interior + hull points
+const FIXED_PTS=[
+  [0.10,0.73],[0.22,0.23],[0.35,0.88],[0.48,0.12],[0.50,0.55],
+  [0.58,0.80],[0.65,0.35],[0.72,0.65],[0.85,0.20],[0.90,0.78]
+];
+function initPts(){pts=FIXED_PTS.map(([rx,ry])=>({x:rx*W,y:ry*H}));}
+function restart(){initPts();build();idx=0;render();}
 function build(){
   steps=[];
   const s=[...pts].sort((a,b)=>a.x===b.x?a.y-b.y:a.x-b.x);
@@ -404,8 +407,8 @@ function render(){
   document.getElementById('mc-stack').innerHTML=`<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ef9a9a;margin-bottom:4px;">Lower [${loLen}]</div><div style="color:#ef9a9a;margin-bottom:8px;">${st.lo&&st.lo.length?st.lo.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div><div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#90caf9;margin-bottom:4px;">Upper [${upLen}]</div><div style="color:#90caf9;">${st.up&&st.up.length?st.up.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div>`;
 }
 window.mcStep=d=>{idx=Math.max(0,Math.min(steps.length-1,idx+d));render();};
-window.mcReset=rand;
-rand();
+window.mcRestart=restart;
+restart();
 })();
 </script>
 {{< /rawhtml >}}
