@@ -259,20 +259,27 @@ function draw(){
   const hit=intersects(p1,p2,p3,p4);
   if(hit){
     if(hit==='general'){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,dv=dx*ey-dy*ex;if(dv!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/dv;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
-    else{// collinear: collect all 4 endpoints on the same line, draw the overlapping span
-      const all=[p1,p2,p3,p4];
-      const dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.sqrt(dx*dx+dy*dy)||1;
-      const ts=all.map(p=>((p.x-p1.x)*dx+(p.y-p1.y)*dy)/len);
+    else{// collinear: find the overlapping span along the line direction
+      // use the longer segment as the reference direction
+      const dx12=p2.x-p1.x,dy12=p2.y-p1.y,len12=Math.sqrt(dx12*dx12+dy12*dy12)||1;
+      const dx34=p4.x-p3.x,dy34=p4.y-p3.y,len34=Math.sqrt(dx34*dx34+dy34*dy34)||1;
+      const dx=len12>=len34?dx12:dx34,dy=len12>=len34?dy12:dy34,len=len12>=len34?len12:len34;
+      const ref=len12>=len34?p1:p3;
+      const t=p=>((p.x-ref.x)*dx+(p.y-ref.y)*dy)/len;
+      const ts=[t(p1),t(p2),t(p3),t(p4)];
       const tmin=Math.max(Math.min(ts[0],ts[1]),Math.min(ts[2],ts[3]));
       const tmax=Math.min(Math.max(ts[0],ts[1]),Math.max(ts[2],ts[3]));
-      if(tmax>=tmin){const ux=dx/len,uy=dy/len;ctx.beginPath();ctx.moveTo(p1.x+ux*tmin,p1.y+uy*tmin);ctx.lineTo(p1.x+ux*tmax,p1.y+uy*tmax);ctx.strokeStyle='#ffd740';ctx.lineWidth=5;ctx.stroke();}}
+      const ux=dx/len,uy=dy/len;
+      const ax=ref.x+ux*tmin,ay=ref.y+uy*tmin,bx=ref.x+ux*tmax,by=ref.y+uy*tmax;
+      if(tmax-tmin>2){ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.strokeStyle='#ffd740';ctx.lineWidth=5;ctx.stroke();}
+      else{ctx.beginPath();ctx.arc((ax+bx)/2,(ay+by)/2,7,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
   }
   ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle='#ef5350';ctx.lineWidth=2.5;ctx.stroke();
   ctx.beginPath();ctx.moveTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;ctx.stroke();
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-16);});
   document.getElementById('seg-d12').textContent=`d1 = CCW(p1,p2,p3) ${sgn(d1)}   d2 = CCW(p1,p2,p4) ${sgn(d2)}`;
   document.getElementById('seg-d34').textContent=`d3 = CCW(p3,p4,p1) ${sgn(d3)}   d4 = CCW(p3,p4,p2) ${sgn(d4)}`;
-  const sgnProd=(a,b,sa,sb)=>a*b>0?'> 0':a*b<0?'< 0':a===0&&b===0?`(${sa}=0, ${sb}=0)`:a===0?`(${sa}=0)`:`(${sb}=0)`;
+  const sgnProd=(a,b,sa,sb)=>a*b>0?'> 0':a*b<0?'< 0':a===0&&b===0?`= 0  (${sa}=0, ${sb}=0)`:a===0?`= 0  (${sa}=0)`:`= 0  (${sb}=0)`;
   document.getElementById('seg-vals').textContent=`d1\u00b7d2 ${sgnProd(d1,d2,'d1','d2')}   d3\u00b7d4 ${sgnProd(d3,d4,'d3','d4')}`;
   const res=document.getElementById('seg-result');
   if(hit==='general'){res.innerHTML='<span style="font-size:22px">\u2715</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">INTERSECT</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
