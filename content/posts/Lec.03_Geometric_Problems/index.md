@@ -52,12 +52,39 @@ function resize(){
   draw();
 }
 new ResizeObserver(resize).observe(cv);
-const pts=[{x:140/560,label:'A',color:'#e53935'},{x:320/560,label:'B',color:'#1e88e5'},{x:230/560,label:'C',color:'#43a047'}].map((p,i)=>({x:p.x,y:[210/280,210/280,80/280][i],label:p.label,color:p.color}));
+// initial grid coords (math): A=(-2,-1), B=(2,-1), C=(0,2); STEP≈W/11
+const pts=[{x:178/560,y:191/280,label:'A',color:'#e53935'},{x:382/560,y:191/280,label:'B',color:'#1e88e5'},{x:280/560,y:38/280,label:'C',color:'#43a047'}];
 let drag=null;
 function cross(a,b,c){return (b.x-a.x)*(a.y-c.y)-(a.x-c.x)*(b.y-a.y);}
 function px(p){return{x:p.x*W,y:p.y*H};}
+function getStep(){return Math.round(W/11);}
+function drawGrid(){
+  const STEP=getStep();
+  const ox=W/2,oy=H/2;
+  // grid lines
+  ctx.lineWidth=0.5;
+  for(let i=Math.ceil(-ox/STEP);i*STEP+ox<W;i++){const x=ox+i*STEP;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.strokeStyle=i===0?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.07)';ctx.stroke();}
+  for(let i=Math.ceil(-oy/STEP);i*STEP+oy<H;i++){const y=oy+i*STEP;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.strokeStyle=i===0?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.07)';ctx.stroke();}
+  // axis arrows
+  ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(8,oy);ctx.lineTo(W-8,oy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W-8,oy);ctx.lineTo(W-15,oy-5);ctx.moveTo(W-8,oy);ctx.lineTo(W-15,oy+5);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,H-8);ctx.lineTo(ox,8);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,8);ctx.lineTo(ox-5,15);ctx.moveTo(ox,8);ctx.lineTo(ox+5,15);ctx.stroke();
+  // axis labels
+  ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='bold 11px sans-serif';
+  ctx.textAlign='left';ctx.fillText('x',W-10,oy-6);
+  ctx.textAlign='center';ctx.fillText('y',ox+10,12);
+  // tick labels (math coords: y flipped)
+  ctx.fillStyle='rgba(255,255,255,0.25)';ctx.font='9px sans-serif';
+  for(let x=ox+STEP;x<W-20;x+=STEP){const v=Math.round((x-ox)/STEP);ctx.textAlign='center';ctx.fillText(v,x,oy+12);}
+  for(let x=ox-STEP;x>20;x-=STEP){const v=Math.round((x-ox)/STEP);ctx.textAlign='center';ctx.fillText(v,x,oy+12);}
+  for(let y=oy-STEP;y>12;y-=STEP){const v=Math.round((oy-y)/STEP);ctx.textAlign='right';ctx.fillText(v,ox-4,y+3);}
+  for(let y=oy+STEP;y<H-8;y+=STEP){const v=Math.round((oy-y)/STEP);ctx.textAlign='right';ctx.fillText(v,ox-4,y+3);}
+}
 function draw(){
   ctx.clearRect(0,0,W,H);
+  drawGrid();
   const [A,B,C]=pts.map(px);
   const val=cross(A,B,C);
   ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);ctx.closePath();
@@ -72,7 +99,7 @@ function draw(){
   };
   arr(A.x,A.y,B.x,B.y,'#ef5350');arr(B.x,B.y,C.x,C.y,'#66bb6a');arr(C.x,C.y,A.x,A.y,'#42a5f5');
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-17);});
-  const bx=Math.round(B.x-A.x),by=Math.round(-(B.y-A.y)),cx=Math.round(C.x-A.x),cy=Math.round(-(C.y-A.y)),rv=bx*cy-by*cx;
+  const STEP=getStep();const bx=Math.round((B.x-A.x)/STEP),by=Math.round(-(B.y-A.y)/STEP),cx=Math.round((C.x-A.x)/STEP),cy=Math.round(-(C.y-A.y)/STEP),rv=bx*cy-by*cx;
   document.getElementById('ccw-formula').textContent=`(${bx})(${cy}) − (${by})(${cx}) = ${rv}`;
   const res=document.getElementById('ccw-result');
   if(val===0){res.innerHTML='<span style="font-size:20px">—</span><span style="font-size:11px;font-weight:600;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#9e9e9e';}
