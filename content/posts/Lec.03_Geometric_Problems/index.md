@@ -174,16 +174,16 @@ function ccw(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
 function onSeg(p,q,r){return Math.min(p.x,q.x)<=r.x&&r.x<=Math.max(p.x,q.x)&&Math.min(p.y,q.y)<=r.y&&r.y<=Math.max(p.y,q.y);}
 function intersects(){
   const [p1,p2,p3,p4]=pts.map(px);
-  const d1=ccw(p3,p4,p1),d2=ccw(p3,p4,p2),d3=ccw(p1,p2,p3),d4=ccw(p1,p2,p4);
+  const d1=ccw(p1,p2,p3),d2=ccw(p1,p2,p4),d3=ccw(p3,p4,p1),d4=ccw(p3,p4,p2);
   if(d1*d2<0&&d3*d4<0)return true;
-  if(d1===0&&onSeg(p3,p4,p1))return true;if(d2===0&&onSeg(p3,p4,p2))return true;
-  if(d3===0&&onSeg(p1,p2,p3))return true;if(d4===0&&onSeg(p1,p2,p4))return true;
+  if(d1===0&&onSeg(p1,p2,p3))return true;if(d2===0&&onSeg(p1,p2,p4))return true;
+  if(d3===0&&onSeg(p3,p4,p1))return true;if(d4===0&&onSeg(p3,p4,p2))return true;
   return false;
 }
 function draw(){
   ctx.clearRect(0,0,W,H);
   const [p1,p2,p3,p4]=pts.map(px);
-  const d1=ccw(p3,p4,p1),d2=ccw(p3,p4,p2),d3=ccw(p1,p2,p3),d4=ccw(p1,p2,p4);
+  const d1=ccw(p1,p2,p3),d2=ccw(p1,p2,p4),d3=ccw(p3,p4,p1),d4=ccw(p3,p4,p2);
   const hit=intersects();
   if(hit){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,d=dx*ey-dy*ex;if(d!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/d;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,7,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();}}
   ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle='#ef5350';ctx.lineWidth=2.5;ctx.stroke();
@@ -218,15 +218,15 @@ def on_segment(p, q, r):
             min(p[1],q[1]) <= r[1] <= max(p[1],q[1]))
 
 def intersects(p1, p2, p3, p4):
-    d1 = ccw(p3, p4, p1);  d2 = ccw(p3, p4, p2)
-    d3 = ccw(p1, p2, p3);  d4 = ccw(p1, p2, p4)
+    d1 = ccw(p1, p2, p3);  d2 = ccw(p1, p2, p4)
+    d3 = ccw(p3, p4, p1);  d4 = ccw(p3, p4, p2)
 
     if d1*d2 < 0 and d3*d4 < 0: return True
 
-    if d1 == 0 and on_segment(p3, p4, p1): return True
-    if d2 == 0 and on_segment(p3, p4, p2): return True
-    if d3 == 0 and on_segment(p1, p2, p3): return True
-    if d4 == 0 and on_segment(p1, p2, p4): return True
+    if d1 == 0 and on_segment(p1, p2, p3): return True
+    if d2 == 0 and on_segment(p1, p2, p4): return True
+    if d3 == 0 and on_segment(p3, p4, p1): return True
+    if d4 == 0 and on_segment(p3, p4, p2): return True
 
     return False
 ```
