@@ -272,7 +272,8 @@ function draw(){
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-16);});
   document.getElementById('seg-d12').textContent=`d1 = CCW(p1,p2,p3) ${sgn(d1)}   d2 = CCW(p1,p2,p4) ${sgn(d2)}`;
   document.getElementById('seg-d34').textContent=`d3 = CCW(p3,p4,p1) ${sgn(d3)}   d4 = CCW(p3,p4,p2) ${sgn(d4)}`;
-  document.getElementById('seg-vals').textContent=`d1\u00b7d2 ${sgn(d1*d2)}   d3\u00b7d4 ${sgn(d3*d4)}`;
+  const sgnProd=(a,b,sa,sb)=>a*b>0?'> 0':a*b<0?'< 0':a===0&&b===0?`(${sa}=0, ${sb}=0)`:a===0?`(${sa}=0)`:`(${sb}=0)`;
+  document.getElementById('seg-vals').textContent=`d1\u00b7d2 ${sgnProd(d1,d2,'d1','d2')}   d3\u00b7d4 ${sgnProd(d3,d4,'d3','d4')}`;
   const res=document.getElementById('seg-result');
   if(hit==='general'){res.innerHTML='<span style="font-size:22px">\u2715</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">INTERSECT</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
   else if(hit==='collinear'){res.innerHTML='<span style="font-size:20px">\u2014</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#ffd740';}
