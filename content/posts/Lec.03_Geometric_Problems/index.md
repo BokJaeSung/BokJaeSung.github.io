@@ -30,6 +30,8 @@ def ccw(A, B, C):
 <div style="display:flex;gap:10px;margin-top:12px;align-items:stretch;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
     <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Formula</div>
+    <div id="ccw-coords" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#7986cb;letter-spacing:.03em;margin-bottom:4px;">-</div>
+    <div id="ccw-vecs" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#80cbc4;letter-spacing:.03em;margin-bottom:4px;">-</div>
     <div id="ccw-formula" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#e0e0e0;letter-spacing:.03em;">-</div>
   </div>
   <div id="ccw-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:14px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
@@ -87,7 +89,10 @@ function draw(){
   drawGrid();
   const [A,B,C]=pts.map(px);
   const STEP=getStep();
-  const bx=Math.round((B.x-A.x)/STEP),by=Math.round(-(B.y-A.y)/STEP),cx=Math.round((C.x-A.x)/STEP),cy=Math.round(-(C.y-A.y)/STEP),rv=bx*cy-by*cx;
+  const ax=Math.round((A.x-W/2)/STEP),ay=Math.round((H/2-A.y)/STEP);
+  const bx_=Math.round((B.x-W/2)/STEP),by_=Math.round((H/2-B.y)/STEP);
+  const cx_=Math.round((C.x-W/2)/STEP),cy_=Math.round((H/2-C.y)/STEP);
+  const bx=bx_-ax,by=by_-ay,cx=cx_-ax,cy=cy_-ay,rv=bx*cy-by*cx;
   ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);ctx.closePath();
   ctx.fillStyle=rv===0?'rgba(150,150,150,0.08)':rv>0?'rgba(67,160,71,0.18)':'rgba(229,57,53,0.18)';ctx.fill();
   const arr=(x1,y1,x2,y2,col)=>{
@@ -100,6 +105,8 @@ function draw(){
   };
   arr(A.x,A.y,B.x,B.y,'#ef5350');arr(B.x,B.y,C.x,C.y,'#66bb6a');arr(C.x,C.y,A.x,A.y,'#42a5f5');
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-17);});
+  document.getElementById('ccw-coords').textContent=`A(${ax}, ${ay})  B(${bx_}, ${by_})  C(${cx_}, ${cy_})`;
+  document.getElementById('ccw-vecs').textContent=`AB⃗(${bx}, ${by})  AC⃗(${cx}, ${cy})`;
   document.getElementById('ccw-formula').textContent=`(${bx})(${cy}) − (${by})(${cx}) = ${rv}`;
   const res=document.getElementById('ccw-result');
   if(rv===0){res.innerHTML='<span style="font-size:20px">—</span><span style="font-size:11px;font-weight:600;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#9e9e9e';}
