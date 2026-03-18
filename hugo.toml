@@ -3,6 +3,9 @@ languageCode = 'ko-kr'
 title = 'History'
 theme = 'PaperMod'
 
+[markup.goldmark.renderer]
+  unsafe = true
+
 [imaging]
   quality = 95
 
