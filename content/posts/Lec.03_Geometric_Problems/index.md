@@ -29,14 +29,14 @@ def ccw(A, B, C):
 <canvas id="ccw-canvas" style="width:100%;border-radius:8px;cursor:crosshair;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:12px;align-items:stretch;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Formula</div>
-    <div id="ccw-coords" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#7986cb;letter-spacing:.03em;margin-bottom:4px;">-</div>
-    <div id="ccw-vecs" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#80cbc4;letter-spacing:.03em;margin-bottom:4px;">-</div>
-    <div id="ccw-formula" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#e0e0e0;letter-spacing:.03em;">-</div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Formula</div>
+    <div id="ccw-coords" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#7986cb;letter-spacing:.03em;margin-bottom:4px;">-</div>
+    <div id="ccw-vecs" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#80cbc4;letter-spacing:.03em;margin-bottom:4px;">-</div>
+    <div id="ccw-formula" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#e0e0e0;letter-spacing:.03em;">-</div>
   </div>
-  <div id="ccw-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:14px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
+  <div id="ccw-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:16px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
 </div>
-<p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">drag points to explore</p>
+<p style="font-size:12px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">drag points to explore</p>
 </div>
 <script>
 (function(){
@@ -189,14 +189,14 @@ $$d_3 = CCW(p_3, p_4, p_1), \quad d_4 = CCW(p_3, p_4, p_2)$$
 <canvas id="seg-canvas" style="width:100%;border-radius:8px;cursor:crosshair;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:12px;align-items:stretch;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Values</div>
-    <div id="seg-d12" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#ef9a9a;letter-spacing:.03em;margin-bottom:3px;">-</div>
-    <div id="seg-d34" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#90caf9;letter-spacing:.03em;margin-bottom:3px;">-</div>
-    <div id="seg-vals" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#e0e0e0;letter-spacing:.03em;">-</div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Values</div>
+    <div id="seg-d12" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#ef9a9a;letter-spacing:.03em;margin-bottom:3px;">-</div>
+    <div id="seg-d34" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#90caf9;letter-spacing:.03em;margin-bottom:3px;">-</div>
+    <div id="seg-vals" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#e0e0e0;letter-spacing:.03em;">-</div>
   </div>
-  <div id="seg-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:14px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
+  <div id="seg-result" style="min-width:130px;padding:10px 18px;border-radius:6px;text-align:center;font-size:16px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;">-</div>
 </div>
-<p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = seg1(p1p2) · blue = seg2(p3p4) · drag to explore</p>
+<p style="font-size:12px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = seg1(p1p2) · blue = seg2(p3p4) · drag to explore</p>
 </div>
 <script>
 (function(){
