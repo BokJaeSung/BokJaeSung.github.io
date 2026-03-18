@@ -221,13 +221,17 @@ function gpx(p){const S=getStep();return{x:Math.round((p.x-W/2)/S),y:Math.round(
 function ccwG(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
 function ccw(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
 function onSeg(p,q,r){return Math.min(p.x,q.x)<=r.x&&r.x<=Math.max(p.x,q.x)&&Math.min(p.y,q.y)<=r.y&&r.y<=Math.max(p.y,q.y);}
-// returns 'general'|'collinear'|false  — p1..p4 are pixel coords
+// returns {type:'general'}|{type:'collinear',pts:[...touching points]}|false
 function intersects(p1,p2,p3,p4){
   const [g1,g2,g3,g4]=[p1,p2,p3,p4].map(gpx);
   const d1=ccwG(g1,g2,g3),d2=ccwG(g1,g2,g4),d3=ccwG(g3,g4,g1),d4=ccwG(g3,g4,g2);
-  if(d1*d2<0&&d3*d4<0)return'general';
-  if(d1===0&&onSeg(p1,p2,p3))return'collinear';if(d2===0&&onSeg(p1,p2,p4))return'collinear';
-  if(d3===0&&onSeg(p3,p4,p1))return'collinear';if(d4===0&&onSeg(p3,p4,p2))return'collinear';
+  if(d1*d2<0&&d3*d4<0)return{type:'general'};
+  const tp=[];
+  if(d1===0&&onSeg(p1,p2,p3))tp.push(p3);
+  if(d2===0&&onSeg(p1,p2,p4))tp.push(p4);
+  if(d3===0&&onSeg(p3,p4,p1))tp.push(p1);
+  if(d4===0&&onSeg(p3,p4,p2))tp.push(p2);
+  if(tp.length)return{type:'collinear',pts:tp};
   return false;
 }
 function drawGrid(){
@@ -258,21 +262,10 @@ function draw(){
   const d1=ccwG(g1,g2,g3),d2=ccwG(g1,g2,g4),d3=ccwG(g3,g4,g1),d4=ccwG(g3,g4,g2);
   const hit=intersects(p1,p2,p3,p4);
   if(hit){
-    if(hit==='general'){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,dv=dx*ey-dy*ex;if(dv!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/dv;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
-    else{// collinear: find the overlapping span along the line direction
-      // use the longer segment as the reference direction
-      const dx12=p2.x-p1.x,dy12=p2.y-p1.y,len12=Math.sqrt(dx12*dx12+dy12*dy12)||1;
-      const dx34=p4.x-p3.x,dy34=p4.y-p3.y,len34=Math.sqrt(dx34*dx34+dy34*dy34)||1;
-      const dx=len12>=len34?dx12:dx34,dy=len12>=len34?dy12:dy34,len=len12>=len34?len12:len34;
-      const ref=len12>=len34?p1:p3;
-      const t=p=>((p.x-ref.x)*dx+(p.y-ref.y)*dy)/len;
-      const ts=[t(p1),t(p2),t(p3),t(p4)];
-      const tmin=Math.max(Math.min(ts[0],ts[1]),Math.min(ts[2],ts[3]));
-      const tmax=Math.min(Math.max(ts[0],ts[1]),Math.max(ts[2],ts[3]));
-      const ux=dx/len,uy=dy/len;
-      const ax=ref.x+ux*tmin,ay=ref.y+uy*tmin,bx=ref.x+ux*tmax,by=ref.y+uy*tmax;
-      if(tmax-tmin>2){ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.strokeStyle='#ffd740';ctx.lineWidth=5;ctx.stroke();}
-      else{ctx.beginPath();ctx.arc((ax+bx)/2,(ay+by)/2,7,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
+    if(hit.type==='general'){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,dv=dx*ey-dy*ex;if(dv!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/dv;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
+    else{// collinear: mark each touching endpoint
+      const seen=new Set();
+      hit.pts.forEach(p=>{const k=`${p.x},${p.y}`;if(seen.has(k))return;seen.add(k);ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();});}
   }
   ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle='#ef5350';ctx.lineWidth=2.5;ctx.stroke();
   ctx.beginPath();ctx.moveTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;ctx.stroke();
@@ -282,8 +275,8 @@ function draw(){
   const sgnProd=(a,b,sa,sb)=>a*b>0?'> 0':a*b<0?'< 0':a===0&&b===0?`= 0  (${sa}=0, ${sb}=0)`:a===0?`= 0  (${sa}=0)`:`= 0  (${sb}=0)`;
   document.getElementById('seg-vals').textContent=`d1\u00b7d2 ${sgnProd(d1,d2,'d1','d2')}   d3\u00b7d4 ${sgnProd(d3,d4,'d3','d4')}`;
   const res=document.getElementById('seg-result');
-  if(hit==='general'){res.innerHTML='<span style="font-size:22px">\u2715</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">INTERSECT</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
-  else if(hit==='collinear'){res.innerHTML='<span style="font-size:20px">\u2014</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#ffd740';}
+  if(hit&&hit.type==='general'){res.innerHTML='<span style="font-size:22px">\u2715</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">INTERSECT</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
+  else if(hit&&hit.type==='collinear'){res.innerHTML='<span style="font-size:20px">\u2014</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#ffd740';}
   else{res.innerHTML='<span style="font-size:22px">\u2225</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">NO CROSS</span>';res.style.background='#3a1a1a';res.style.color='#ff5252';}
 }
 function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height};}
