@@ -216,13 +216,18 @@ const pts=[
 ];
 let drag=null;
 function px(p){return{x:p.x*W,y:p.y*H};}
+// integer grid coords (math y-up) from pixel coords — for exact ===0 detection
+function gpx(p){const S=getStep();return{x:Math.round((p.x-W/2)/S),y:Math.round((H/2-p.y)/S)};}
+function ccwG(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
 function ccw(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
 function onSeg(p,q,r){return Math.min(p.x,q.x)<=r.x&&r.x<=Math.max(p.x,q.x)&&Math.min(p.y,q.y)<=r.y&&r.y<=Math.max(p.y,q.y);}
+// returns 'general'|'collinear'|false  — p1..p4 are pixel coords
 function intersects(p1,p2,p3,p4){
-  const d1=ccw(p1,p2,p3),d2=ccw(p1,p2,p4),d3=ccw(p3,p4,p1),d4=ccw(p3,p4,p2);
-  if(d1*d2<0&&d3*d4<0)return true;
-  if(d1===0&&onSeg(p1,p2,p3))return true;if(d2===0&&onSeg(p1,p2,p4))return true;
-  if(d3===0&&onSeg(p3,p4,p1))return true;if(d4===0&&onSeg(p3,p4,p2))return true;
+  const [g1,g2,g3,g4]=[p1,p2,p3,p4].map(gpx);
+  const d1=ccwG(g1,g2,g3),d2=ccwG(g1,g2,g4),d3=ccwG(g3,g4,g1),d4=ccwG(g3,g4,g2);
+  if(d1*d2<0&&d3*d4<0)return'general';
+  if(d1===0&&onSeg(p1,p2,p3))return'collinear';if(d2===0&&onSeg(p1,p2,p4))return'collinear';
+  if(d3===0&&onSeg(p3,p4,p1))return'collinear';if(d4===0&&onSeg(p3,p4,p2))return'collinear';
   return false;
 }
 function drawGrid(){
@@ -249,9 +254,19 @@ function draw(){
   ctx.clearRect(0,0,W,H);
   drawGrid();
   const [p1,p2,p3,p4]=pts.map(px);
-  const d1=ccw(p1,p2,p3),d2=ccw(p1,p2,p4),d3=ccw(p3,p4,p1),d4=ccw(p3,p4,p2);
+  const [g1,g2,g3,g4]=[p1,p2,p3,p4].map(gpx);
+  const d1=ccwG(g1,g2,g3),d2=ccwG(g1,g2,g4),d3=ccwG(g3,g4,g1),d4=ccwG(g3,g4,g2);
   const hit=intersects(p1,p2,p3,p4);
-  if(hit){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,dv=dx*ey-dy*ex;if(dv!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/dv;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
+  if(hit){
+    if(hit==='general'){const dx=p2.x-p1.x,dy=p2.y-p1.y,ex=p4.x-p3.x,ey=p4.y-p3.y,dv=dx*ey-dy*ex;if(dv!==0){const t=((p3.x-p1.x)*ey-(p3.y-p1.y)*ex)/dv;const ix=p1.x+t*dx,iy=p1.y+t*dy;ctx.beginPath();ctx.arc(ix,iy,8,0,Math.PI*2);ctx.fillStyle='#ffd740';ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();}}
+    else{// collinear: collect all 4 endpoints on the same line, draw the overlapping span
+      const all=[p1,p2,p3,p4];
+      const dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.sqrt(dx*dx+dy*dy)||1;
+      const ts=all.map(p=>((p.x-p1.x)*dx+(p.y-p1.y)*dy)/len);
+      const tmin=Math.max(Math.min(ts[0],ts[1]),Math.min(ts[2],ts[3]));
+      const tmax=Math.min(Math.max(ts[0],ts[1]),Math.max(ts[2],ts[3]));
+      if(tmax>=tmin){const ux=dx/len,uy=dy/len;ctx.beginPath();ctx.moveTo(p1.x+ux*tmin,p1.y+uy*tmin);ctx.lineTo(p1.x+ux*tmax,p1.y+uy*tmax);ctx.strokeStyle='#ffd740';ctx.lineWidth=5;ctx.stroke();}}
+  }
   ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle='#ef5350';ctx.lineWidth=2.5;ctx.stroke();
   ctx.beginPath();ctx.moveTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;ctx.stroke();
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-16);});
@@ -259,7 +274,8 @@ function draw(){
   document.getElementById('seg-d34').textContent=`d3 = CCW(p3,p4,p1) ${sgn(d3)}   d4 = CCW(p3,p4,p2) ${sgn(d4)}`;
   document.getElementById('seg-vals').textContent=`d1\u00b7d2 ${sgn(d1*d2)}   d3\u00b7d4 ${sgn(d3*d4)}`;
   const res=document.getElementById('seg-result');
-  if(hit){res.innerHTML='<span style="font-size:22px">\u2715</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">INTERSECT</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
+  if(hit==='general'){res.innerHTML='<span style="font-size:22px">\u2715</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">INTERSECT</span>';res.style.background='#1b3a1f';res.style.color='#69f0ae';}
+  else if(hit==='collinear'){res.innerHTML='<span style="font-size:20px">\u2014</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#ffd740';}
   else{res.innerHTML='<span style="font-size:22px">\u2225</span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;margin-top:2px;">NO CROSS</span>';res.style.background='#3a1a1a';res.style.color='#ff5252';}
 }
 function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height};}
