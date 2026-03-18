@@ -108,8 +108,8 @@ function draw(){
 }
 function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height};}
 cv.addEventListener('mousedown',e=>{const p=pos(e);drag=pts.reduce((b,pt,i)=>{const q=px(pt),pp={x:p.x*W,y:p.y*H};const d=Math.hypot(q.x-pp.x,q.y-pp.y);return d<(b?b.d:22)?{i,d}:b;},null);});
-cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);const S=getStep();const rx=Math.round((p.x*W-W/2)/S),ry=Math.round((p.y*H-H/2)/S);pts[drag.i].x=Math.max(16/W,Math.min(1-16/W,(W/2+rx*S)/W));pts[drag.i].y=Math.max(16/H,Math.min(1-16/H,(H/2+ry*S)/H));draw();});
-cv.addEventListener('mouseup',()=>drag=null);
+cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16/W,Math.min(1-16/W,p.x));pts[drag.i].y=Math.max(16/H,Math.min(1-16/H,p.y));draw();});
+cv.addEventListener('mouseup',e=>{if(!drag)return;const p=pos(e);const S=getStep();const rx=Math.round((p.x*W-W/2)/S),ry=Math.round((p.y*H-H/2)/S);pts[drag.i].x=Math.max(16/W,Math.min(1-16/W,(W/2+rx*S)/W));pts[drag.i].y=Math.max(16/H,Math.min(1-16/H,(H/2+ry*S)/H));drag=null;draw();});
 })();
 </script>
 {{< /rawhtml >}}
