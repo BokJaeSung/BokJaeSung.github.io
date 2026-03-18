@@ -338,11 +338,11 @@ B가 새 껍질이 되는 게 아니라, **볼록성을 깨는 점 B를 제거**
   <button onclick="mcStep(-1)" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;transition:background .15s;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#9664;</button>
   <button onclick="mcStep(1)" style="padding:7px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:14px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">&#9654;</button>
   <button onclick="mcRestart()" style="padding:7px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:14px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">&#8635;</button>
-  <span id="mc-desc" style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#5c6bc0;margin-left:8px;text-transform:uppercase;"></span>
+  <span id="mc-desc" style="font-size:13px;font-weight:700;letter-spacing:.1em;color:#5c6bc0;margin-left:8px;text-transform:uppercase;"></span>
 </div>
 <div style="display:flex;gap:10px;margin-top:8px;align-items:stretch;">
-  <div id="mc-explain" style="flex:1;font-size:12px;color:#b0b8d0;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;min-height:36px;letter-spacing:.02em;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;"></div>
-  <div id="mc-stack" style="min-width:130px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:11px;color:#b0b8d0;letter-spacing:.03em;">-</div>
+  <div id="mc-explain" style="flex:1;font-size:14px;color:#b0b8d0;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;min-height:36px;letter-spacing:.02em;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;"></div>
+  <div id="mc-stack" style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#b0b8d0;letter-spacing:.03em;">-</div>
 </div>
 <p style="font-size:10px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">red = lower hull · blue = upper hull · green = done · &#9654; to step · &#8635; to restart</p>
 </div>
@@ -396,15 +396,15 @@ function render(){
   st.s.forEach((p,i)=>{
     const inLo=st.lo&&st.lo.some(q=>q===p),inUp=st.up&&st.up.some(q=>q===p);
     const col=st.hull?'#69f0ae':inLo?'#ef5350':inUp?'#42a5f5':'#4a4e5e';
-    ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();
-    ctx.fillStyle=st.hull||inLo||inUp?'#e0e0e0':'#777';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillText(i+1,p.x,p.y-13);
+    ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=st.hull||inLo||inUp?'#e0e0e0':'#777';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(i+1,p.x,p.y-15);
   });
   if(st.cur){ctx.beginPath();ctx.arc(st.cur.x,st.cur.y,12,0,Math.PI*2);ctx.strokeStyle='#ffd740';ctx.lineWidth=2.5;ctx.stroke();}
   const loLen=st.lo?st.lo.length:0,upLen=st.up?st.up.length:0;
   document.getElementById('mc-desc').textContent=`${idx+1} / ${steps.length}  \u2014  ${st.desc}`;
   document.getElementById('mc-explain').textContent=st.ex;
   const sIdx=p=>st.s.indexOf(p)+1;
-  document.getElementById('mc-stack').innerHTML=`<div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ef9a9a;margin-bottom:4px;">Lower [${loLen}]</div><div style="color:#ef9a9a;margin-bottom:8px;">${st.lo&&st.lo.length?st.lo.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div><div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#90caf9;margin-bottom:4px;">Upper [${upLen}]</div><div style="color:#90caf9;">${st.up&&st.up.length?st.up.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div>`;
+  document.getElementById('mc-stack').innerHTML=`<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ef9a9a;margin-bottom:4px;">Lower [${loLen}]</div><div style="font-size:13px;color:#ef9a9a;margin-bottom:8px;">${st.lo&&st.lo.length?st.lo.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div><div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#90caf9;margin-bottom:4px;">Upper [${upLen}]</div><div style="font-size:13px;color:#90caf9;">${st.up&&st.up.length?st.up.map(p=>sIdx(p)).join(' \u2192 '):'\u2014'}</div>`;
 }
 window.mcStep=d=>{idx=Math.max(0,Math.min(steps.length-1,idx+d));render();};
 window.mcRestart=restart;
