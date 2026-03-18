@@ -106,7 +106,7 @@ function draw(){
   arr(A.x,A.y,B.x,B.y,'#ef5350');arr(B.x,B.y,C.x,C.y,'#66bb6a');arr(C.x,C.y,A.x,A.y,'#42a5f5');
   pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,10,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.strokeStyle='#1a1d27';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-17);});
   document.getElementById('ccw-coords').textContent=`A(${ax}, ${ay})  B(${bx_}, ${by_})  C(${cx_}, ${cy_})`;
-  document.getElementById('ccw-vecs').textContent=`AB⃗(${bx}, ${by})  AC⃗(${cx}, ${cy})`;
+  document.getElementById('ccw-vecs').textContent=`AB\u2192(${bx}, ${by})  AC\u2192(${cx}, ${cy})`;
   document.getElementById('ccw-formula').textContent=`(${bx})(${cy}) − (${by})(${cx}) = ${rv}`;
   const res=document.getElementById('ccw-result');
   if(rv===0){res.innerHTML='<span style="font-size:20px">—</span><span style="font-size:11px;font-weight:600;letter-spacing:.06em;margin-top:2px;">COLLINEAR</span>';res.style.background='#2a2d3a';res.style.color='#9e9e9e';}
