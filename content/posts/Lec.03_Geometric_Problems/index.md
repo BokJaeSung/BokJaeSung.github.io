@@ -1,12 +1,12 @@
 ---
-title: "CCW 알고리즘 완전 정복 - 외적부터 볼록 껍질까지"
+title: "Lec.03 Geometric Problems"
 date: 2026-03-18T09:00:00+09:00
 tags: ["알고리즘", "기하학", "CCW", "외적", "선분교차", "볼록껍질"]
 cover:
   image: 'images/cover.jpg'
-  alt: 'CCW 알고리즘 완전 정복'
+  alt: 'Lec.03 Geometric Problems'
   relative: true
-summary: "CCW(Counter-Clockwise)의 원리를 외적부터 이해하고, 선분 교차 판별과 볼록 껍질까지 완전히 정복해보자"
+summary: "From cross product to convex hull: a complete walkthrough of CCW, line segment intersection, and the Monotone Chain algorithm."
 ---
 
 ## 1. CCW란?
