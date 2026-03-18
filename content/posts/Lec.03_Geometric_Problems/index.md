@@ -39,41 +39,50 @@ def ccw(A, B, C):
 <script>
 (function(){
 const cv=document.getElementById('ccw-canvas');
-const dpr=window.devicePixelRatio||1;
-const W=560,H=280;
-cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';
-const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
-const pts=[{x:140,y:210,label:'A',color:'#e53935'},{x:320,y:210,label:'B',color:'#1e88e5'},{x:230,y:80,label:'C',color:'#43a047'}];
+const RATIO=560/280;
+cv.style.aspectRatio=RATIO;
+const ctx=cv.getContext('2d');
+let W=560,H=280,dpr=1;
+function resize(){
+  dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  W=r.width;H=r.height;
+  cv.width=W*dpr;cv.height=H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+new ResizeObserver(resize).observe(cv);
+const pts=[{x:140/560,label:'A',color:'#e53935'},{x:320/560,label:'B',color:'#1e88e5'},{x:230/560,label:'C',color:'#43a047'}].map((p,i)=>({x:p.x,y:[210/280,210/280,80/280][i],label:p.label,color:p.color}));
 let drag=null;
 function cross(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
+function px(p){return{x:p.x*W,y:p.y*H};}
 function draw(){
   ctx.clearRect(0,0,W,H);
-  const [A,B,C]=pts;
+  const [A,B,C]=pts.map(px);
   const val=cross(A,B,C);
   ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);ctx.closePath();
   ctx.fillStyle=val===0?'rgba(150,150,150,0.1)':val>0?'rgba(67,160,71,0.12)':'rgba(229,57,53,0.12)';ctx.fill();
   const arr=(x1,y1,x2,y2,col)=>{
     const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);if(len<1)return;
-    const ux=dx/len,uy=dy/len;
-    ctx.beginPath();ctx.moveTo(x1+ux*14,y1+uy*14);ctx.lineTo(x2-ux*14,y2-uy*14);
+    const ux=dx/len,uy=dy/len,r=12;
+    ctx.beginPath();ctx.moveTo(x1+ux*r,y1+uy*r);ctx.lineTo(x2-ux*r,y2-uy*r);
     ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
     const a=Math.atan2(dy,dx);
-    ctx.beginPath();ctx.moveTo(x2-ux*14,y2-uy*14);ctx.lineTo(x2-ux*14-Math.cos(a-.4)*10,y2-uy*14-Math.sin(a-.4)*10);ctx.moveTo(x2-ux*14,y2-uy*14);ctx.lineTo(x2-ux*14-Math.cos(a+.4)*10,y2-uy*14-Math.sin(a+.4)*10);ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x2-ux*r,y2-uy*r);ctx.lineTo(x2-ux*r-Math.cos(a-.4)*9,y2-uy*r-Math.sin(a-.4)*9);ctx.moveTo(x2-ux*r,y2-uy*r);ctx.lineTo(x2-ux*r-Math.cos(a+.4)*9,y2-uy*r-Math.sin(a+.4)*9);ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
   };
   arr(A.x,A.y,B.x,B.y,'#e53935');arr(B.x,B.y,C.x,C.y,'#43a047');arr(C.x,C.y,A.x,A.y,'#1e88e5');
-  pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,9,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#333';ctx.font='500 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,p.x,p.y-16);});
-  const ax=Math.round(B.x-A.x),ay=Math.round(B.y-A.y),bx=Math.round(C.x-A.x),by=Math.round(C.y-A.y),rv=Math.round(val);
-  document.getElementById('ccw-formula').textContent=`(${ax})(${by}) − (${ay})(${bx}) = ${rv}`;
+  pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,9,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#333';ctx.font='500 13px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-16);});
+  const ax=Math.round(A.x),ay=Math.round(A.y),bx=Math.round(B.x-A.x),by=Math.round(B.y-A.y),cx=Math.round(C.x-A.x),cy=Math.round(C.y-A.y),rv=Math.round(val);
+  document.getElementById('ccw-formula').textContent=`(${bx})(${cy}) − (${by})(${cx}) = ${rv}`;
   const res=document.getElementById('ccw-result');
   if(val===0){res.textContent='= 0  일직선';res.style.background='#f5f5f5';res.style.color='#888';}
   else if(val>0){res.textContent='> 0  반시계 ↺';res.style.background='#e8f5e9';res.style.color='#2e7d32';}
   else{res.textContent='< 0  시계방향 ↻';res.style.background='#ffebee';res.style.color='#c62828';}
 }
-function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(W/r.width),y:(t.clientY-r.top)*(H/r.height)};}
-cv.addEventListener('mousedown',e=>{const p=pos(e);drag=pts.reduce((b,pt,i)=>{const d=Math.hypot(pt.x-p.x,pt.y-p.y);return d<(b?b.d:22)?{i,d}:b;},null);});
-cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16,Math.min(W-16,p.x));pts[drag.i].y=Math.max(16,Math.min(H-16,p.y));draw();});
+function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height};}
+cv.addEventListener('mousedown',e=>{const p=pos(e);drag=pts.reduce((b,pt,i)=>{const q=px(pt),pp={x:p.x*W,y:p.y*H};const d=Math.hypot(q.x-pp.x,q.y-pp.y);return d<(b?b.d:22)?{i,d}:b;},null);});
+cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16/W,Math.min(1-16/W,p.x));pts[drag.i].y=Math.max(16/H,Math.min(1-16/H,p.y));draw();});
 cv.addEventListener('mouseup',()=>drag=null);
-draw();
 })();
 </script>
 {{< /rawhtml >}}
@@ -153,16 +162,18 @@ $$d_3 = CCW(p_3, p_4, p_1), \quad d_4 = CCW(p_3, p_4, p_2)$$
 <script>
 (function(){
 const cv=document.getElementById('seg-canvas');
-const dpr=window.devicePixelRatio||1;
-const W=560,H=260;
-cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';
-const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
-const pts=[{x:100,y:200,label:'p1',c:'#e53935'},{x:300,y:90,label:'p2',c:'#e53935'},{x:90,y:100,label:'p3',c:'#1e88e5'},{x:310,y:210,label:'p4',c:'#1e88e5'}];
+cv.style.aspectRatio='560/260';
+const ctx=cv.getContext('2d');
+let W=560,H=260,dpr=1;
+function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);draw();}
+new ResizeObserver(resize).observe(cv);
+const pts=[{x:100/560,y:200/260,label:'p1',c:'#e53935'},{x:300/560,y:90/260,label:'p2',c:'#e53935'},{x:90/560,y:100/260,label:'p3',c:'#1e88e5'},{x:310/560,y:210/260,label:'p4',c:'#1e88e5'}];
 let drag=null;
+function px(p){return{x:p.x*W,y:p.y*H};}
 function ccw(a,b,c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
 function onSeg(p,q,r){return Math.min(p.x,q.x)<=r.x&&r.x<=Math.max(p.x,q.x)&&Math.min(p.y,q.y)<=r.y&&r.y<=Math.max(p.y,q.y);}
 function intersects(){
-  const [p1,p2,p3,p4]=pts;
+  const [p1,p2,p3,p4]=pts.map(px);
   const d1=ccw(p3,p4,p1),d2=ccw(p3,p4,p2),d3=ccw(p1,p2,p3),d4=ccw(p1,p2,p4);
   if(d1*d2<0&&d3*d4<0)return true;
   if(d1===0&&onSeg(p3,p4,p1))return true;if(d2===0&&onSeg(p3,p4,p2))return true;
@@ -171,21 +182,20 @@ function intersects(){
 }
 function draw(){
   ctx.clearRect(0,0,W,H);
-  const [p1,p2,p3,p4]=pts;
+  const [p1,p2,p3,p4]=pts.map(px);
   const d1=ccw(p3,p4,p1),d2=ccw(p3,p4,p2),d3=ccw(p1,p2,p3),d4=ccw(p1,p2,p4);
   const hit=intersects();
   ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle='#e53935';ctx.lineWidth=2.5;ctx.stroke();
   ctx.beginPath();ctx.moveTo(p3.x,p3.y);ctx.lineTo(p4.x,p4.y);ctx.strokeStyle='#1e88e5';ctx.lineWidth=2.5;ctx.stroke();
-  pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,8,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#333';ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,p.x,p.y-13);});
+  pts.forEach(p=>{const q=px(p);ctx.beginPath();ctx.arc(q.x,q.y,8,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#333';ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,q.x,q.y-13);});
   document.getElementById('seg-vals').textContent=`d1·d2=${d1*d2>0?'>0':d1*d2<0?'<0':'=0'}  d3·d4=${d3*d4>0?'>0':d3*d4<0?'<0':'=0'}`;
   const res=document.getElementById('seg-result');
   res.textContent=hit?'교차 O':'교차 X';res.style.background=hit?'#e8f5e9':'#ffebee';res.style.color=hit?'#2e7d32':'#c62828';
 }
-function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(W/r.width),y:(t.clientY-r.top)*(H/r.height)};}
-cv.addEventListener('mousedown',e=>{const p=pos(e);drag=pts.reduce((b,pt,i)=>{const d=Math.hypot(pt.x-p.x,pt.y-p.y);return d<(b?b.d:22)?{i,d}:b;},null);});
-cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16,Math.min(W-16,p.x));pts[drag.i].y=Math.max(16,Math.min(H-16,p.y));draw();});
+function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)/r.width,y:(t.clientY-r.top)/r.height};}
+cv.addEventListener('mousedown',e=>{const p=pos(e);drag=pts.reduce((b,pt,i)=>{const q=px(pt),pp={x:p.x*W,y:p.y*H};const d=Math.hypot(q.x-pp.x,q.y-pp.y);return d<(b?b.d:22)?{i,d}:b;},null);});
+cv.addEventListener('mousemove',e=>{if(!drag)return;const p=pos(e);pts[drag.i].x=Math.max(16/W,Math.min(1-16/W,p.x));pts[drag.i].y=Math.max(16/H,Math.min(1-16/H,p.y));draw();});
 cv.addEventListener('mouseup',()=>drag=null);
-draw();
 })();
 </script>
 {{< /rawhtml >}}
@@ -252,10 +262,11 @@ B가 새 껍질이 되는 게 아니라, **볼록성을 깨는 점 B를 제거**
 (function(){
 let pts=[],steps=[],idx=0;
 const cv=document.getElementById('mc-canvas');
-const dpr=window.devicePixelRatio||1;
-const W=560,H=240;
-cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';
-const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
+cv.style.aspectRatio='560/240';
+const ctx=cv.getContext('2d');
+let W=560,H=240,dpr=1;
+function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(steps.length)render();}
+new ResizeObserver(resize).observe(cv);
 function cross(O,A,B){return (A.x-O.x)*(B.y-O.y)-(A.y-O.y)*(B.x-O.x);}
 function rand(){
   pts=[];for(let i=0;i<10;i++)pts.push({x:50+Math.random()*(W-100),y:25+Math.random()*(H-50)});
