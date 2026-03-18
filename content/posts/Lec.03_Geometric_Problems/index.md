@@ -192,7 +192,7 @@ draw();
 
 **Case 2. Collinear** — $d$ 값 중 하나라도 0이면, 해당 끝점이 다른 선분 위에 있는지 체크
 
-$$\text{on\_segment}(p, q, r): \quad \min(p_x, q_x) \le r_x \le \max(p_x, q_x) \quad \text{AND} \quad \min(p_y, q_y) \le r_y \le \max(p_y, q_y)$$
+$$\text{onSeg}(p, q, r): \quad \min(p_x, q_x) \le r_x \le \max(p_x, q_x) \quad \text{AND} \quad \min(p_y, q_y) \le r_y \le \max(p_y, q_y)$$
 
 ```python
 def on_segment(p, q, r):
