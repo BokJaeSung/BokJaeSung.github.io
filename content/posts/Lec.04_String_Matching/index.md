@@ -260,7 +260,8 @@ function drawPi(){
   const st=steps[idx];
   const MONO2="'JetBrains Mono','Fira Code','Courier New',monospace";
   const rowGap=Math.round(H*0.08);
-  const rowY=[Math.round(H*0.05),Math.round(H*0.05)+bh+rowGap,Math.round(H*0.05)+(bh+rowGap)*2];
+  const rowStart=Math.round((H-(3*bh+2*rowGap))/2);
+  const rowY=[rowStart,rowStart+bh+rowGap,rowStart+(bh+rowGap)*2];
   const fs=Math.round(bh*0.42);
 
   // row labels
