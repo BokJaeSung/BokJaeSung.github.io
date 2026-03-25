@@ -220,6 +220,32 @@ def compute_prefix_function(P: str):
 
 **시간복잡도:** $O(m)$
 
+### ※ 왜 불일치 시 $j = \pi[j-1]$ 인가?
+
+`P[i] ≠ P[j]` 일 때, $j$ 를 무작정 0으로 되돌리면 틀린다. 예시로 확인해보자.
+
+패턴 `abcaaxabcab` 에서 $i=10$, $j=3$ 까지 채워진 상황:
+
+$$\pi = [0,\ 0,\ 0,\ 1,\ 1,\ 0,\ 1,\ 2,\ 3,\ 4,\ ?]$$
+
+$P[i] = \texttt{b}$, $P[j] = \texttt{a}$ 로 불일치. LPS 길이 5는 불가.
+
+**왜 $j=0$ 으로 가면 안 되나?**
+
+$i-1$ 번째까지의 부분 문자열 `abcaaxabca` 의 LPS 길이는 $\pi[i-1] = 4$ — 접두사 `abca` 와 접미사 `abca` 가 같다. 이 4글자짜리 접두사/접미사 자체는 LPS 길이가 1이다 (`a`). 즉:
+
+$$\text{`abcaaxabca'의 접두사 == 접미사 길이} = 4, \quad \text{그 다음으로 긴 길이} = 1$$
+
+$j=0$ 으로 가버리면 이미 알고 있는 "길이 1짜리 일치" 정보를 버리게 된다.
+
+**올바른 이동: $j = \pi[j-1]$**
+
+$j-1$ 번째까지 접두사 안에서의 "접두사 = 접미사" 길이가 $\pi[j-1]$ 에 저장되어 있다. 이 위치로 $j$ 를 옮기면 이미 매칭된 부분을 재활용할 수 있다.
+
+$$j = \pi[j-1] = \pi[2] = 0 \xrightarrow{\text{다시 비교}} P[i]=P[j] \implies \pi[i] = j+1 = 1$$
+
+$j$ 를 한 번에 0으로 보내는 게 아니라, **`while` 루프로 $\pi$ 를 타고 내려가며** 일치하는 지점을 찾거나 $j=0$ 에 도달한다. 이 과정이 분할상환 $O(m)$ 을 보장한다.
+
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);">
 <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
