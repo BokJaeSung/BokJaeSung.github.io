@@ -248,7 +248,8 @@ const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
 
 function buildPiSteps(P){
   const m=P.length,pi=new Array(m).fill(0);
-  const steps=[{q:-1,k:0,pi:[...pi],msg:'초기화: π 배열을 0으로 세팅'}];
+  // store k BEFORE the update so we can show j pointer correctly
+  const steps=[{q:-1,k:0,kb:0,pi:[...pi],msg:'초기화: π 배열을 0으로 세팅'}];
   let k=0;
   for(let q=1;q<m;q++){
     const kb=k;
@@ -257,7 +258,7 @@ function buildPiSteps(P){
     pi[q]=k;
     const match=P[kb]===P[q];
     const cmp=match?`<span style="color:#69f0ae;font-weight:700">=</span>`:`<span style="color:#ef5350;font-weight:700">≠</span>`;
-    steps.push({q,k,pi:[...pi],msg:`<span style="color:#90caf9">q=${q}</span>, <span style="color:#ffd740">P[q]='${P[q]}'</span>: k_before=<span style="color:#ce93d8">${kb}</span> → P[${kb}]='<span style="color:#ffd740">${P[kb]??'-'}</span>' ${cmp} P[${q}]='<span style="color:#ffd740">${P[q]}'</span> → k=<span style="color:#ce93d8">${k}</span> → <span style="color:#69f0ae">π[${q}]=${k}</span>`});
+    steps.push({q,k,kb,pi:[...pi],msg:`<span style="color:#90caf9">i(q)=${q}</span>, <span style="color:#ef5350">j(k)=${kb}</span>: P[${kb}]='<span style="color:#ffd740">${P[kb]??'-'}</span>' ${cmp} P[${q}]='<span style="color:#ffd740">${P[q]}</span>' → k=<span style="color:#ce93d8">${k}</span> → <span style="color:#69f0ae">π[${q}]=${k}</span>`});
   }
   return steps;
 }
@@ -267,50 +268,71 @@ function drawPi(){
   ctx.clearRect(0,0,W,H);
   const {P,steps,idx}=ps;
   const m=P.length;
-  const bw=Math.min(Math.floor((W-50)/m),58);
+  const labelW=46;
+  const bw=Math.min(Math.floor((W-labelW-16)/m),58);
   const bh=Math.max(44,Math.round(H*0.2));
   const gap=3;
-  const startX=(W-m*(bw+gap))/2;
+  const rowGap=Math.round(H*0.1);
+  const totalH=bh*2+rowGap;
+  const ty=Math.round((H-totalH)/2);
+  const py=ty+bh+rowGap;
+  const startX=labelW+Math.round(((W-labelW)-(m*(bw+gap)-gap))/2);
+  const fs=Math.round(bh*0.44);
   const st=steps[idx];
-  const MONO2="'JetBrains Mono','Fira Code','Courier New',monospace";
-  const rowGap=Math.round(H*0.08);
-  const rowStart=Math.round((H-(3*bh+2*rowGap))/2);
-  const rowY=[rowStart,rowStart+bh+rowGap,rowStart+(bh+rowGap)*2];
-  const fs=Math.round(bh*0.42);
 
   // row labels
-  const rows=['q','P[q]','π[q]'];
-  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO2}`;ctx.textAlign='right';ctx.textBaseline='middle';
-  rows.forEach((r,i)=>ctx.fillText(r,startX-8,rowY[i]+bh/2));
+  ctx.textBaseline='middle';ctx.textAlign='right';
+  ctx.font=`italic bold 15px sans-serif`;ctx.fillStyle='#5c8de8';
+  ctx.fillText('pattern',startX-8,ty+bh/2);
+  ctx.font=`italic bold 15px sans-serif`;ctx.fillStyle='#ef5350';
+  ctx.fillText('π',startX-8,py+bh/2);
+
+  // blue bracket: matched prefix [0..k-1] on pattern row
+  const k=st.k,q=st.q,kb=st.kb??0;
+  // draw prefix highlight bracket (k chars from left)
+  if(k>0&&q>=0){
+    const bx=startX,by=ty,bW=k*(bw+gap)-gap,bH=bh;
+    ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;
+    ctx.strokeRect(bx-1,by-1,bW+2,bH+2);
+  }
+  // draw suffix highlight bracket (k chars ending at q)
+  if(k>0&&q>=0&&q-k+1>=0){
+    const bx=startX+(q-k+1)*(bw+gap),by=ty,bW=k*(bw+gap)-gap,bH=bh;
+    ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;
+    ctx.strokeRect(bx-1,by-1,bW+2,bH+2);
+  }
 
   for(let i=0;i<m;i++){
-    const isActive=i===st.q;
-    const isComputed=st.pi[i]!==undefined&&i<=st.q;
+    const x=startX+i*(bw+gap);
+    // pattern row
+    let bg='#1e2130',border='#2a2d3a',tc='#b0b8d0';
+    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(x,ty,bw,bh,4);ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x,ty,bw,bh,4);ctx.stroke();
+    // character
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font=`bold ${fs}px ${MONO}`;ctx.fillStyle=tc;
+    ctx.fillText(P[i],x+bw/2,ty+bh/2);
+    // j pointer (kb = k before update = where prefix comparison happens)
+    if(i===kb&&q>=0){
+      ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
+      ctx.fillStyle='#ef5350';ctx.textAlign='center';ctx.textBaseline='bottom';
+      ctx.fillText('j',x+bw/2,ty-2);
+    }
+    // i pointer (q = current index)
+    if(i===q&&q>=0){
+      ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
+      ctx.fillStyle='#42a5f5';ctx.textAlign='center';ctx.textBaseline='bottom';
+      ctx.fillText('i',x+bw/2,ty-2);
+    }
 
-    // q row
-    let bg='#1e2130',border='#2a2d3a',tc='#8090a0';
-    if(isActive){bg='#1a237e';border='#5c6bc0';tc='#9fa8da';}
-    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[0],bw,bh,4);ctx.fill();
-    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[0],bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`${fs}px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(i,startX+i*(bw+gap)+bw/2,rowY[0]+bh/2);
-
-    // P[q] row
-    bg=isActive?'#3a2a00':'#1e2130';border=isActive?'#ffd740':'#2a2d3a';tc=isActive?'#ffd740':'#b0b8d0';
-    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[1],bw,bh,4);ctx.fill();
-    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[1],bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold ${fs+2}px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(P[i],startX+i*(bw+gap)+bw/2,rowY[1]+bh/2);
-
-    // π[q] row
-    const piVal=i<=st.q?st.pi[i]:null;
-    bg=piVal!==null?(piVal>0?'#1a0a2e':'#1e2130'):'#161820';
-    border=piVal!==null?(piVal>0?'#7c4dff':'#2a2d3a'):'#1e2130';
-    tc=piVal!==null?(piVal>0?'#b39ddb':'#8090a0'):'#2a2d3a';
-    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[2],bw,bh,4);ctx.fill();
-    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[2],bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold ${fs+1}px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(piVal!==null?piVal:'?',startX+i*(bw+gap)+bw/2,rowY[2]+bh/2);
+    // π row
+    const piVal=i<=q&&q>=0?st.pi[i]:null;
+    bg='#1e2130';border='#2a2d3a';tc='#8090a0';
+    if(piVal!==null&&piVal>0){bg='#1a0a2e';border='#7c4dff';tc='#b39ddb';}
+    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(x,py,bw,bh,4);ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x,py,bw,bh,4);ctx.stroke();
+    ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(piVal!==null?piVal:'',x+bw/2,py+bh/2);
   }
 }
 
