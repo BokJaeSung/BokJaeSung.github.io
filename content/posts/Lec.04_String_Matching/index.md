@@ -59,24 +59,24 @@ def string_matching_naive(T: str, P: str):
 <canvas id="naive-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:10px;align-items:stretch;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div id="naive-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
+    <div id="naive-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
   </div>
-  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#b0b8d0;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
+  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
     <div>비교: <span id="naive-cmp" style="color:#ffd740;">0</span></div>
     <div>발견: <span id="naive-found" style="color:#69f0ae;">-</span></div>
   </div>
 </div>
-<p style="font-size:11px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = match · red = mismatch · amber = current window</p>
+<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = match · red = mismatch · amber = current window</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('naive-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=120,dpr=1;
+let W=560,H=180,dpr=1;
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(ns)drawNaive();}
 new ResizeObserver(resize).observe(cv);
-cv.style.aspectRatio='560/120';
+cv.style.aspectRatio='560/180';
 
 let ns=null,naiveTimer=null;
 const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
@@ -92,15 +92,16 @@ function drawNaive(){
   ctx.clearRect(0,0,W,H);
   const {T,P,s,j,found,done}=ns;
   const n=T.length,m=P.length;
-  const bw=Math.min(Math.floor((W-40)/(n+1)),44);
-  const bh=Math.min(bw,36);
-  const gap=2;
+  const bw=Math.min(Math.floor((W-40)/(n+1)),54);
+  const bh=Math.max(42,Math.min(bw,Math.round(H*0.24)));
+  const gap=3;
   const startX=(W-n*(bw+gap))/2;
-  const ty=14,py=ty+bh+18;
+  const ty=18,py=ty+bh+22;
+  const fs=Math.round(bh*0.45);
 
   // index labels
-  ctx.fillStyle='#555';ctx.font=`10px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-  for(let i=0;i<n;i++) ctx.fillText(i,startX+i*(bw+gap)+bw/2,ty-8);
+  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let i=0;i<n;i++) ctx.fillText(i,startX+i*(bw+gap)+bw/2,ty-10);
 
   // text boxes
   for(let i=0;i<n;i++){
@@ -112,12 +113,12 @@ function drawNaive(){
       else if(pj===j){bg='#1a237e';border='#5c6bc0';textCol='#9fa8da';}
       else{bg='#1e2130';border='#37474f';textCol='#546e7a';}
     }
-    drawBox(startX+i*(bw+gap),ty,bw,bh,bg,border,T[i],textCol,15);
+    drawBox(startX+i*(bw+gap),ty,bw,bh,bg,border,T[i],textCol,fs);
   }
 
   // pattern boxes
   const patStart=startX+s*(bw+gap);
-  ctx.fillStyle='#37474f';ctx.font=`10px sans-serif`;ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillStyle='#8090a0';ctx.font=`13px sans-serif`;ctx.textAlign='left';ctx.textBaseline='middle';
   ctx.fillText(`s=${s}`,patStart,py+bh/2);
   const labelW=ctx.measureText(`s=${s}`).width+6;
   for(let i=0;i<m;i++){
@@ -126,10 +127,10 @@ function drawNaive(){
       if(i<j){bg='#1b3a1f';border='#43a047';textCol='#69f0ae';}
       else if(i===j){bg='#3a1a1a';border='#e53935';textCol='#ef9a9a';}
     }
-    drawBox(patStart+labelW+i*(bw+gap),py,bw,bh,bg,border,P[i],textCol,15);
+    drawBox(patStart+labelW+i*(bw+gap),py,bw,bh,bg,border,P[i],textCol,fs);
   }
   if(done&&found.length===0){
-    ctx.fillStyle='#ef9a9a';ctx.font=`12px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='#ef9a9a';ctx.font=`14px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText('패턴 없음',W/2,py+bh+12);
   }
 }
@@ -217,16 +218,16 @@ def compute_prefix_function(P: str):
 </div>
 <canvas id="pi-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
 <div style="background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;margin-top:10px;">
-  <div id="pi-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;color:#b0b8d0;line-height:1.6;">패턴을 입력하고 시작 버튼을 누르세요.</div>
+  <div id="pi-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.6;">패턴을 입력하고 시작 버튼을 누르세요.</div>
 </div>
-<p style="font-size:11px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">amber = current q · purple = computed π value</p>
+<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">amber = current q · purple = computed π value</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('pi-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=140,dpr=1;
-cv.style.aspectRatio='560/140';
+let W=560,H=210,dpr=1;
+cv.style.aspectRatio='560/210';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(ps)drawPi();}
 new ResizeObserver(resize).observe(cv);
 
@@ -252,45 +253,48 @@ function drawPi(){
   ctx.clearRect(0,0,W,H);
   const {P,steps,idx}=ps;
   const m=P.length;
-  const bw=Math.min(Math.floor((W-40)/m),50);
-  const bh=36,gap=2;
+  const bw=Math.min(Math.floor((W-50)/m),58);
+  const bh=Math.max(44,Math.round(H*0.2));
+  const gap=3;
   const startX=(W-m*(bw+gap))/2;
   const st=steps[idx];
   const MONO2="'JetBrains Mono','Fira Code','Courier New',monospace";
+  const rowGap=Math.round(H*0.08);
+  const rowY=[Math.round(H*0.05),Math.round(H*0.05)+bh+rowGap,Math.round(H*0.05)+(bh+rowGap)*2];
+  const fs=Math.round(bh*0.42);
 
   // row labels
   const rows=['q','P[q]','π[q]'];
-  const rowY=[16,58,100];
-  ctx.fillStyle='#546e7a';ctx.font=`11px ${MONO2}`;ctx.textAlign='right';ctx.textBaseline='middle';
-  rows.forEach((r,i)=>ctx.fillText(r,startX-6,rowY[i]+bh/2));
+  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO2}`;ctx.textAlign='right';ctx.textBaseline='middle';
+  rows.forEach((r,i)=>ctx.fillText(r,startX-8,rowY[i]+bh/2));
 
   for(let i=0;i<m;i++){
     const isActive=i===st.q;
     const isComputed=st.pi[i]!==undefined&&i<=st.q;
 
     // q row
-    let bg='#1e2130',border='#2a2d3a',tc='#546e7a';
+    let bg='#1e2130',border='#2a2d3a',tc='#8090a0';
     if(isActive){bg='#1a237e';border='#5c6bc0';tc='#9fa8da';}
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[0],bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[0],bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`12px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=tc;ctx.font=`${fs}px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(i,startX+i*(bw+gap)+bw/2,rowY[0]+bh/2);
 
     // P[q] row
     bg=isActive?'#3a2a00':'#1e2130';border=isActive?'#ffd740':'#2a2d3a';tc=isActive?'#ffd740':'#b0b8d0';
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[1],bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[1],bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold 16px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=tc;ctx.font=`bold ${fs+2}px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(P[i],startX+i*(bw+gap)+bw/2,rowY[1]+bh/2);
 
     // π[q] row
     const piVal=i<=st.q?st.pi[i]:null;
     bg=piVal!==null?(piVal>0?'#1a0a2e':'#1e2130'):'#161820';
     border=piVal!==null?(piVal>0?'#7c4dff':'#2a2d3a'):'#1e2130';
-    tc=piVal!==null?(piVal>0?'#b39ddb':'#546e7a'):'#2a2d3a';
+    tc=piVal!==null?(piVal>0?'#b39ddb':'#8090a0'):'#2a2d3a';
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[2],bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+i*(bw+gap),rowY[2],bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold 15px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=tc;ctx.font=`bold ${fs+1}px ${MONO2}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(piVal!==null?piVal:'?',startX+i*(bw+gap)+bw/2,rowY[2]+bh/2);
   }
 }
@@ -352,25 +356,25 @@ def string_matching_kmp(T: str, P: str):
 <canvas id="kmp-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:10px;align-items:stretch;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div id="kmp-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
-    <div id="kmp-pi-row" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:12px;color:#546e7a;margin-top:4px;"></div>
+    <div id="kmp-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
+    <div id="kmp-pi-row" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;color:#8090a0;margin-top:4px;"></div>
   </div>
-  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#b0b8d0;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
+  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
     <div>비교: <span id="kmp-cmp" style="color:#ffd740;">0</span></div>
     <div>i: <span id="kmp-i" style="color:#90caf9;">-</span></div>
     <div>q: <span id="kmp-q" style="color:#a5d6a7;">-</span></div>
     <div>발견: <span id="kmp-found" style="color:#69f0ae;">-</span></div>
   </div>
 </div>
-<p style="font-size:11px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = matched · red = mismatch · blue = current i · purple = reused chars</p>
+<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = matched · red = mismatch · blue = current i · purple = reused chars</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('kmp-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=130,dpr=1;
-cv.style.aspectRatio='560/130';
+let W=560,H=190,dpr=1;
+cv.style.aspectRatio='560/190';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(ks)drawKmp();}
 new ResizeObserver(resize).observe(cv);
 
@@ -384,14 +388,16 @@ function drawKmp(){
   ctx.clearRect(0,0,W,H);
   const {T,P,i,q,found,done,pi}=ks;
   const n=T.length,m=P.length;
-  const bw=Math.min(Math.floor((W-40)/n),44);
-  const bh=36,gap=2;
+  const bw=Math.min(Math.floor((W-40)/n),54);
+  const bh=Math.max(42,Math.round(H*0.22));
+  const gap=3;
   const startX=(W-n*(bw+gap))/2;
-  const ty=14,py=ty+bh+18;
+  const ty=18,py=ty+bh+22;
+  const fs=Math.round(bh*0.45);
   const s=i-q;
 
-  ctx.fillStyle='#546e7a';ctx.font=`10px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-  for(let k=0;k<n;k++) ctx.fillText(k,startX+k*(bw+gap)+bw/2,ty-8);
+  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let k=0;k<n;k++) ctx.fillText(k,startX+k*(bw+gap)+bw/2,ty-10);
 
   for(let k=0;k<n;k++){
     let bg='#1e2130',border='#2a2d3a',tc='#b0b8d0';
@@ -402,7 +408,7 @@ function drawKmp(){
     }
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold 15px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(T[k],startX+k*(bw+gap)+bw/2,ty+bh/2);
   }
 
@@ -412,12 +418,12 @@ function drawKmp(){
     if(k<q){bg='#1a0a2e';border='#7c4dff';tc='#b39ddb';}
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(patStart+k*(bw+gap),py,bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(patStart+k*(bw+gap),py,bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold 15px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(P[k],patStart+k*(bw+gap)+bw/2,py+bh/2);
   }
   // s label
-  ctx.fillStyle='#546e7a';ctx.font=`10px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText(`s=${s}`,patStart+m*(bw+gap)/2,py+bh+2);
+  ctx.fillStyle='#8090a0';ctx.font=`13px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(`s=${s}`,patStart+m*(bw+gap)/2,py+bh+3);
 }
 
 window.kmpRestart=function(){
@@ -512,23 +518,23 @@ def string_matching_rabin_karp(T: str, P: str, d=256, q=10**9+7):
 <canvas id="rk-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:10px;align-items:stretch;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div id="rk-hash-line" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#b0b8d0;line-height:1.8;"></div>
+    <div id="rk-hash-line" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;line-height:1.8;"></div>
   </div>
-  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#b0b8d0;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
+  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
     <div>슬라이드: <span id="rk-steps" style="color:#ffd740;">0</span></div>
     <div>해시일치: <span id="rk-hit" style="color:#ef9a9a;">0</span></div>
     <div>발견: <span id="rk-found" style="color:#69f0ae;">-</span></div>
   </div>
 </div>
-<p style="font-size:11px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">amber = current window · green = match found · red = spurious hit</p>
+<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">amber = current window · green = match found · red = spurious hit</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('rk-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=110,dpr=1;
-cv.style.aspectRatio='560/110';
+let W=560,H=170,dpr=1;
+cv.style.aspectRatio='560/170';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(rks)drawRk();}
 new ResizeObserver(resize).observe(cv);
 
@@ -543,13 +549,15 @@ function drawRk(){
   ctx.clearRect(0,0,W,H);
   const {T,P,s,m,found,spurious}=rks;
   const n=T.length;
-  const bw=Math.min(Math.floor((W-40)/n),44);
-  const bh=36,gap=2;
+  const bw=Math.min(Math.floor((W-40)/n),54);
+  const bh=Math.max(42,Math.round(H*0.26));
+  const gap=3;
   const startX=(W-n*(bw+gap))/2;
-  const ty=14;
+  const ty=18;
+  const fs=Math.round(bh*0.45);
 
-  ctx.fillStyle='#546e7a';ctx.font=`10px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-  for(let k=0;k<n;k++) ctx.fillText(k,startX+k*(bw+gap)+bw/2,ty-8);
+  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let k=0;k<n;k++) ctx.fillText(k,startX+k*(bw+gap)+bw/2,ty-10);
 
   for(let k=0;k<n;k++){
     let bg='#1e2130',border='#2a2d3a',tc='#b0b8d0';
@@ -558,22 +566,22 @@ function drawRk(){
     else if(k>=s&&k<s+m){bg='#2a1f00';border='#ffd740';tc='#ffd740';}
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold 15px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(T[k],startX+k*(bw+gap)+bw/2,ty+bh/2);
   }
 
   // hash bar under window
-  const barY=ty+bh+6;
+  const barY=ty+bh+8;
   const barX=startX+s*(bw+gap);
   const barW=m*(bw+gap)-gap;
   const isMatch=rks.th===rks.ph;
   ctx.fillStyle=isMatch?(T.slice(s,s+m)===P?'rgba(105,240,174,0.15)':'rgba(229,57,53,0.15)'):'rgba(92,107,192,0.1)';
-  ctx.fillRect(barX,barY,barW,14);
+  ctx.fillRect(barX,barY,barW,18);
   ctx.strokeStyle=isMatch?(T.slice(s,s+m)===P?'#69f0ae':'#e53935'):'#5c6bc0';
-  ctx.lineWidth=1;ctx.strokeRect(barX,barY,barW,14);
+  ctx.lineWidth=1;ctx.strokeRect(barX,barY,barW,18);
   ctx.fillStyle=isMatch?(T.slice(s,s+m)===P?'#69f0ae':'#ef9a9a'):'#7986cb';
-  ctx.font=`10px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(`h=${rks.th}`,barX+barW/2,barY+7);
+  ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(`h=${rks.th}`,barX+barW/2,barY+9);
 }
 
 window.rkRestart=function(){
@@ -684,24 +692,24 @@ def maximum_exponent(s: str):
 <canvas id="bs-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
 <div style="display:flex;gap:10px;margin-top:10px;">
   <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div id="bs-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
+    <div id="bs-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
   </div>
-  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:13px;color:#b0b8d0;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Binary Search</div>
+  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Binary Search</div>
     <div>left: <span id="bs-left" style="color:#90caf9;">-</span></div>
     <div>right: <span id="bs-right" style="color:#90caf9;">-</span></div>
     <div>mid: <span id="bs-mid" style="color:#ffd740;">-</span></div>
     <div>답: <span id="bs-ans" style="color:#69f0ae;">-</span></div>
   </div>
 </div>
-<p style="font-size:11px;color:#555;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = true (duplicate exists) · red = false · amber = current mid</p>
+<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = true (duplicate exists) · red = false · amber = current mid</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('bs-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=100,dpr=1;
-cv.style.aspectRatio='560/100';
+let W=560,H=160,dpr=1;
+cv.style.aspectRatio='560/160';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(bss)drawBs();}
 new ResizeObserver(resize).observe(cv);
 
@@ -745,39 +753,41 @@ function drawBs(){
   const {s,steps,idx}=bss;
   const n=s.length;
   const st=steps[idx];
-  const bw=Math.min(Math.floor((W-60)/(n+1)),44);
-  const bh=36,gap=4;
+  const bw=Math.min(Math.floor((W-60)/(n+1)),54);
+  const bh=Math.max(42,Math.round(H*0.26));
+  const gap=4;
   const startX=(W-(n+1)*(bw+gap))/2;
-  const ty=20;
+  const ty=18;
+  const fs=Math.round(bh*0.43);
 
   // draw length boxes 0..n
   for(let L=0;L<=n;L++){
-    let bg='#1e2130',border='#2a2d3a',tc='#546e7a';
+    let bg='#1e2130',border='#2a2d3a',tc='#8090a0';
     if(st.mid===L){bg='#2a1f00';border='#ffd740';tc='#ffd740';}
     else if(L<=bss.answers[idx]){bg='#1b3a1f';border='#43a047';tc='#69f0ae';}
     else if(st.result===false&&st.mid!==null&&L>st.mid){bg='#1e2130';border='#2a2d3a';tc='#37474f';}
 
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+L*(bw+gap),ty,bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+L*(bw+gap),ty,bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold 14px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(L,startX+L*(bw+gap)+bw/2,ty+bh/2);
   }
 
   // left/right arrows
   if(st.left!==null&&st.left<=n){
     const lx=startX+st.left*(bw+gap);
-    ctx.fillStyle='#90caf9';ctx.font=`10px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('L',lx+bw/2,ty+bh+3);
+    ctx.fillStyle='#90caf9';ctx.font=`13px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('L',lx+bw/2,ty+bh+4);
   }
   if(st.right!==null&&st.right>=0&&st.right<=n){
     const rx=startX+st.right*(bw+gap);
-    ctx.fillStyle='#90caf9';ctx.font=`10px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('R',rx+bw/2,ty+bh+3);
+    ctx.fillStyle='#90caf9';ctx.font=`13px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('R',rx+bw/2,ty+bh+4);
   }
   if(st.mid!==null){
     const mx=startX+st.mid*(bw+gap);
-    ctx.fillStyle='#ffd740';ctx.font=`10px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('M',mx+bw/2,ty+bh+14);
+    ctx.fillStyle='#ffd740';ctx.font=`13px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('M',mx+bw/2,ty+bh+18);
   }
 }
 
