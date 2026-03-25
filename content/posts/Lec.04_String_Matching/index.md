@@ -92,18 +92,24 @@ function drawNaive(){
   ctx.clearRect(0,0,W,H);
   const {T,P,s,j,found,done}=ns;
   const n=T.length,m=P.length;
-  const bw=Math.min(Math.floor((W-40)/(n+1)),54);
+  const bw=Math.min(Math.floor((W-40)/Math.max(n,m+1)),54);
   const bh=Math.max(42,Math.min(bw,Math.round(H*0.24)));
   const gap=3;
-  const startX=(W-n*(bw+gap))/2;
-  const ty=18,py=ty+bh+22;
+  const rowGap=Math.round(H*0.12);
+  const labelH=16;
+  const totalH=labelH+bh+rowGap+bh;
+  const ty=Math.round((H-totalH)/2)+labelH;
+  const py=ty+bh+rowGap;
   const fs=Math.round(bh*0.45);
+  const startX=(W-n*(bw+gap))/2;
+  const patStart=startX+s*(bw+gap);
+  const patW=m*(bw+gap)-gap;
 
-  // index labels
+  // index labels (T행 위)
   ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
   for(let i=0;i<n;i++) ctx.fillText(i,startX+i*(bw+gap)+bw/2,ty-10);
 
-  // text boxes
+  // T text boxes
   for(let i=0;i<n;i++){
     let bg='#1e2130',border='#2a2d3a',textCol='#b0b8d0';
     if(found.some(f=>i>=f&&i<f+m)){bg='#1b3a1f';border='#69f0ae';textCol='#69f0ae';}
@@ -116,22 +122,21 @@ function drawNaive(){
     drawBox(startX+i*(bw+gap),ty,bw,bh,bg,border,T[i],textCol,fs);
   }
 
-  // pattern boxes
-  const patStart=startX+s*(bw+gap);
-  ctx.fillStyle='#8090a0';ctx.font=`13px sans-serif`;ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillText(`s=${s}`,patStart,py+bh/2);
-  const labelW=ctx.measureText(`s=${s}`).width+6;
+  // P pattern boxes — centered under the matching T window
   for(let i=0;i<m;i++){
     let bg='#1a1a2e',border='#3949ab',textCol='#7986cb';
     if(!done){
       if(i<j){bg='#1b3a1f';border='#43a047';textCol='#69f0ae';}
       else if(i===j){bg='#3a1a1a';border='#e53935';textCol='#ef9a9a';}
     }
-    drawBox(patStart+labelW+i*(bw+gap),py,bw,bh,bg,border,P[i],textCol,fs);
+    drawBox(patStart+i*(bw+gap),py,bw,bh,bg,border,P[i],textCol,fs);
   }
+  // s= label below P row, centered
+  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(`s=${s}`,patStart+patW/2,py+bh+4);
   if(done&&found.length===0){
-    ctx.fillStyle='#ef9a9a';ctx.font=`14px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('패턴 없음',W/2,py+bh+12);
+    ctx.fillStyle='#ef9a9a';ctx.font=`14px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('패턴 없음',W/2,py+bh+4);
   }
 }
 
