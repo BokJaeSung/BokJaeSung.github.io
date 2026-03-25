@@ -148,25 +148,32 @@ window.naiveRestart=function(){
   ns={T,P,s:0,j:0,cmp:0,found:[],done:false};
   document.getElementById('naive-cmp').textContent='0';
   document.getElementById('naive-found').textContent='-';
-  document.getElementById('naive-info').textContent=`s=0, j=0 에서 비교 시작`;
+  document.getElementById('naive-info').innerHTML=`<span style="color:#90caf9">s=0</span>, <span style="color:#90caf9">j=0</span> 에서 비교 시작`;
   drawNaive();
 };
+const nI=id=>document.getElementById(id);
+const nC=(v,c)=>`<span style="color:${c}">${v}</span>`;
+const nIdx=v=>nC(v,'#90caf9');
+const nChr=v=>nC(`'${v}'`,'#ffd740');
+const nRes=v=>nC(v,'#ce93d8');
+const nOk=v=>nC(v,'#69f0ae');
+const nNg=v=>nC(v,'#ef5350');
 
 window.naiveStep=function(){
   if(!ns||ns.done)return;
   const {T,P}=ns;const n=T.length,m=P.length;
-  if(ns.s>n-m){ns.done=true;document.getElementById('naive-info').textContent=`완료! 총 ${ns.cmp}번 비교`;drawNaive();return;}
+  if(ns.s>n-m){ns.done=true;nI('naive-info').innerHTML=`완료! 총 <span style="color:#ffd740">${ns.cmp}</span>번 비교`;drawNaive();return;}
   ns.cmp++;
-  document.getElementById('naive-cmp').textContent=ns.cmp;
+  nI('naive-cmp').textContent=ns.cmp;
   if(T[ns.s+ns.j]===P[ns.j]){
-    document.getElementById('naive-info').textContent=`s=${ns.s}, j=${ns.j}: T[${ns.s+ns.j}]='${T[ns.s+ns.j]}' = P[${ns.j}]='${P[ns.j]}' ✓`;
+    nI('naive-info').innerHTML=`${nIdx('s='+ns.s)}, ${nIdx('j='+ns.j)}: T[${ns.s+ns.j}]=${nChr(T[ns.s+ns.j])} <b style="color:#69f0ae">=</b> P[${ns.j}]=${nChr(P[ns.j])} ${nOk('✓')}`;
     ns.j++;
-    if(ns.j===m){ns.found.push(ns.s);document.getElementById('naive-found').textContent=ns.found.join(', ');document.getElementById('naive-info').textContent=`✓ 패턴 발견! s=${ns.s}`;ns.s++;ns.j=0;}
+    if(ns.j===m){ns.found.push(ns.s);nI('naive-found').textContent=ns.found.join(', ');nI('naive-info').innerHTML=`${nOk('✓ 패턴 발견!')} ${nIdx('s='+ns.s)}`;ns.s++;ns.j=0;}
   } else {
-    document.getElementById('naive-info').textContent=`s=${ns.s}, j=${ns.j}: T[${ns.s+ns.j}]='${T[ns.s+ns.j]}' ≠ P[${ns.j}]='${P[ns.j]}' → s+1`;
+    nI('naive-info').innerHTML=`${nIdx('s='+ns.s)}, ${nIdx('j='+ns.j)}: T[${ns.s+ns.j}]=${nChr(T[ns.s+ns.j])} <b style="color:#ef5350">≠</b> P[${ns.j}]=${nChr(P[ns.j])} → ${nRes('s+1')}`;
     ns.s++;ns.j=0;
   }
-  if(ns.s>n-m){ns.done=true;document.getElementById('naive-info').textContent=`완료! 총 ${ns.cmp}번 비교 | 발견: ${ns.found.length?ns.found.join(', '):'없음'}`;}
+  if(ns.s>n-m){ns.done=true;nI('naive-info').innerHTML=`완료! 총 <span style="color:#ffd740">${ns.cmp}</span>번 | 발견: ${ns.found.length?nOk(ns.found.join(', ')):nNg('없음')}`;}
   drawNaive();
 };
 
@@ -446,27 +453,34 @@ window.kmpRestart=function(){
   document.getElementById('kmp-q').textContent='0';
   document.getElementById('kmp-found').textContent='-';
   document.getElementById('kmp-pi-row').textContent=`π = [${pi.join(', ')}]`;
-  document.getElementById('kmp-info').textContent=`i=0, q=0 에서 시작`;
+  document.getElementById('kmp-info').innerHTML=`<span style="color:#90caf9">i=0</span>, <span style="color:#90caf9">q=0</span> 에서 시작`;
   drawKmp();
 };
+const kI=id=>document.getElementById(id);
+const kC=(v,c)=>`<span style="color:${c}">${v}</span>`;
+const kIdx=v=>kC(v,'#90caf9');
+const kChr=v=>kC(`'${v}'`,'#ffd740');
+const kRes=v=>kC(v,'#ce93d8');
+const kOk=v=>kC(v,'#69f0ae');
+const kNg=v=>kC(v,'#ef5350');
 
 window.kmpStep=function(){
   if(!ks||ks.done)return;
   const {T,P,pi}=ks;const n=T.length,m=P.length;
-  if(ks.i>=n){ks.done=true;document.getElementById('kmp-info').textContent=`완료! 총 ${ks.cmp}번 비교`;drawKmp();return;}
+  if(ks.i>=n){ks.done=true;kI('kmp-info').innerHTML=`완료! 총 <span style="color:#ffd740">${ks.cmp}</span>번 비교`;drawKmp();return;}
   ks.cmp++;
-  document.getElementById('kmp-cmp').textContent=ks.cmp;
+  kI('kmp-cmp').textContent=ks.cmp;
   if(P[ks.q]===T[ks.i]){
-    document.getElementById('kmp-info').textContent=`i=${ks.i}, q=${ks.q}: '${T[ks.i]}'='${P[ks.q]}' ✓ → q+1`;
+    kI('kmp-info').innerHTML=`${kIdx('i='+ks.i)}, ${kIdx('q='+ks.q)}: ${kChr(T[ks.i])} <b style="color:#69f0ae">=</b> ${kChr(P[ks.q])} ${kOk('✓')} → ${kRes('q+1')}`;
     ks.q++;ks.i++;
-    if(ks.q===m){const pos=ks.i-m;ks.found.push(pos);document.getElementById('kmp-found').textContent=ks.found.join(', ');document.getElementById('kmp-info').textContent=`✓ 패턴 발견! s=${pos} → q=π[${m-1}]=${pi[m-1]}`;ks.q=pi[m-1];}
+    if(ks.q===m){const pos=ks.i-m;ks.found.push(pos);kI('kmp-found').textContent=ks.found.join(', ');kI('kmp-info').innerHTML=`${kOk('✓ 패턴 발견!')} ${kIdx('s='+pos)} → ${kRes('q=π['+(m-1)+']='+pi[m-1])}`;ks.q=pi[m-1];}
   } else {
-    if(ks.q>0){document.getElementById('kmp-info').textContent=`i=${ks.i}, q=${ks.q}: '${T[ks.i]}'≠'${P[ks.q]}' → q=π[${ks.q-1}]=${pi[ks.q-1]} (i 고정!)`;ks.q=pi[ks.q-1];}
-    else{document.getElementById('kmp-info').textContent=`i=${ks.i}, q=0: '${T[ks.i]}'≠'${P[0]}' → i+1`;ks.i++;}
+    if(ks.q>0){kI('kmp-info').innerHTML=`${kIdx('i='+ks.i)}, ${kIdx('q='+ks.q)}: ${kChr(T[ks.i])} <b style="color:#ef5350">≠</b> ${kChr(P[ks.q])} → ${kRes('q=π['+(ks.q-1)+']='+pi[ks.q-1])} <span style="color:#ce93d8;font-size:0.9em">(i 고정!)</span>`;ks.q=pi[ks.q-1];}
+    else{kI('kmp-info').innerHTML=`${kIdx('i='+ks.i)}, ${kIdx('q=0')}: ${kChr(T[ks.i])} <b style="color:#ef5350">≠</b> ${kChr(P[0])} → ${kRes('i+1')}`;ks.i++;}
   }
-  document.getElementById('kmp-i').textContent=ks.i;
-  document.getElementById('kmp-q').textContent=ks.q;
-  if(ks.i>=n){ks.done=true;document.getElementById('kmp-info').textContent=`완료! 총 ${ks.cmp}번 | 발견: ${ks.found.length?ks.found.join(', '):'없음'}`;}
+  kI('kmp-i').textContent=ks.i;
+  kI('kmp-q').textContent=ks.q;
+  if(ks.i>=n){ks.done=true;kI('kmp-info').innerHTML=`완료! 총 <span style="color:#ffd740">${ks.cmp}</span>번 | 발견: ${ks.found.length?kOk(ks.found.join(', ')):kNg('없음')}`;}
   drawKmp();
 };
 
