@@ -243,7 +243,9 @@ function buildPiSteps(P){
     while(k>0&&P[k]!==P[q])k=pi[k-1];
     if(P[k]===P[q])k++;
     pi[q]=k;
-    steps.push({q,k,pi:[...pi],msg:`q=${q}, P[q]='${P[q]}': k_before=${kb} → P[${kb}]='${P[kb]??'-'}' ${P[kb]===P[q]?'=':'≠'} P[${q}]='${P[q]}' → k=${k} → π[${q}]=${k}`});
+    const match=P[kb]===P[q];
+    const cmp=match?`<span style="color:#69f0ae;font-weight:700">=</span>`:`<span style="color:#ef5350;font-weight:700">≠</span>`;
+    steps.push({q,k,pi:[...pi],msg:`<span style="color:#90caf9">q=${q}</span>, <span style="color:#ffd740">P[q]='${P[q]}'</span>: k_before=<span style="color:#ce93d8">${kb}</span> → P[${kb}]='<span style="color:#ffd740">${P[kb]??'-'}</span>' ${cmp} P[${q}]='<span style="color:#ffd740">${P[q]}'</span> → k=<span style="color:#ce93d8">${k}</span> → <span style="color:#69f0ae">π[${q}]=${k}</span>`});
   }
   return steps;
 }
@@ -304,13 +306,13 @@ window.piRestart=function(){
   if(piTimer){clearInterval(piTimer);piTimer=null;document.getElementById('pi-auto-btn').textContent='⏩ 자동';}
   const P=document.getElementById('pi-P').value||'ababaca';
   ps={P,steps:buildPiSteps(P),idx:0};
-  document.getElementById('pi-info').textContent=ps.steps[0].msg;
+  document.getElementById('pi-info').innerHTML=ps.steps[0].msg;
   drawPi();
 };
 window.piStep=function(){
   if(!ps||ps.idx>=ps.steps.length-1)return;
   ps.idx++;
-  document.getElementById('pi-info').textContent=ps.steps[ps.idx].msg;
+  document.getElementById('pi-info').innerHTML=ps.steps[ps.idx].msg;
   drawPi();
 };
 window.piAuto=function(){
