@@ -881,33 +881,72 @@ def maximum_exponent(s: str):
 - **출력:** $S$ 에서 **두 번 이상** 등장하는 부분 문자열 중 가장 긴 것의 길이 $L$
 - **조건:** 두 등장 위치는 겹쳐도 된다 (overlapping 허용)
 
-예: $S = \texttt{banana}$ → `an` 이 $S[1..2]$, $S[3..4]$ 에 등장 → $L = 3$ (`ana`)
+| 예시 | 답 | 이유 |
+|------|-----|------|
+| $S = \texttt{abcabcabc}$ | $L = 6$ | `abcabc` 가 $S[0..6]$, $S[3..9]$ 에 등장 (overlap 허용) |
+| $S = \texttt{abcd}$ | $L = 0$ | 두 번 이상 등장하는 부분 문자열 없음 |
+| $S = \texttt{banana}$ | $L = 3$ | `ana` 가 $S[1..3]$, $S[3..5]$ 에 등장 |
+
+### 접근법 비교
+
+#### DP — $O(n^2)$
+
+모든 접미사 쌍의 LCP(Longest Common Prefix)를 DP로 구한다.
+
+$$\text{LCP}(S[i:],\, S[j:]) = dp[i][j]$$
+
+$$dp[i][j] = \begin{cases} dp[i+1][j+1] + 1 & S[i] = S[j] \\ 0 & \text{otherwise} \end{cases}$$
+
+답 $= \max_{i < j} dp[i][j]$. 테이블 크기가 $O(n^2)$ 이므로 시간·공간 모두 $O(n^2)$.
+
+#### KMP — $O(n^2)$
+
+각 접미사 $S[i:]$ 에 대해 prefix function을 계산하면, $\pi[k]$ 의 최댓값이 해당 접미사 내의 가장 긴 반복 접두사 길이다. 하지만 접미사가 $n$ 개이고 각 prefix function 계산이 $O(n)$ 이므로 전체 $O(n^2)$.
+
+#### Rabin-Karp + 이진탐색 — $O(n \log n)$
 
 ### 핵심 관찰 — 단조성
 
-> 길이 $L$ 인 중복 부분문자열이 존재하면, 길이 $L-1$ 인 것도 반드시 존재한다.
+`check(L)` = "길이 $L$ 인 중복 부분문자열이 존재하는가?"
 
-따라서 `check(L)` = "길이 $L$ 인 중복 부분문자열이 존재하는가?" 가 단조 함수 → **이진탐색 가능**.
+> `check(L)` = True 이면 `check(L-1)` = True
 
-$$\text{이진탐색 범위: } lo = 0,\ hi = n-1$$
+길이 $L$ 인 반복 부분문자열의 길이 $L-1$ 접두사도 두 번 이상 등장하기 때문이다. 따라서 유효한 길이 집합은 $\{0, 1, \ldots, k\}$ 형태 → **이진탐색 가능**.
+
+$$lo = 0,\quad hi = n - 1$$
 
 ### check(L) 구현 — Rolling Hash
 
-길이 $L$ 인 모든 부분문자열의 해시를 $O(n)$ 에 계산하고, **해시 집합**에서 중복을 탐지한다.
+고정된 $L$ 에 대해 모든 길이 $L$ 부분문자열 $S[0:L],\ S[1:L+1],\ \ldots,\ S[n-L:n]$ 의 해시를 $O(n)$ 에 계산해 집합에 넣는다.
 
 $$h_s = \left(\sum_{i=0}^{L-1} S[s+i]\cdot d^{L-1-i}\right) \bmod q$$
 
-Rolling Hash로 $h_{s+1}$ 을 $O(1)$ 에 갱신:
+Rolling Hash로 $O(1)$ 갱신:
 
 $$h_{s+1} = \left(d \cdot h_s - S[s] \cdot d^L + S[s+L]\right) \bmod q$$
 
-해시 충돌을 막기 위해 같은 해시값이 발견되면 실제 문자열도 비교한다.
+**check(L) 절차:**
 
-### 알고리즘
+1. 첫 번째 부분문자열의 해시를 계산해 집합에 삽입
+2. 윈도우를 한 칸씩 슬라이드하며 rolling hash 갱신
+3. 해시가 집합에 이미 존재하면 → 실제 문자열 비교 (충돌 검증)
+4. 실제로도 같으면 True 반환, 끝까지 없으면 False 반환
+
+### 해시 충돌 처리
+
+서로 다른 부분문자열이 같은 해시를 가질 수 있다 (spurious hit).
+
+| 방법 | 설명 |
+|------|------|
+| **Strict Verification** | 해시 일치 시 실제 문자열 $O(L)$ 비교 |
+| **Double Hashing** | 독립적인 두 해시 $(H_1, H_2)$ 동시 사용 → 충돌 확률 $\approx \frac{1}{q_1 q_2}$ |
+
+### 알고리즘 요약
 
 1. $lo = 0,\ hi = n-1$
-2. `check(mid)` 가 참이면 $lo = mid+1$, 거짓이면 $hi = mid-1$
-3. 최종 답 $L = lo - 1$
+2. $mid = (lo + hi) / 2$
+3. `check(mid)` 가 True → $lo = mid + 1$, False → $hi = mid - 1$
+4. 최종 답 $L = lo - 1$
 
 **시간복잡도:** $O(n \log n)$ — `check` $O(n)$ × 이진탐색 $O(\log n)$
 
