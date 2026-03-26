@@ -533,10 +533,10 @@ function drawKmp(){
   ctx.fillStyle='#ef5350';ctx.fillText('Pattern',startX-8,patY+bh/2);
   ctx.fillStyle='#ce93d8';ctx.fillText('pi',startX-8,piY+bh/2);
 
-  // w pointer
+  // w pointer (below word box)
   ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
-  ctx.fillStyle='#69f0ae';ctx.textAlign='center';ctx.textBaseline='bottom';
-  if(w<n) ctx.fillText('w',startX+w*(bw+gap)+bw/2,wy-2);
+  ctx.fillStyle='#69f0ae';ctx.textAlign='center';ctx.textBaseline='top';
+  if(w<n) ctx.fillText('w',startX+w*(bw+gap)+bw/2,wy+bh+2);
 
   // word row (T)
   for(let k=0;k<n;k++){
@@ -553,10 +553,10 @@ function drawKmp(){
     ctx.fillText(k,startX+k*(bw+gap)+bw/2,wy-10);
   }
 
-  // p pointer
+  // p pointer (below pattern box)
   ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
-  ctx.fillStyle='#ef5350';ctx.textAlign='center';ctx.textBaseline='bottom';
-  if(!st.done) ctx.fillText('p',startX+s*(bw+gap)+p*(bw+gap)+bw/2,patY-2);
+  ctx.fillStyle='#ef5350';ctx.textAlign='center';ctx.textBaseline='top';
+  if(!st.done) ctx.fillText('p',startX+s*(bw+gap)+p*(bw+gap)+bw/2,patY+bh+2);
 
   // pattern row (P) — aligned under T[s..s+m-1]
   const patStartX=startX+s*(bw+gap);
