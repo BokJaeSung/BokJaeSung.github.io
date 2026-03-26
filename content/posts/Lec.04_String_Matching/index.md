@@ -875,13 +875,41 @@ def maximum_exponent(s: str):
 
 ## 6. Problem 4.3 — Longest Repeated Substring
 
-두 번 이상 등장하는 부분 문자열 중 가장 긴 것의 길이 $L$ 을 구하라.
+### 문제 정의
 
-**핵심 관찰:** 길이 $L$ 인 반복이 있으면 길이 $L-1$ 인 반복도 반드시 있다 → **이진탐색 가능**.
+- **입력:** 소문자 영문자로 구성된 길이 $n$ 의 문자열 $S$
+- **출력:** $S$ 에서 **두 번 이상** 등장하는 부분 문자열 중 가장 긴 것의 길이 $L$
+- **조건:** 두 등장 위치는 겹쳐도 된다 (overlapping 허용)
 
-`check(L)` = "길이 $L$ 인 중복 부분문자열이 존재하냐?" 를 Rolling Hash로 $O(n)$ 에 구현.
+예: $S = \texttt{banana}$ → `an` 이 $S[1..2]$, $S[3..4]$ 에 등장 → $L = 3$ (`ana`)
 
-**전체 복잡도:** $O(n \log n)$
+### 핵심 관찰 — 단조성
+
+> 길이 $L$ 인 중복 부분문자열이 존재하면, 길이 $L-1$ 인 것도 반드시 존재한다.
+
+따라서 `check(L)` = "길이 $L$ 인 중복 부분문자열이 존재하는가?" 가 단조 함수 → **이진탐색 가능**.
+
+$$\text{이진탐색 범위: } lo = 0,\ hi = n-1$$
+
+### check(L) 구현 — Rolling Hash
+
+길이 $L$ 인 모든 부분문자열의 해시를 $O(n)$ 에 계산하고, **해시 집합**에서 중복을 탐지한다.
+
+$$h_s = \left(\sum_{i=0}^{L-1} S[s+i]\cdot d^{L-1-i}\right) \bmod q$$
+
+Rolling Hash로 $h_{s+1}$ 을 $O(1)$ 에 갱신:
+
+$$h_{s+1} = \left(d \cdot h_s - S[s] \cdot d^L + S[s+L]\right) \bmod q$$
+
+해시 충돌을 막기 위해 같은 해시값이 발견되면 실제 문자열도 비교한다.
+
+### 알고리즘
+
+1. $lo = 0,\ hi = n-1$
+2. `check(mid)` 가 참이면 $lo = mid+1$, 거짓이면 $hi = mid-1$
+3. 최종 답 $L = lo - 1$
+
+**시간복잡도:** $O(n \log n)$ — `check` $O(n)$ × 이진탐색 $O(\log n)$
 
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);">
