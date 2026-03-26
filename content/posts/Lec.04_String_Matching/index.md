@@ -822,9 +822,43 @@ rkRestart();
 
 문자열 $S$ 가 주어질 때, $S = A^k$ 를 만족하는 최대 $k$ 를 구하라.
 
-$$p = n - \pi[n-1], \quad k = \begin{cases} n/p & n \bmod p = 0 \\ 1 & \text{otherwise} \end{cases}$$
+### 핵심 관찰
 
-$\pi[n-1]$ 은 겹치는 길이, $p = n - \pi[n-1]$ 이 겹치지 않는 최소 반복 단위다.
+$S = A^k$ 이면 $S$ 는 주기 $p = |A|$ 를 가진다. 즉 $S[i] = S[i+p]$ 가 모든 유효한 $i$ 에 대해 성립.
+
+$\pi[n-1]$ 은 $S$ 전체에서 접두사 = 접미사인 가장 긴 길이이므로, 겹치는 부분의 길이가 $\pi[n-1]$ 이고 **겹치지 않는 최소 반복 단위**의 길이가
+
+$$p = n - \pi[n-1]$$
+
+### 판별 규칙
+
+$$k = \begin{cases} n/p & n \bmod p = 0 \\ 1 & \text{otherwise} \end{cases}$$
+
+$n \bmod p = 0$ 이 아니면 $S$ 는 완전한 반복이 아니므로 $k = 1$.
+
+### 예시: $S = \texttt{abcabcabc}$
+
+| $i$ | $S[i]$ | $\pi[i]$ |
+|-----|--------|----------|
+| 0 | a | 0 |
+| 1 | b | 0 |
+| 2 | c | 0 |
+| 3 | a | 1 |
+| 4 | b | 2 |
+| 5 | c | 3 |
+| 6 | a | 4 |
+| 7 | b | 5 |
+| 8 | c | 6 |
+
+$$n = 9,\quad \pi[n-1] = 6,\quad p = 9 - 6 = 3,\quad 9 \bmod 3 = 0 \implies k = \frac{9}{3} = 3$$
+
+접두사 `abcabcabc` 와 접미사 `abcabcabc` 가 길이 6 만큼 겹친다 — 즉 반복 단위 `abc` 가 3번 등장.
+
+### 알고리즘
+
+1. $\pi$ 배열 계산
+2. $p = n - \pi[n-1]$
+3. $n \bmod p = 0$ 이면 $k = n/p$, 아니면 $k = 1$
 
 ```python
 def maximum_exponent(s: str):
