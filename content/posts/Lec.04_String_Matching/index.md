@@ -660,6 +660,20 @@ def string_matching_rabin_karp(T: str, P: str, d=256, q=10**9+7):
 
 **시간복잡도:** $O(n+m)$ expected
 
+### 4.1 해시 충돌 확률과 기대 spurious hit 수
+
+해시 함수가 $\bmod\, q$ 에서 균등 분포한다고 가정하면, 서로 다른 두 문자열 $X \neq Y$ 에 대해
+
+$$\Pr[\,\text{hash}(X) = \text{hash}(Y)\,] = \frac{1}{q}$$
+
+즉 spurious hit(해시는 같지만 실제 문자열은 다른 경우)이 발생할 확률은 각 윈도우마다 $\frac{1}{q}$.
+
+텍스트에 총 $n - m + 1$ 개의 윈도우가 있으므로, 기대 spurious hit 수는
+
+$$\mathbb{E}[\,\text{spurious hits}\,] = \frac{n - m + 1}{q}$$
+
+$q$ 를 충분히 큰 소수(예: $10^9 + 7$)로 잡으면 이 값은 사실상 0에 가깝다. spurious hit이 발생해도 문자열 전체를 $O(m)$ 으로 검증하면 되므로, 전체 기대 시간복잡도는 $O(n + m)$ 이 된다.
+
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);">
 <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
