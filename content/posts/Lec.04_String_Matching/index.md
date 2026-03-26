@@ -274,17 +274,21 @@ const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
 
 function buildPiSteps(P){
   const m=P.length,pi=new Array(m).fill(0);
-  const steps=[{i:-1,j:0,jb:0,pi:[...pi],msg:'초기화: π 배열을 0으로 세팅'}];
+  const steps=[{i:-1,j:0,jb:0,jc:0,pi:[...pi],msg:'초기화: π 배열을 0으로 세팅'}];
   let j=0;
   for(let i=1;i<m;i++){
-    const jb=j;
-    while(j>0&&P[i]!==P[j])j=pi[j-1];
-    const jc=j; // j after while loop = actual comparison index
+    // fallback steps: each iteration of the while loop becomes its own step
+    while(j>0&&P[i]!==P[j]){
+      const jprev=j;
+      j=pi[j-1];
+      steps.push({i,j,jb:jprev,jc:j,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>: P[${jprev}]='<span style="color:#ffd740">${P[jprev]}</span>' <span style="color:#ef5350;font-weight:700">≠</span> P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → fallback j=<span style="color:#ce93d8">${jprev}</span>→<span style="color:#ce93d8">${j}</span>`});
+    }
+    const jc=j;
     if(P[i]===P[j])j++;
     pi[i]=j;
     const match=P[jc]===P[i];
     const cmp=match?`<span style="color:#69f0ae;font-weight:700">=</span>`:`<span style="color:#ef5350;font-weight:700">≠</span>`;
-    steps.push({i,j,jb,jc,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jc}</span>: P[${jc}]='<span style="color:#ffd740">${P[jc]??'-'}</span>' ${cmp} P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → j=<span style="color:#ce93d8">${j}</span> → <span style="color:#69f0ae">π[${i}]=${j}</span>`});
+    steps.push({i,j,jb:jc,jc,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jc}</span>: P[${jc}]='<span style="color:#ffd740">${P[jc]??'-'}</span>' ${cmp} P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → j=<span style="color:#ce93d8">${j}</span> → <span style="color:#69f0ae">π[${i}]=${j}</span>`});
   }
   return steps;
 }
