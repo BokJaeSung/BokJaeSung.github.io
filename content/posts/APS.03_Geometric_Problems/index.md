@@ -4,7 +4,7 @@ date: 2026-03-18T09:00:00+09:00
 tags: ["알고리즘", "기하학", "CCW", "외적", "선분교차", "볼록껍질"]
 cover:
   image: 'images/cover.jpg'
-  alt: 'Lec.03 Geometric Problems'
+  alt: 'APS.03 Geometric Problems'
   relative: true
 summary: "From cross product to convex hull: a complete walkthrough of CCW, line segment intersection, and the Monotone Chain algorithm."
 ---
