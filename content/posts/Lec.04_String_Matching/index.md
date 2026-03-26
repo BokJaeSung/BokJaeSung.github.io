@@ -573,6 +573,7 @@ function drawKmp(){
     if(px2+bw>W)break;
     let bg='#1e2130',border='#3949ab',tc='#7986cb';
     if(k<p){bg='#1a0a2e';border='#7c4dff';tc='#b39ddb';}
+    if(k===p&&!st.done){bg='#1a237e';border='#5c6bc0';tc='#9fa8da';}
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(px2,patY,bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(px2,patY,bw,bh,4);ctx.stroke();
     ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
