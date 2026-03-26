@@ -281,7 +281,7 @@ function buildPiSteps(P){
     while(j>0&&P[i]!==P[j]){
       const jprev=j;
       j=pi[j-1];
-      steps.push({i,j,jb:jprev,jc:j,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jprev}</span><br>P[${jprev}]='<span style="color:#ffd740">${P[jprev]}</span>' <span style="color:#ef5350;font-weight:700">≠</span> P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → 불일치<br>fallback: j = π[j-1] = π[${jprev-1}] = <span style="color:#ce93d8">${j}</span>`});
+      steps.push({i,j,jb:jprev,jc:j,fallback:true,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jprev}</span><br>P[${jprev}]='<span style="color:#ffd740">${P[jprev]}</span>' <span style="color:#ef5350;font-weight:700">≠</span> P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → 불일치<br>fallback: j = π[j-1] = π[${jprev-1}] = <span style="color:#ce93d8">${j}</span>`});
     }
     const jc=j;
     if(P[i]===P[j])j++;
@@ -321,7 +321,7 @@ function drawPi(){
   ctx.fillText('π',startX-8,py+bh/2);
 
   // blue bracket: matched prefix [0..j-1] on pattern row
-  const j=st.j,ci=st.i,jb=st.jb??0,jc=st.jc??0;
+  const j=st.j,ci=st.i,jb=st.jb??0,jc=st.jc??0,isFallback=!!st.fallback;
   // draw prefix highlight bracket (j chars from left)
   if(j>0&&ci>=0){
     const bx=startX,by=ty,bW=j*(bw+gap)-gap,bH=bh;
@@ -345,11 +345,18 @@ function drawPi(){
     ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.font=`bold ${fs}px ${MONO}`;ctx.fillStyle=tc;
     ctx.fillText(P[ii],x+bw/2,ty+bh/2);
-    // j pointer (jc = j after while loop = actual comparison position)
-    if(ii===jc&&ci>=0){
-      ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
-      ctx.fillStyle='#ef5350';ctx.textAlign='center';ctx.textBaseline='bottom';
-      ctx.fillText('j',x+bw/2,ty-2);
+    // j pointer
+    if(ci>=0){
+      const pfs=Math.round(fs*0.8);
+      ctx.font=`italic bold ${pfs}px sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='bottom';
+      if(isFallback){
+        // fallback: jb=출발(흐림), jc=도착(진함)
+        if(ii===jb){ctx.fillStyle='#ef535066';ctx.fillText('j',x+bw/2,ty-2);}
+        if(ii===jc){ctx.fillStyle='#ef5350';ctx.fillText('j',x+bw/2,ty-2);}
+      } else {
+        if(ii===jc){ctx.fillStyle='#ef5350';ctx.fillText('j',x+bw/2,ty-2);}
+      }
     }
     // i pointer (current index)
     if(ii===ci&&ci>=0){
