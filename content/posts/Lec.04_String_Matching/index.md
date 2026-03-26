@@ -322,6 +322,29 @@ function drawPi(){
 
   // blue bracket: matched prefix [0..j-1] on pattern row
   const j=st.j,ci=st.i,jb=st.jb??0,jc=st.jc??0,isFallback=!!st.fallback;
+
+  // fallback curved arrow: jb → jc (right to left, arc above boxes)
+  if(isFallback&&jb!==jc){
+    const x1=startX+jb*(bw+gap)+bw/2; // departure center
+    const x2=startX+jc*(bw+gap)+bw/2; // arrival center
+    const ay=ty-2; // arrow base y (top of pointer area)
+    const cpY=ay-Math.max(18, Math.round((jb-jc)*(bw+gap)*0.45)); // control point height
+    ctx.save();
+    ctx.strokeStyle='#ef5350';ctx.lineWidth=2;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(x1,ay);ctx.quadraticCurveTo((x1+x2)/2,cpY,x2,ay);ctx.stroke();
+    ctx.setLineDash([]);
+    // arrowhead at x2
+    const dx=x2-((x1+x2)/2),dy=ay-cpY;
+    const len=Math.sqrt(dx*dx+dy*dy);
+    const nx=dx/len,ny=dy/len;
+    const hs=7;
+    ctx.fillStyle='#ef5350';ctx.beginPath();
+    ctx.moveTo(x2,ay);
+    ctx.lineTo(x2-hs*(nx-ny*0.5),ay-hs*(ny+nx*0.5));
+    ctx.lineTo(x2-hs*(nx+ny*0.5),ay-hs*(ny-nx*0.5));
+    ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
   // draw prefix highlight bracket (j chars from left)
   if(j>0&&ci>=0){
     const bx=startX,by=ty,bW=j*(bw+gap)-gap,bH=bh;
@@ -351,8 +374,6 @@ function drawPi(){
       ctx.font=`italic bold ${pfs}px sans-serif`;
       ctx.textAlign='center';ctx.textBaseline='bottom';
       if(isFallback){
-        // fallback: jb=출발(흐림), jc=도착(진함)
-        if(ii===jb){ctx.fillStyle='#ef535066';ctx.fillText('j',x+bw/2,ty-2);}
         if(ii===jc){ctx.fillStyle='#ef5350';ctx.fillText('j',x+bw/2,ty-2);}
       } else {
         if(ii===jc){ctx.fillStyle='#ef5350';ctx.fillText('j',x+bw/2,ty-2);}
