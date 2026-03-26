@@ -274,17 +274,16 @@ const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
 
 function buildPiSteps(P){
   const m=P.length,pi=new Array(m).fill(0);
-  // store k BEFORE the update so we can show j pointer correctly
-  const steps=[{q:-1,k:0,kb:0,pi:[...pi],msg:'초기화: π 배열을 0으로 세팅'}];
-  let k=0;
-  for(let q=1;q<m;q++){
-    const kb=k;
-    while(k>0&&P[k]!==P[q])k=pi[k-1];
-    if(P[k]===P[q])k++;
-    pi[q]=k;
-    const match=P[kb]===P[q];
+  const steps=[{i:-1,j:0,jb:0,pi:[...pi],msg:'초기화: π 배열을 0으로 세팅'}];
+  let j=0;
+  for(let i=1;i<m;i++){
+    const jb=j;
+    while(j>0&&P[i]!==P[j])j=pi[j-1];
+    if(P[i]===P[j])j++;
+    pi[i]=j;
+    const match=P[jb]===P[i];
     const cmp=match?`<span style="color:#69f0ae;font-weight:700">=</span>`:`<span style="color:#ef5350;font-weight:700">≠</span>`;
-    steps.push({q,k,kb,pi:[...pi],msg:`<span style="color:#90caf9">i(q)=${q}</span>, <span style="color:#ef5350">j(k)=${kb}</span>: P[${kb}]='<span style="color:#ffd740">${P[kb]??'-'}</span>' ${cmp} P[${q}]='<span style="color:#ffd740">${P[q]}</span>' → k=<span style="color:#ce93d8">${k}</span> → <span style="color:#69f0ae">π[${q}]=${k}</span>`});
+    steps.push({i,j,jb,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jb}</span>: P[${jb}]='<span style="color:#ffd740">${P[jb]??'-'}</span>' ${cmp} P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → j=<span style="color:#ce93d8">${j}</span> → <span style="color:#69f0ae">π[${i}]=${j}</span>`});
   }
   return steps;
 }
@@ -313,23 +312,23 @@ function drawPi(){
   ctx.font=`italic bold 15px sans-serif`;ctx.fillStyle='#ef5350';
   ctx.fillText('π',startX-8,py+bh/2);
 
-  // blue bracket: matched prefix [0..k-1] on pattern row
-  const k=st.k,q=st.q,kb=st.kb??0;
-  // draw prefix highlight bracket (k chars from left)
-  if(k>0&&q>=0){
-    const bx=startX,by=ty,bW=k*(bw+gap)-gap,bH=bh;
+  // blue bracket: matched prefix [0..j-1] on pattern row
+  const j=st.j,ci=st.i,jb=st.jb??0;
+  // draw prefix highlight bracket (j chars from left)
+  if(j>0&&ci>=0){
+    const bx=startX,by=ty,bW=j*(bw+gap)-gap,bH=bh;
     ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;
     ctx.strokeRect(bx-1,by-1,bW+2,bH+2);
   }
-  // draw suffix highlight bracket (k chars ending at q)
-  if(k>0&&q>=0&&q-k+1>=0){
-    const bx=startX+(q-k+1)*(bw+gap),by=ty,bW=k*(bw+gap)-gap,bH=bh;
+  // draw suffix highlight bracket (j chars ending at i)
+  if(j>0&&ci>=0&&ci-j+1>=0){
+    const bx=startX+(ci-j+1)*(bw+gap),by=ty,bW=j*(bw+gap)-gap,bH=bh;
     ctx.strokeStyle='#42a5f5';ctx.lineWidth=2.5;
     ctx.strokeRect(bx-1,by-1,bW+2,bH+2);
   }
 
-  for(let i=0;i<m;i++){
-    const x=startX+i*(bw+gap);
+  for(let ii=0;ii<m;ii++){
+    const x=startX+ii*(bw+gap);
     // pattern row
     let bg='#1e2130',border='#2a2d3a',tc='#b0b8d0';
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(x,ty,bw,bh,4);ctx.fill();
@@ -337,22 +336,22 @@ function drawPi(){
     // character
     ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.font=`bold ${fs}px ${MONO}`;ctx.fillStyle=tc;
-    ctx.fillText(P[i],x+bw/2,ty+bh/2);
-    // j pointer (kb = k before update = where prefix comparison happens)
-    if(i===kb&&q>=0){
+    ctx.fillText(P[ii],x+bw/2,ty+bh/2);
+    // j pointer (jb = j before while loop)
+    if(ii===jb&&ci>=0){
       ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
       ctx.fillStyle='#ef5350';ctx.textAlign='center';ctx.textBaseline='bottom';
       ctx.fillText('j',x+bw/2,ty-2);
     }
-    // i pointer (q = current index)
-    if(i===q&&q>=0){
+    // i pointer (current index)
+    if(ii===ci&&ci>=0){
       ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
       ctx.fillStyle='#42a5f5';ctx.textAlign='center';ctx.textBaseline='bottom';
       ctx.fillText('i',x+bw/2,ty-2);
     }
 
     // π row
-    const piVal=i<=q&&q>=0?st.pi[i]:null;
+    const piVal=ii<=ci&&ci>=0?st.pi[ii]:null;
     bg='#1e2130';border='#2a2d3a';tc='#8090a0';
     if(piVal!==null&&piVal>0){bg='#1a0a2e';border='#7c4dff';tc='#b39ddb';}
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(x,py,bw,bh,4);ctx.fill();
@@ -444,7 +443,7 @@ new ResizeObserver(resize).observe(cv);
 let ks=null,kmpTimer=null;
 const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
 
-function computePi(P){const m=P.length,pi=new Array(m).fill(0);let k=0;for(let q=1;q<m;q++){while(k>0&&P[k]!==P[q])k=pi[k-1];if(P[k]===P[q])k++;pi[q]=k;}return pi;}
+function computePi(P){const m=P.length,pi=new Array(m).fill(0);let j=0;for(let i=1;i<m;i++){while(j>0&&P[i]!==P[j])j=pi[j-1];if(P[i]===P[j])j++;pi[i]=j;}return pi;}
 
 function drawKmp(){
   if(!ks)return;
