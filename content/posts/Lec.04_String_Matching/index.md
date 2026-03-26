@@ -284,7 +284,7 @@ function buildPiSteps(P){
     pi[i]=j;
     const match=P[jc]===P[i];
     const cmp=match?`<span style="color:#69f0ae;font-weight:700">=</span>`:`<span style="color:#ef5350;font-weight:700">≠</span>`;
-    steps.push({i,j,jb,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jc}</span>: P[${jc}]='<span style="color:#ffd740">${P[jc]??'-'}</span>' ${cmp} P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → j=<span style="color:#ce93d8">${j}</span> → <span style="color:#69f0ae">π[${i}]=${j}</span>`});
+    steps.push({i,j,jb,jc,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jc}</span>: P[${jc}]='<span style="color:#ffd740">${P[jc]??'-'}</span>' ${cmp} P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → j=<span style="color:#ce93d8">${j}</span> → <span style="color:#69f0ae">π[${i}]=${j}</span>`});
   }
   return steps;
 }
@@ -314,7 +314,7 @@ function drawPi(){
   ctx.fillText('π',startX-8,py+bh/2);
 
   // blue bracket: matched prefix [0..j-1] on pattern row
-  const j=st.j,ci=st.i,jb=st.jb??0;
+  const j=st.j,ci=st.i,jb=st.jb??0,jc=st.jc??0;
   // draw prefix highlight bracket (j chars from left)
   if(j>0&&ci>=0){
     const bx=startX,by=ty,bW=j*(bw+gap)-gap,bH=bh;
@@ -338,8 +338,8 @@ function drawPi(){
     ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.font=`bold ${fs}px ${MONO}`;ctx.fillStyle=tc;
     ctx.fillText(P[ii],x+bw/2,ty+bh/2);
-    // j pointer (jb = j before while loop)
-    if(ii===jb&&ci>=0){
+    // j pointer (jc = j after while loop = actual comparison position)
+    if(ii===jc&&ci>=0){
       ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
       ctx.fillStyle='#ef5350';ctx.textAlign='center';ctx.textBaseline='bottom';
       ctx.fillText('j',x+bw/2,ty-2);
