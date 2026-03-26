@@ -680,127 +680,124 @@ $q$ 를 충분히 큰 소수(예: $10^9 + 7$)로 잡으면 이 값은 사실상 
   <input id="rk-T" value="2359031415267399" maxlength="18" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:200px;" placeholder="Text T (숫자)">
   <input id="rk-P" value="31415" maxlength="6" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:100px;" placeholder="Pattern P">
   <button onclick="rkRestart()" style="padding:6px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:13px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">시작</button>
-  <button onclick="rkStep()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">▶ 슬라이드</button>
-  <button onclick="rkAuto()" id="rk-auto-btn" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">⏩ 자동</button>
+  <button onclick="rkBack()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">◀ 이전</button>
+  <button onclick="rkStep()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">▶ 다음</button>
 </div>
 <canvas id="rk-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
-<div style="display:flex;gap:10px;margin-top:10px;align-items:stretch;">
-  <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div id="rk-hash-line" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;line-height:1.8;"></div>
-  </div>
-  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;">
-    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
-    <div>슬라이드: <span id="rk-steps" style="color:#ffd740;">0</span></div>
-    <div>해시일치: <span id="rk-hit" style="color:#ef9a9a;">0</span></div>
-    <div>발견: <span id="rk-found" style="color:#69f0ae;">-</span></div>
-  </div>
+<div style="background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;margin-top:10px;">
+  <div id="rk-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.8;">시작 버튼을 누르세요.</div>
 </div>
-<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">amber = current window · green = match found · red = spurious hit</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('rk-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=170,dpr=1;
-cv.style.aspectRatio='560/170';
+let W=560,H=200,dpr=1;
+cv.style.aspectRatio='560/200';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(rks)drawRk();}
 new ResizeObserver(resize).observe(cv);
 
 const RD=10,RQ=13;
-let rks=null,rkTimer=null;
+let rks=null;
 const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
+const C=(v,c)=>`<span style="color:${c}">${v}</span>`;
 
 function hashStr(s,len){let h=0;for(let i=0;i<len;i++)h=(RD*h+parseInt(s[i]))%RQ;return h;}
+
+function buildRkSteps(T,P){
+  const n=T.length,m=P.length;
+  const steps=[];
+  let hh=1;for(let i=0;i<m-1;i++)hh=(hh*RD)%RQ;
+  const ph=hashStr(P,m);
+  let th=hashStr(T,m);
+  const found=[],spurious=[];
+  steps.push({s:0,th,ph,found:[],spurious:[],
+    msg:`${C('P hash','#ffd740')}("${P}") mod ${RQ} = ${C(ph,'#ffd740')}<br>이진탐색 시작: s=0`});
+  for(let s=0;s<n-m+1;s++){
+    const cur=T.slice(s,s+m);
+    const hashMatch=th===ph;
+    const realMatch=cur===P;
+    let line3;
+    if(hashMatch&&realMatch){found.push(s);line3=`${C('해시일치 + 실제일치','#69f0ae')} → 발견! 위치 ${C(s,'#ffd740')}`;}
+    else if(hashMatch){spurious.push(s);line3=`${C('해시일치','#ffd740')} but ${C('실제불일치','#ef5350')} → Spurious Hit`;}
+    else{line3=`${C('해시불일치','#7986cb')} → 스킵`;}
+    steps.push({s,th,ph,found:[...found],spurious:[...spurious],
+      msg:`s=${C(s,'#90caf9')}: T[${s}..${s+m-1}]="${C(cur,'#ffd740')}"<br>hash = ${C(th,'#ffd740')} (P hash = ${C(ph,'#ce93d8')})<br>${line3}`});
+    if(s<n-m){th=((RD*(th-(parseInt(T[s])*hh%RQ)+RQ)+parseInt(T[s+m]))%RQ+RQ)%RQ;}
+  }
+  steps.push({s:n-m,th,ph,found:[...found],spurious:[...spurious],done:true,
+    msg:`완료! 발견: ${found.length?found.map(f=>C(f,'#69f0ae')).join(', '):C('없음','#ef5350')} | Spurious hit: ${C(spurious.length,'#ef9a9a')}`});
+  return steps;
+}
 
 function drawRk(){
   if(!rks)return;
   ctx.clearRect(0,0,W,H);
-  const {T,P,s,m,found,spurious}=rks;
-  const n=T.length;
+  const {T,P,steps,idx}=rks;
+  const st=steps[idx];
+  const {s,found,spurious}=st;
+  const n=T.length,m=P.length;
   const bw=Math.min(Math.floor((W-40)/n),54);
-  const bh=Math.max(42,Math.round(H*0.26));
+  const bh=Math.max(42,Math.round(H*0.24));
   const gap=3;
-  const startX=(W-n*(bw+gap))/2;
-  const ty=18;
+  const startX=Math.round((W-n*(bw+gap)+gap)/2);
+  // vertical center: index row + box row + hash bar
+  const indexH=16,hashBarH=22,rowGap=8;
+  const totalH=indexH+bh+rowGap+hashBarH;
+  const ty=Math.round((H-totalH)/2)+indexH;
   const fs=Math.round(bh*0.45);
 
-  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+  // index labels
+  ctx.fillStyle='#8090a0';ctx.font=`${Math.round(bh*0.28)}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
   for(let k=0;k<n;k++) ctx.fillText(k,startX+k*(bw+gap)+bw/2,ty-10);
 
+  // boxes
   for(let k=0;k<n;k++){
     let bg='#1e2130',border='#2a2d3a',tc='#b0b8d0';
     if(found.some(f=>k>=f&&k<f+m)){bg='#1b3a1f';border='#69f0ae';tc='#69f0ae';}
-    else if(spurious.includes(k-s+s)&&k>=s&&k<s+m){bg='#3a0a0a';border='#e53935';tc='#ef9a9a';}
-    else if(k>=s&&k<s+m){bg='#2a1f00';border='#ffd740';tc='#ffd740';}
+    else if(spurious.some(sp=>k>=sp&&k<sp+m)){bg='#3a0a0a';border='#e53935';tc='#ef9a9a';}
+    if(k>=s&&k<s+m&&!found.some(f=>k>=f&&k<f+m)&&!spurious.some(sp=>k>=sp&&k<sp+m)){bg='#2a1f00';border='#ffd740';tc='#ffd740';}
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.stroke();
     ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(T[k],startX+k*(bw+gap)+bw/2,ty+bh/2);
   }
 
-  // hash bar under window
-  const barY=ty+bh+8;
+  // hash bar under current window
+  const barY=ty+bh+rowGap;
   const barX=startX+s*(bw+gap);
   const barW=m*(bw+gap)-gap;
-  const isMatch=rks.th===rks.ph;
-  ctx.fillStyle=isMatch?(T.slice(s,s+m)===P?'rgba(105,240,174,0.15)':'rgba(229,57,53,0.15)'):'rgba(92,107,192,0.1)';
-  ctx.fillRect(barX,barY,barW,18);
-  ctx.strokeStyle=isMatch?(T.slice(s,s+m)===P?'#69f0ae':'#e53935'):'#5c6bc0';
-  ctx.lineWidth=1;ctx.strokeRect(barX,barY,barW,18);
-  ctx.fillStyle=isMatch?(T.slice(s,s+m)===P?'#69f0ae':'#ef9a9a'):'#7986cb';
-  ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(`h=${rks.th}`,barX+barW/2,barY+9);
+  const isMatch=st.th===st.ph;
+  const isReal=T.slice(s,s+m)===P;
+  ctx.fillStyle=isMatch?(isReal?'rgba(105,240,174,0.15)':'rgba(229,57,53,0.15)'):'rgba(92,107,192,0.1)';
+  ctx.fillRect(barX,barY,barW,hashBarH);
+  ctx.strokeStyle=isMatch?(isReal?'#69f0ae':'#e53935'):'#5c6bc0';
+  ctx.lineWidth=1;ctx.strokeRect(barX,barY,barW,hashBarH);
+  ctx.fillStyle=isMatch?(isReal?'#69f0ae':'#ef9a9a'):'#7986cb';
+  ctx.font=`bold 13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(`h=${st.th}`,barX+barW/2,barY+hashBarH/2);
 }
 
 window.rkRestart=function(){
-  if(rkTimer){clearInterval(rkTimer);rkTimer=null;document.getElementById('rk-auto-btn').textContent='⏩ 자동';}
   const T=document.getElementById('rk-T').value||'2359031415267399';
   const P=document.getElementById('rk-P').value||'31415';
   if(P.length>T.length)return;
-  const m=P.length;
-  let hh=1;for(let i=0;i<m-1;i++)hh=(hh*RD)%RQ;
-  const ph=hashStr(P,m);
-  const th=hashStr(T,m);
-  rks={T,P,m,ph,th,hh,s:0,found:[],spurious:[],done:false};
-  document.getElementById('rk-steps').textContent='0';
-  document.getElementById('rk-hit').textContent='0';
-  document.getElementById('rk-found').textContent='-';
-  updateRkInfo();drawRk();
+  const steps=buildRkSteps(T,P);
+  rks={T,P,steps,idx:0};
+  document.getElementById('rk-info').innerHTML=steps[0].msg;
+  drawRk();
 };
-
-function updateRkInfo(){
-  if(!rks)return;
-  const {T,P,s,m,ph,th}=rks;
-  const cur=T.slice(s,s+m);
-  const hashMatch=th===ph;
-  const realMatch=cur===P;
-  let status=hashMatch?(realMatch?`<span style="color:#69f0ae">해시일치 + 실제일치 ✓</span>`:`<span style="color:#ef9a9a">해시일치 but 실제불일치 (Spurious Hit!)</span>`):`<span style="color:#7986cb">해시불일치 → 스킵</span>`;
-  document.getElementById('rk-hash-line').innerHTML=
-    `P hash("${P}") mod ${RQ} = <span style="color:#ffd740">${ph}</span><br>`+
-    `T[${s}..${s+m-1}]="${cur}" hash = <span style="color:#ffd740">${th}</span> &nbsp; ${status}`;
-}
-
+window.rkBack=function(){
+  if(!rks||rks.idx<=0)return;
+  rks.idx--;
+  document.getElementById('rk-info').innerHTML=rks.steps[rks.idx].msg;
+  drawRk();
+};
 window.rkStep=function(){
-  if(!rks||rks.done)return;
-  const {T,P,m,ph,hh}=rks;
-  const n=T.length,s=rks.s;
-  if(rks.th===ph){
-    document.getElementById('rk-hit').textContent=parseInt(document.getElementById('rk-hit').textContent)+1;
-    if(T.slice(s,s+m)===P){rks.found.push(s);document.getElementById('rk-found').textContent=rks.found.join(', ');}
-    else rks.spurious.push(s);
-  }
-  if(s+1>n-m){rks.done=true;updateRkInfo();drawRk();return;}
-  rks.th=((RD*(rks.th-(parseInt(T[s])*hh%RQ)+RQ)+parseInt(T[s+m]))%RQ+RQ)%RQ;
-  rks.s++;
-  document.getElementById('rk-steps').textContent=rks.s;
-  updateRkInfo();drawRk();
-};
-
-window.rkAuto=function(){
-  if(rkTimer){clearInterval(rkTimer);rkTimer=null;document.getElementById('rk-auto-btn').textContent='⏩ 자동';return;}
-  if(!rks)rkRestart();
-  document.getElementById('rk-auto-btn').textContent='⏸ 정지';
-  rkTimer=setInterval(()=>{if(!rks||rks.done){clearInterval(rkTimer);rkTimer=null;document.getElementById('rk-auto-btn').textContent='⏩ 자동';return;}rkStep();},350);
+  if(!rks||rks.idx>=rks.steps.length-1)return;
+  rks.idx++;
+  document.getElementById('rk-info').innerHTML=rks.steps[rks.idx].msg;
+  drawRk();
 };
 rkRestart();
 })();
