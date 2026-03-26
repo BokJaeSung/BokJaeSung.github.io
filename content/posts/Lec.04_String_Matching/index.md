@@ -533,10 +533,14 @@ function drawKmp(){
   ctx.fillStyle='#ef5350';ctx.fillText('Pattern',startX-8,patY+bh/2);
   ctx.fillStyle='#ce93d8';ctx.fillText('pi',startX-8,piY+bh/2);
 
-  // w pointer (below word box)
-  ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
-  ctx.fillStyle='#69f0ae';ctx.textAlign='center';ctx.textBaseline='top';
-  if(w<n) ctx.fillText('w',startX+w*(bw+gap)+bw/2,wy+bh+2);
+  // w pointer: triangle marker on bottom edge of word box + label inside box bottom
+  if(w<n&&!st.done){
+    const wx=startX+w*(bw+gap)+bw/2,wby=wy+bh;
+    ctx.fillStyle='#69f0ae';
+    ctx.beginPath();ctx.moveTo(wx-5,wby+2);ctx.lineTo(wx+5,wby+2);ctx.lineTo(wx,wby+8);ctx.closePath();ctx.fill();
+    ctx.font=`bold ${Math.round(fs*0.65)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('w',wx,wby-2);
+  }
 
   // word row (T)
   for(let k=0;k<n;k++){
@@ -553,10 +557,14 @@ function drawKmp(){
     ctx.fillText(k,startX+k*(bw+gap)+bw/2,wy-10);
   }
 
-  // p pointer (below pattern box)
-  ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
-  ctx.fillStyle='#ef5350';ctx.textAlign='center';ctx.textBaseline='top';
-  if(!st.done) ctx.fillText('p',startX+s*(bw+gap)+p*(bw+gap)+bw/2,patY+bh+2);
+  // p pointer: triangle marker on bottom edge of pattern box + label inside box bottom
+  if(!st.done){
+    const ppx=startX+s*(bw+gap)+p*(bw+gap)+bw/2,pby=patY+bh;
+    ctx.fillStyle='#ef5350';
+    ctx.beginPath();ctx.moveTo(ppx-5,pby+2);ctx.lineTo(ppx+5,pby+2);ctx.lineTo(ppx,pby+8);ctx.closePath();ctx.fill();
+    ctx.font=`bold ${Math.round(fs*0.65)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('p',ppx,pby-2);
+  }
 
   // pattern row (P) — aligned under T[s..s+m-1]
   const patStartX=startX+s*(bw+gap);
