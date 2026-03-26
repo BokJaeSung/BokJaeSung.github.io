@@ -251,8 +251,8 @@ $j$ 를 한 번에 0으로 보내는 게 아니라, **`while` 루프로 $\pi$ �
 <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
   <input id="pi-P" value="abcaaxabcabc" maxlength="14" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:180px;" placeholder="Pattern P">
   <button onclick="piRestart()" style="padding:6px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:13px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">시작</button>
+  <button onclick="piBack()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">◀ 이전</button>
   <button onclick="piStep()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">▶ 다음</button>
-  <button onclick="piAuto()" id="pi-auto-btn" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">⏩ 자동</button>
 </div>
 <canvas id="pi-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
 <div style="background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;margin-top:10px;">
@@ -269,7 +269,7 @@ cv.style.aspectRatio='560/210';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(ps)drawPi();}
 new ResizeObserver(resize).observe(cv);
 
-let ps=null,piTimer=null;
+let ps=null;
 const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
 
 function buildPiSteps(P){
@@ -370,10 +370,15 @@ function drawPi(){
 }
 
 window.piRestart=function(){
-  if(piTimer){clearInterval(piTimer);piTimer=null;document.getElementById('pi-auto-btn').textContent='⏩ 자동';}
   const P=document.getElementById('pi-P').value||'abcaaxabcabc';
   ps={P,steps:buildPiSteps(P),idx:0};
   document.getElementById('pi-info').innerHTML=ps.steps[0].msg;
+  drawPi();
+};
+window.piBack=function(){
+  if(!ps||ps.idx<=0)return;
+  ps.idx--;
+  document.getElementById('pi-info').innerHTML=ps.steps[ps.idx].msg;
   drawPi();
 };
 window.piStep=function(){
@@ -381,12 +386,6 @@ window.piStep=function(){
   ps.idx++;
   document.getElementById('pi-info').innerHTML=ps.steps[ps.idx].msg;
   drawPi();
-};
-window.piAuto=function(){
-  if(piTimer){clearInterval(piTimer);piTimer=null;document.getElementById('pi-auto-btn').textContent='⏩ 자동';return;}
-  if(!ps)piRestart();
-  document.getElementById('pi-auto-btn').textContent='⏸ 정지';
-  piTimer=setInterval(()=>{if(!ps||ps.idx>=ps.steps.length-1){clearInterval(piTimer);piTimer=null;document.getElementById('pi-auto-btn').textContent='⏩ 자동';return;}piStep();},500);
 };
 piRestart();
 })();
