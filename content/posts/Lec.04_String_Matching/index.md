@@ -333,15 +333,16 @@ function drawPi(){
     ctx.strokeStyle='#ef5350';ctx.lineWidth=2;ctx.setLineDash([4,3]);
     ctx.beginPath();ctx.moveTo(x1,ay);ctx.quadraticCurveTo((x1+x2)/2,cpY,x2,ay);ctx.stroke();
     ctx.setLineDash([]);
-    // arrowhead at x2
-    const dx=x2-((x1+x2)/2),dy=ay-cpY;
-    const len=Math.sqrt(dx*dx+dy*dy);
-    const nx=dx/len,ny=dy/len;
+    // arrowhead at x2: tangent = (cp→end) direction
+    const cpX=(x1+x2)/2;
+    const tdx=x2-cpX,tdy=ay-cpY;
+    const tlen=Math.sqrt(tdx*tdx+tdy*tdy);
+    const tnx=tdx/tlen,tny=tdy/tlen;
     const hs=7;
     ctx.fillStyle='#ef5350';ctx.beginPath();
     ctx.moveTo(x2,ay);
-    ctx.lineTo(x2-hs*(nx-ny*0.5),ay-hs*(ny+nx*0.5));
-    ctx.lineTo(x2-hs*(nx+ny*0.5),ay-hs*(ny-nx*0.5));
+    ctx.lineTo(x2-hs*(tnx-tny*0.5),ay-hs*(tny+tnx*0.5));
+    ctx.lineTo(x2-hs*(tnx+tny*0.5),ay-hs*(tny-tnx*0.5));
     ctx.closePath();ctx.fill();
     ctx.restore();
   }
@@ -374,6 +375,7 @@ function drawPi(){
       ctx.font=`italic bold ${pfs}px sans-serif`;
       ctx.textAlign='center';ctx.textBaseline='bottom';
       if(isFallback){
+        if(ii===jb){ctx.fillStyle='#ef535055';ctx.fillText('j',x+bw/2,ty-2);}
         if(ii===jc){ctx.fillStyle='#ef5350';ctx.fillText('j',x+bw/2,ty-2);}
       } else {
         if(ii===jc){ctx.fillStyle='#ef5350';ctx.fillText('j',x+bw/2,ty-2);}
