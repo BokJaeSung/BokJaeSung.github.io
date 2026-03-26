@@ -446,133 +446,168 @@ def string_matching_kmp(T: str, P: str):
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);">
 <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
-  <input id="kmp-T" value="abcababcab" maxlength="16" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:180px;" placeholder="Text T">
-  <input id="kmp-P" value="ababc" maxlength="8" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:120px;" placeholder="Pattern P">
+  <input id="kmp-T" value="ababdababcabbababcabababcababa" maxlength="32" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:240px;" placeholder="Word W">
+  <input id="kmp-P" value="ababcaba" maxlength="12" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:140px;" placeholder="Pattern P">
   <button onclick="kmpRestart()" style="padding:6px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:13px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">시작</button>
-  <button onclick="kmpStep()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">▶ 한 칸</button>
-  <button onclick="kmpAuto()" id="kmp-auto-btn" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">⏩ 자동</button>
+  <button onclick="kmpBack()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">◀ 이전</button>
+  <button onclick="kmpStep()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">▶ 다음</button>
 </div>
 <canvas id="kmp-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
-<div style="display:flex;gap:10px;margin-top:10px;align-items:stretch;">
-  <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div id="kmp-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
-    <div id="kmp-pi-row" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;color:#8090a0;margin-top:4px;"></div>
-  </div>
-  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;">
-    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
-    <div>비교: <span id="kmp-cmp" style="color:#ffd740;">0</span></div>
-    <div>i: <span id="kmp-i" style="color:#90caf9;">-</span></div>
-    <div>q: <span id="kmp-q" style="color:#a5d6a7;">-</span></div>
-    <div>발견: <span id="kmp-found" style="color:#69f0ae;">-</span></div>
-  </div>
+<div style="background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;margin-top:10px;">
+  <div id="kmp-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.8;">시작 버튼을 누르세요.</div>
 </div>
-<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = matched · red = mismatch · blue = current i · purple = reused chars</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('kmp-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=190,dpr=1;
-cv.style.aspectRatio='560/190';
+let W=560,H=230,dpr=1;
+cv.style.aspectRatio='560/230';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(ks)drawKmp();}
 new ResizeObserver(resize).observe(cv);
 
-let ks=null,kmpTimer=null;
+let ks=null;
 const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
 
 function computePi(P){const m=P.length,pi=new Array(m).fill(0);let j=0;for(let i=1;i<m;i++){while(j>0&&P[i]!==P[j])j=pi[j-1];if(P[i]===P[j])j++;pi[i]=j;}return pi;}
 
+function buildKmpSteps(T,P,pi){
+  const n=T.length,m=P.length;
+  const C=(v,c)=>`<span style="color:${c}">${v}</span>`;
+  const cW=v=>C(v,'#69f0ae');   // w_idx - green
+  const cP=v=>C(v,'#ef5350');   // p_idx - red
+  const cChr=v=>C(`'${v}'`,'#ffd740');
+  const cRes=v=>C(v,'#ce93d8');
+  const steps=[{w:0,p:0,found:[],msg:`${cW('w_idx=0')}, ${cP('p_idx=0')} 에서 시작`}];
+  let w=0,p=0,found=[];
+  while(w<n){
+    if(T[w]===P[p]){
+      const msg=`${cW('w_idx='+w)}, ${cP('p_idx='+p)}<br>${cChr(T[w])} = ${cChr(P[p])} → 일치<br>w_idx: ${cW(w)}→${cW(w+1)}, p_idx: ${cP(p)}→${cP(p+1)}`;
+      w++;p++;
+      if(p===m){
+        const pos=w-m;found=[...found,pos];
+        steps.push({w,p,found:[...found],match:true,msg:`${cW('w_idx='+w)}, ${cP('p_idx='+p)}<br>패턴 발견! 위치 ${cRes(pos)}<br>p_idx = π[${m-1}] = ${cRes(pi[m-1])} (fallback)`});
+        p=pi[m-1];
+      } else {
+        steps.push({w,p,found:[...found],match:true,msg});
+      }
+    } else {
+      if(p>0){
+        const pb=p;
+        p=pi[p-1];
+        steps.push({w,p,found:[...found],fallback:true,msg:`${cW('w_idx='+w)}, ${cP('p_idx='+pb)}<br>${cChr(T[w])} ≠ ${cChr(P[pb])} → 불일치<br>p_idx = π[${pb-1}] = ${cRes(p)} (i 고정, p fallback)`});
+      } else {
+        steps.push({w,p,found:[...found],msg:`${cW('w_idx='+w)}, ${cP('p_idx=0')}<br>${cChr(T[w])} ≠ ${cChr(P[0])} → 불일치<br>p_idx=0, w_idx: ${cW(w)}→${cW(w+1)}`});
+        w++;
+      }
+    }
+  }
+  steps.push({w,p,found:[...found],done:true,msg:`완료! 발견 위치: ${found.length?found.map(f=>cRes(f)).join(', '):C('없음','#ef5350')}`});
+  return steps;
+}
+
 function drawKmp(){
   if(!ks)return;
   ctx.clearRect(0,0,W,H);
-  const {T,P,i,q,found,done,pi}=ks;
+  const {T,P,pi,steps,idx}=ks;
+  const st=steps[idx];
   const n=T.length,m=P.length;
-  const bw=Math.min(Math.floor((W-40)/n),54);
-  const bh=Math.max(42,Math.round(H*0.22));
-  const gap=3;
-  const startX=(W-n*(bw+gap))/2;
-  const ty=18,py=ty+bh+22;
-  const fs=Math.round(bh*0.45);
-  const s=i-q;
+  const labelW=48;
+  const bw=Math.min(Math.floor((W-labelW-8)/n),40);
+  const bh=Math.max(36,Math.round(H*0.18));
+  const gap=2;
+  const rowGap=Math.round(H*0.08);
+  const totalH=bh*3+rowGap*2;
+  const wy=Math.round((H-totalH)/2);
+  const patY=wy+bh+rowGap;
+  const piY=patY+bh+rowGap;
+  const startX=labelW+Math.round(((W-labelW)-(n*(bw+gap)-gap))/2);
+  const fs=Math.round(bh*0.44);
+  const {w,p,found}=st;
+  const s=w-p; // pattern start in T
 
-  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-  for(let k=0;k<n;k++) ctx.fillText(k,startX+k*(bw+gap)+bw/2,ty-10);
+  // row labels
+  ctx.textBaseline='middle';ctx.textAlign='right';
+  ctx.font=`italic bold 14px sans-serif`;
+  ctx.fillStyle='#69f0ae';ctx.fillText('word',startX-8,wy+bh/2);
+  ctx.fillStyle='#ef5350';ctx.fillText('Pattern',startX-8,patY+bh/2);
+  ctx.fillStyle='#ce93d8';ctx.fillText('pi',startX-8,piY+bh/2);
 
+  // w pointer
+  ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
+  ctx.fillStyle='#69f0ae';ctx.textAlign='center';ctx.textBaseline='bottom';
+  if(w<n) ctx.fillText('w',startX+w*(bw+gap)+bw/2,wy-2);
+
+  // word row (T)
   for(let k=0;k<n;k++){
     let bg='#1e2130',border='#2a2d3a',tc='#b0b8d0';
     if(found.some(f=>k>=f&&k<f+m)){bg='#1b3a1f';border='#69f0ae';tc='#69f0ae';}
-    else if(!done){
-      if(k===i){bg='#1a237e';border='#5c6bc0';tc='#9fa8da';}
-      else if(k>=s&&k<i){bg='#1b3a1f';border='#43a047';tc='#69f0ae';}
-    }
-    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.fill();
-    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.stroke();
+    else if(k===w&&!st.done){bg='#1a237e';border='#5c6bc0';tc='#9fa8da';}
+    else if(k>=s&&k<w&&!st.done){bg='#0d2818';border='#2e7d32';tc='#66bb6a';}
+    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),wy,bw,bh,4);ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),wy,bw,bh,4);ctx.stroke();
     ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(T[k],startX+k*(bw+gap)+bw/2,ty+bh/2);
+    ctx.fillText(T[k],startX+k*(bw+gap)+bw/2,wy+bh/2);
+    // index label
+    ctx.fillStyle='#8090a0';ctx.font=`${Math.round(bh*0.28)}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(k,startX+k*(bw+gap)+bw/2,wy-10);
   }
 
-  const patStart=startX+s*(bw+gap);
+  // p pointer
+  ctx.font=`italic bold ${Math.round(fs*0.8)}px sans-serif`;
+  ctx.fillStyle='#ef5350';ctx.textAlign='center';ctx.textBaseline='bottom';
+  if(!st.done) ctx.fillText('p',startX+s*(bw+gap)+p*(bw+gap)+bw/2,patY-2);
+
+  // pattern row (P) — aligned under T[s..s+m-1]
+  const patStartX=startX+s*(bw+gap);
   for(let k=0;k<m;k++){
-    let bg='#1a1a2e',border='#3949ab',tc='#7986cb';
-    if(k<q){bg='#1a0a2e';border='#7c4dff';tc='#b39ddb';}
-    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(patStart+k*(bw+gap),py,bw,bh,4);ctx.fill();
-    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(patStart+k*(bw+gap),py,bw,bh,4);ctx.stroke();
+    const px2=patStartX+k*(bw+gap);
+    if(px2+bw>W)break;
+    let bg='#1e2130',border='#3949ab',tc='#7986cb';
+    if(k<p){bg='#1a0a2e';border='#7c4dff';tc='#b39ddb';}
+    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(px2,patY,bw,bh,4);ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(px2,patY,bw,bh,4);ctx.stroke();
     ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(P[k],patStart+k*(bw+gap)+bw/2,py+bh/2);
+    ctx.fillText(P[k],px2+bw/2,patY+bh/2);
+    // p index label
+    ctx.fillStyle='#8090a0';ctx.font=`${Math.round(bh*0.28)}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(k,px2+bw/2,patY-10);
   }
-  // s label
-  ctx.fillStyle='#8090a0';ctx.font=`13px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText(`s=${s}`,patStart+m*(bw+gap)/2,py+bh+3);
+
+  // pi row — always aligned from index 0 (same width as pattern)
+  const piStartX=startX;
+  for(let k=0;k<m;k++){
+    const px2=piStartX+k*(bw+gap);
+    let bg='#1e2130',border='#2a2d3a',tc='#8090a0';
+    if(pi[k]>0){bg='#1a0a2e';border='#7c4dff';tc='#b39ddb';}
+    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(px2,piY,bw,bh,4);ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(px2,piY,bw,bh,4);ctx.stroke();
+    ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(pi[k],px2+bw/2,piY+bh/2);
+  }
 }
 
 window.kmpRestart=function(){
-  if(kmpTimer){clearInterval(kmpTimer);kmpTimer=null;document.getElementById('kmp-auto-btn').textContent='⏩ 자동';}
-  const T=document.getElementById('kmp-T').value||'abcababcab';
-  const P=document.getElementById('kmp-P').value||'ababc';
+  const T=document.getElementById('kmp-T').value||'ababdababcabbababcabababcababa';
+  const P=document.getElementById('kmp-P').value||'ababcaba';
   if(P.length>T.length)return;
   const pi=computePi(P);
-  ks={T,P,pi,i:0,q:0,cmp:0,found:[],done:false};
-  document.getElementById('kmp-cmp').textContent='0';
-  document.getElementById('kmp-i').textContent='0';
-  document.getElementById('kmp-q').textContent='0';
-  document.getElementById('kmp-found').textContent='-';
-  document.getElementById('kmp-pi-row').textContent=`π = [${pi.join(', ')}]`;
-  document.getElementById('kmp-info').innerHTML=`<span style="color:#90caf9">i=0</span>, <span style="color:#90caf9">q=0</span> 에서 시작`;
+  const steps=buildKmpSteps(T,P,pi);
+  ks={T,P,pi,steps,idx:0};
+  document.getElementById('kmp-info').innerHTML=steps[0].msg;
   drawKmp();
 };
-const kI=id=>document.getElementById(id);
-const kC=(v,c)=>`<span style="color:${c}">${v}</span>`;
-const kIdx=v=>kC(v,'#90caf9');
-const kChr=v=>kC(`'${v}'`,'#ffd740');
-const kRes=v=>kC(v,'#ce93d8');
-const kOk=v=>kC(v,'#69f0ae');
-const kNg=v=>kC(v,'#ef5350');
-
+window.kmpBack=function(){
+  if(!ks||ks.idx<=0)return;
+  ks.idx--;
+  document.getElementById('kmp-info').innerHTML=ks.steps[ks.idx].msg;
+  drawKmp();
+};
 window.kmpStep=function(){
-  if(!ks||ks.done)return;
-  const {T,P,pi}=ks;const n=T.length,m=P.length;
-  if(ks.i>=n){ks.done=true;kI('kmp-info').innerHTML=`완료! 총 <span style="color:#ffd740">${ks.cmp}</span>번 비교`;drawKmp();return;}
-  ks.cmp++;
-  kI('kmp-cmp').textContent=ks.cmp;
-  if(P[ks.q]===T[ks.i]){
-    kI('kmp-info').innerHTML=`${kIdx('i='+ks.i)}, ${kIdx('q='+ks.q)}: ${kChr(T[ks.i])} <b style="color:#69f0ae">=</b> ${kChr(P[ks.q])} ${kOk('✓')} → ${kRes('q+1')}`;
-    ks.q++;ks.i++;
-    if(ks.q===m){const pos=ks.i-m;ks.found.push(pos);kI('kmp-found').textContent=ks.found.join(', ');kI('kmp-info').innerHTML=`${kOk('✓ 패턴 발견!')} ${kIdx('s='+pos)} → ${kRes('q=π['+(m-1)+']='+pi[m-1])}`;ks.q=pi[m-1];}
-  } else {
-    if(ks.q>0){kI('kmp-info').innerHTML=`${kIdx('i='+ks.i)}, ${kIdx('q='+ks.q)}: ${kChr(T[ks.i])} <b style="color:#ef5350">≠</b> ${kChr(P[ks.q])} → ${kRes('q=π['+(ks.q-1)+']='+pi[ks.q-1])} <span style="color:#ce93d8;font-size:0.9em">(i 고정!)</span>`;ks.q=pi[ks.q-1];}
-    else{kI('kmp-info').innerHTML=`${kIdx('i='+ks.i)}, ${kIdx('q=0')}: ${kChr(T[ks.i])} <b style="color:#ef5350">≠</b> ${kChr(P[0])} → ${kRes('i+1')}`;ks.i++;}
-  }
-  kI('kmp-i').textContent=ks.i;
-  kI('kmp-q').textContent=ks.q;
-  if(ks.i>=n){ks.done=true;kI('kmp-info').innerHTML=`완료! 총 <span style="color:#ffd740">${ks.cmp}</span>번 | 발견: ${ks.found.length?kOk(ks.found.join(', ')):kNg('없음')}`;}
+  if(!ks||ks.idx>=ks.steps.length-1)return;
+  ks.idx++;
+  document.getElementById('kmp-info').innerHTML=ks.steps[ks.idx].msg;
   drawKmp();
-};
-
-window.kmpAuto=function(){
-  if(kmpTimer){clearInterval(kmpTimer);kmpTimer=null;document.getElementById('kmp-auto-btn').textContent='⏩ 자동';return;}
-  if(!ks)kmpRestart();
-  document.getElementById('kmp-auto-btn').textContent='⏸ 정지';
-  kmpTimer=setInterval(()=>{if(!ks||ks.done){clearInterval(kmpTimer);kmpTimer=null;document.getElementById('kmp-auto-btn').textContent='⏩ 자동';return;}kmpStep();},280);
 };
 kmpRestart();
 })();
