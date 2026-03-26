@@ -712,7 +712,7 @@ function buildRkSteps(T,P){
   let th=hashStr(T,m);
   const found=[],spurious=[];
   steps.push({s:0,th,ph,found:[],spurious:[],
-    msg:`${C('P hash','#ffd740')}("${P}") mod ${RQ} = ${C(ph,'#ffd740')}<br>이진탐색 시작: s=0`});
+    msg:`${C('P hash','#ffd740')}("${P}") mod ${RQ} = ${C(ph,'#ffd740')}<br>초기 T hash("${T.slice(0,m)}") = ${C(th,'#90caf9')}<br>h = d^(m-1) mod q = ${C(hh,'#ce93d8')}`});
   for(let s=0;s<n-m+1;s++){
     const cur=T.slice(s,s+m);
     const hashMatch=th===ph;
@@ -723,7 +723,16 @@ function buildRkSteps(T,P){
     else{line3=`${C('해시불일치','#7986cb')} → 스킵`;}
     steps.push({s,th,ph,found:[...found],spurious:[...spurious],
       msg:`s=${C(s,'#90caf9')}: T[${s}..${s+m-1}]="${C(cur,'#ffd740')}"<br>hash = ${C(th,'#ffd740')} (P hash = ${C(ph,'#ce93d8')})<br>${line3}`});
-    if(s<n-m){th=((RD*(th-(parseInt(T[s])*hh%RQ)+RQ)+parseInt(T[s+m]))%RQ+RQ)%RQ;}
+    if(s<n-m){
+      const oldTh=th;
+      const removeChar=T[s],addChar=T[s+m];
+      const removeVal=parseInt(removeChar),addVal=parseInt(addChar);
+      const newTh=((RD*(th-(removeVal*hh%RQ)+RQ)+addVal)%RQ+RQ)%RQ;
+      th=newTh;
+      steps.push({s,rolling:true,removeIdx:s,addIdx:s+m,removeChar,addChar,removeVal,addVal,oldTh,newTh,hh,
+        th,ph,found:[...found],spurious:[...spurious],
+        msg:`Rolling Hash: s=${C(s,'#90caf9')} → s=${C(s+1,'#90caf9')}<br>${C('빼기','#ef5350')} T[${s}]='${removeChar}'(${removeVal}) × h=${hh}, ${C('더하기','#69f0ae')} T[${s+m}]='${addChar}'(${addVal})<br>= (d×(${oldTh} - ${removeVal}×${hh}) + ${addVal}) mod ${RQ} = ${C(newTh,'#ffd740')}`});
+    }
   }
   steps.push({s:n-m,th,ph,found:[...found],spurious:[...spurious],done:true,
     msg:`완료! 발견: ${found.length?found.map(f=>C(f,'#69f0ae')).join(', '):C('없음','#ef5350')} | Spurious hit: ${C(spurious.length,'#ef9a9a')}`});
@@ -741,7 +750,6 @@ function drawRk(){
   const bh=Math.max(42,Math.round(H*0.24));
   const gap=3;
   const startX=Math.round((W-n*(bw+gap)+gap)/2);
-  // vertical center: index row + box row + hash bar
   const indexH=16,hashBarH=22,rowGap=8;
   const totalH=indexH+bh+rowGap+hashBarH;
   const ty=Math.round((H-totalH)/2)+indexH;
@@ -756,11 +764,42 @@ function drawRk(){
     let bg='#1e2130',border='#2a2d3a',tc='#b0b8d0';
     if(found.some(f=>k>=f&&k<f+m)){bg='#1b3a1f';border='#69f0ae';tc='#69f0ae';}
     else if(spurious.some(sp=>k>=sp&&k<sp+m)){bg='#3a0a0a';border='#e53935';tc='#ef9a9a';}
-    if(k>=s&&k<s+m&&!found.some(f=>k>=f&&k<f+m)&&!spurious.some(sp=>k>=sp&&k<sp+m)){bg='#2a1f00';border='#ffd740';tc='#ffd740';}
+    if(st.rolling){
+      // rolling step: highlight remove (red) and add (green) chars, current window dim
+      if(k===st.removeIdx){bg='#3a1010';border='#ef5350';tc='#ef5350';}
+      else if(k===st.addIdx){bg='#0d2b1a';border='#69f0ae';tc='#69f0ae';}
+      else if(k>s&&k<s+m){bg='#1e2130';border='#3a3f50';tc='#8090a0';}
+      else if(k>=s&&k<s+m){bg='#2a1f00';border='#ffd74055';tc='#ffd74088';}
+    } else {
+      if(k>=s&&k<s+m&&!found.some(f=>k>=f&&k<f+m)&&!spurious.some(sp=>k>=sp&&k<sp+m)){bg='#2a1f00';border='#ffd740';tc='#ffd740';}
+    }
     ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.fill();
     ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+k*(bw+gap),ty,bw,bh,4);ctx.stroke();
     ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(T[k],startX+k*(bw+gap)+bw/2,ty+bh/2);
+  }
+
+  // rolling: draw minus arrow over removeIdx, plus arrow over addIdx
+  if(st.rolling){
+    const arrowY=ty-4;
+    const rx=startX+st.removeIdx*(bw+gap)+bw/2;
+    const ax=startX+st.addIdx*(bw+gap)+bw/2;
+    // minus sign above remove char
+    ctx.fillStyle='#ef5350';ctx.font=`bold 15px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('−',rx,arrowY);
+    // plus sign above add char
+    ctx.fillStyle='#69f0ae';ctx.font=`bold 15px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('+',ax,arrowY);
+    // dashed arrow from old window to new window (shift right)
+    const wx1=startX+s*(bw+gap)+bw/2;
+    const wx2=startX+(s+1)*(bw+gap)+bw/2;
+    const wy=ty+bh+rowGap+hashBarH/2;
+    ctx.save();ctx.strokeStyle='#ffd74088';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(wx1,wy);ctx.lineTo(wx2-4,wy);ctx.stroke();
+    ctx.setLineDash([]);
+    // arrowhead
+    ctx.fillStyle='#ffd74088';ctx.beginPath();ctx.moveTo(wx2,wy);ctx.lineTo(wx2-7,wy-4);ctx.lineTo(wx2-7,wy+4);ctx.closePath();ctx.fill();
+    ctx.restore();
   }
 
   // hash bar under current window
@@ -769,13 +808,13 @@ function drawRk(){
   const barW=m*(bw+gap)-gap;
   const isMatch=st.th===st.ph;
   const isReal=T.slice(s,s+m)===P;
-  ctx.fillStyle=isMatch?(isReal?'rgba(105,240,174,0.15)':'rgba(229,57,53,0.15)'):'rgba(92,107,192,0.1)';
+  const barColor=st.rolling?'#ffd740':isMatch?(isReal?'#69f0ae':'#e53935'):'#5c6bc0';
+  ctx.fillStyle=st.rolling?'rgba(255,215,64,0.08)':isMatch?(isReal?'rgba(105,240,174,0.15)':'rgba(229,57,53,0.15)'):'rgba(92,107,192,0.1)';
   ctx.fillRect(barX,barY,barW,hashBarH);
-  ctx.strokeStyle=isMatch?(isReal?'#69f0ae':'#e53935'):'#5c6bc0';
-  ctx.lineWidth=1;ctx.strokeRect(barX,barY,barW,hashBarH);
-  ctx.fillStyle=isMatch?(isReal?'#69f0ae':'#ef9a9a'):'#7986cb';
+  ctx.strokeStyle=barColor;ctx.lineWidth=1;ctx.strokeRect(barX,barY,barW,hashBarH);
+  ctx.fillStyle=barColor;
   ctx.font=`bold 13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(`h=${st.th}`,barX+barW/2,barY+hashBarH/2);
+  ctx.fillText(st.rolling?`${st.oldTh} → ${st.newTh}`:`h=${st.th}`,barX+barW/2,barY+hashBarH/2);
 }
 
 window.rkRestart=function(){
