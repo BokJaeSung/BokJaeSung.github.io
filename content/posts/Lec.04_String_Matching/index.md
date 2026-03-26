@@ -194,27 +194,27 @@ naiveRestart();
 
 ### 핵심 관찰
 
-나이브는 불일치 시 맞춰둔 $q$ 개의 정보를 전부 버리고 $s+1$ 로 이동한다.
+나이브는 불일치 시 맞춰둔 $j$ 개의 정보를 전부 버리고 $s+1$ 로 이동한다.
 
-그런데 우리는 이미 $T[s+1 \cdots s+q] = P[1 \cdots q]$ 라는 사실을 알고 있다. **텍스트 포인터 $i$ 는 절대 뒤로 가지 않는다.** 불일치 시 패턴 포인터 $q$ 만 $\pi[q-1]$ 로 줄인다.
+그런데 우리는 이미 $T[s+1 \cdots s+j] = P[1 \cdots j]$ 라는 사실을 알고 있다. **텍스트 포인터 $i$ 는 절대 뒤로 가지 않는다.** 불일치 시 패턴 포인터 $j$ 만 $\pi[j-1]$ 로 줄인다.
 
 ### Prefix Function (접두사 함수)
 
-$\pi[q]$ = $P[0 \cdots q]$ 에서 **자기 자신을 제외한** 접두사이면서 동시에 접미사인 것 중 가장 긴 길이.
+$\pi[i]$ = $P[0 \cdots i]$ 에서 **자기 자신을 제외한** 접두사이면서 동시에 접미사인 것 중 가장 긴 길이.
 
-자기 자신을 제외하는 이유: 포함하면 $q = \pi[q]$ 가 되어 무한루프. 항상 $\pi[q] < q$ 가 성립해야 한다.
+자기 자신을 제외하는 이유: 포함하면 $i = \pi[i]$ 가 되어 무한루프. 항상 $\pi[i] < i$ 가 성립해야 한다.
 
 ```python
 def compute_prefix_function(P: str):
     m = len(P)
     pi = [0] * m
-    k = 0
-    for q in range(1, m):
-        while k > 0 and P[k] != P[q]:
-            k = pi[k - 1]
-        if P[k] == P[q]:
-            k += 1
-        pi[q] = k
+    j = 0
+    for i in range(1, m):
+        while j > 0 and P[j] != P[i]:
+            j = pi[j - 1]
+        if P[j] == P[i]:
+            j += 1
+        pi[i] = j
     return pi
 ```
 
