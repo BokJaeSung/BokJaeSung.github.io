@@ -950,6 +950,43 @@ $$h_{s+1} = \left(d \cdot h_s - S[s] \cdot d^L + S[s+L]\right) \bmod q$$
 
 **시간복잡도:** $O(n \log n)$ — `check` $O(n)$ × 이진탐색 $O(\log n)$
 
+```python
+def has_duplicate_substring(T: str, L: int, d=256, q=10**9+7) -> bool:
+    n = len(T)
+    if L == 0:
+        return True
+    if L > n:
+        return False
+    h = pow(d, L - 1, q)
+    t = 0
+    for i in range(L):
+        t = (d * t + ord(T[i])) % q
+    seen = {t: [0]}
+    for s in range(1, n - L + 1):
+        t = (d * (t - ord(T[s - 1]) * h) + ord(T[s + L - 1])) % q
+        if t in seen:
+            current = T[s:s + L]
+            for prev in seen[t]:
+                if T[prev:prev + L] == current:
+                    return True
+            seen[t].append(s)
+        else:
+            seen[t] = [s]
+    return False
+
+
+def longest_repeated(n: int, s: str) -> int:
+    def bin_search(left: int, right: int) -> int:
+        if left > right:
+            return right
+        mid = (left + right) // 2
+        if has_duplicate_substring(s, mid):
+            return bin_search(mid + 1, right)
+        else:
+            return bin_search(left, mid - 1)
+    return bin_search(0, n)
+```
+
 {{< rawhtml >}}
 <div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);">
 <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
