@@ -875,80 +875,75 @@ def maximum_exponent(s: str):
 
 ## 6. Problem 4.3 — Longest Repeated Substring
 
-### 문제 정의
+### 문제
 
-- **입력:** 소문자 영문자로 구성된 길이 $n$ 의 문자열 $S$
-- **출력:** $S$ 에서 **두 번 이상** 등장하는 부분 문자열 중 가장 긴 것의 길이 $L$
-- **조건:** 두 등장 위치는 겹쳐도 된다 (overlapping 허용)
+$S = \texttt{banana}$ 에서 두 번 이상 나오는 부분 문자열 중 가장 긴 것은?
 
-| 예시 | 답 | 이유 |
+- `b` → 1번 → ✗
+- `an` → $S[1..2]$, $S[3..4]$ → ✓
+- `ana` → $S[1..3]$, $S[3..5]$ → ✓ (겹쳐도 됨!)
+- `anan` → 1번 → ✗
+
+→ 답: $L = 3$
+
+| 예시 | 답 | 근거 |
 |------|-----|------|
-| $S = \texttt{abcabcabc}$ | $L = 6$ | `abcabc` 가 $S[0..6]$, $S[3..9]$ 에 등장 (overlap 허용) |
-| $S = \texttt{abcd}$ | $L = 0$ | 두 번 이상 등장하는 부분 문자열 없음 |
-| $S = \texttt{banana}$ | $L = 3$ | `ana` 가 $S[1..3]$, $S[3..5]$ 에 등장 |
+| `abcabcabc` | 6 | `abcabc` 가 위치 0, 3 에 등장 (overlap) |
+| `abcd` | 0 | 반복 부분문자열 없음 |
+| `banana` | 3 | `ana` 가 위치 1, 3 에 등장 |
 
-### 접근법 비교
-
-#### DP — $O(n^2)$
-
-모든 접미사 쌍의 LCP(Longest Common Prefix)를 DP로 구한다.
-
-$$\text{LCP}(S[i:],\, S[j:]) = dp[i][j]$$
-
-$$dp[i][j] = \begin{cases} dp[i+1][j+1] + 1 & S[i] = S[j] \\ 0 & \text{otherwise} \end{cases}$$
-
-답 $= \max_{i < j} dp[i][j]$. 테이블 크기가 $O(n^2)$ 이므로 시간·공간 모두 $O(n^2)$.
-
-#### KMP — $O(n^2)$
-
-각 접미사 $S[i:]$ 에 대해 prefix function을 계산하면, $\pi[k]$ 의 최댓값이 해당 접미사 내의 가장 긴 반복 접두사 길이다. 하지만 접미사가 $n$ 개이고 각 prefix function 계산이 $O(n)$ 이므로 전체 $O(n^2)$.
-
-#### Rabin-Karp + 이진탐색 — $O(n \log n)$
-
-### 핵심 관찰 — 단조성
+### 왜 이진탐색인가?
 
 `check(L)` = "길이 $L$ 인 중복 부분문자열이 존재하는가?"
 
-> `check(L)` = True 이면 `check(L-1)` = True
+길이 $L$ 짜리가 두 번 나오면, 그 앞 $L-1$ 글자도 두 번 나온다. 즉:
 
-길이 $L$ 인 반복 부분문자열의 길이 $L-1$ 접두사도 두 번 이상 등장하기 때문이다. 따라서 유효한 길이 집합은 $\{0, 1, \ldots, k\}$ 형태 → **이진탐색 가능**.
+$$\text{check}(L) = \text{True} \implies \text{check}(L-1) = \text{True}$$
 
-$$lo = 0,\quad hi = n - 1$$
+유효한 길이들이 항상 $\{0, 1, \ldots, k\}$ 형태 → **이진탐색으로 최대 $k$ 탐색 가능**.
 
-### check(L) 구현 — Rolling Hash
+### 왜 세 가지 접근법이 있는가?
 
-고정된 $L$ 에 대해 모든 길이 $L$ 부분문자열 $S[0:L],\ S[1:L+1],\ \ldots,\ S[n-L:n]$ 의 해시를 $O(n)$ 에 계산해 집합에 넣는다.
+| 방법 | 핵심 아이디어 | 복잡도 |
+|------|-------------|--------|
+| **DP** | $dp[i][j]$ = $S[i:]$ 와 $S[j:]$ 의 LCP. $S[i]=S[j]$ 이면 $dp[i][j]=dp[i+1][j+1]+1$ | $O(n^2)$ |
+| **KMP** | 각 접미사 $S[i:]$ 의 prefix function 최댓값 = 그 접미사 내 가장 긴 반복. 하지만 접미사 $n$ 개 × 각 $O(n)$ | $O(n^2)$ |
+| **Rabin-Karp + 이진탐색** | `check(L)` 을 rolling hash로 $O(n)$, 이진탐색 $O(\log n)$ 번 호출 | $O(n \log n)$ |
 
-$$h_s = \left(\sum_{i=0}^{L-1} S[s+i]\cdot d^{L-1-i}\right) \bmod q$$
+### check(L) — Rolling Hash로 O(n)
 
-Rolling Hash로 $O(1)$ 갱신:
+길이 $L$ 짜리 창을 왼쪽부터 오른쪽으로 슬라이드하면서 각 창의 해시를 집합에 넣는다. 해시가 이미 있으면 실제 문자열도 같은지 확인 (충돌 방어).
 
-$$h_{s+1} = \left(d \cdot h_s - S[s] \cdot d^L + S[s+L]\right) \bmod q$$
+```
+S = b a n a n a,  L = 3
 
-**check(L) 절차:**
+창[0]: "ban" → hash=H1 → seen={H1:[0]}
+창[1]: "ana" → hash=H2 → seen={H1:[0], H2:[1]}
+창[2]: "nan" → hash=H3 → seen={..., H3:[2]}
+창[3]: "ana" → hash=H2 → H2 이미 있음! "ana"=="ana" → True ✓
+```
 
-1. 첫 번째 부분문자열의 해시를 계산해 집합에 삽입
-2. 윈도우를 한 칸씩 슬라이드하며 rolling hash 갱신
-3. 해시가 집합에 이미 존재하면 → 실제 문자열 비교 (충돌 검증)
-4. 실제로도 같으면 True 반환, 끝까지 없으면 False 반환
+rolling hash 갱신 ($O(1)$):
 
-### 해시 충돌 처리
+$$h_{s+1} = \bigl(d \cdot h_s - S[s] \cdot d^L + S[s+L]\bigr) \bmod q$$
 
-서로 다른 부분문자열이 같은 해시를 가질 수 있다 (spurious hit).
+**해시 충돌:** 해시가 같아도 실제 문자열이 다를 수 있으므로 반드시 문자열 비교로 검증한다.
 
-| 방법 | 설명 |
-|------|------|
-| **Strict Verification** | 해시 일치 시 실제 문자열 $O(L)$ 비교 |
-| **Double Hashing** | 독립적인 두 해시 $(H_1, H_2)$ 동시 사용 → 충돌 확률 $\approx \frac{1}{q_1 q_2}$ |
+### 전체 알고리즘
 
-### 알고리즘 요약
+```
+left=0, right=n, ans=0
+while left <= right:
+    mid = (left+right) // 2
+    if check(mid):          # 길이 mid 짜리 중복 있음
+        ans = mid
+        left = mid + 1      # 더 긴 것도 가능한지 탐색
+    else:
+        right = mid - 1     # 더 짧은 것만 가능
+return ans
+```
 
-1. $lo = 0,\ hi = n-1$
-2. $mid = (lo + hi) / 2$
-3. `check(mid)` 가 True → $lo = mid + 1$, False → $hi = mid - 1$
-4. 최종 답 $L = lo - 1$
-
-**시간복잡도:** $O(n \log n)$ — `check` $O(n)$ × 이진탐색 $O(\log n)$
+**시간복잡도:** `check` $O(n)$ × 이진탐색 $O(\log n)$ = $O(n \log n)$
 
 ```python
 def has_duplicate_substring(T: str, L: int, d=256, q=10**9+7) -> bool:
@@ -992,64 +987,63 @@ def longest_repeated(n: int, s: str) -> int:
 <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
   <input id="bs-S" value="banana" maxlength="14" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:160px;" placeholder="String S">
   <button onclick="bsRestart()" style="padding:6px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:13px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">시작</button>
+  <button onclick="bsBack()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">◀ 이전</button>
   <button onclick="bsStep()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">▶ 다음</button>
-  <button onclick="bsAuto()" id="bs-auto-btn" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">⏩ 자동</button>
 </div>
 <canvas id="bs-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
-<div style="display:flex;gap:10px;margin-top:10px;">
-  <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
-    <div id="bs-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
-  </div>
-  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;">
-    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Binary Search</div>
-    <div>left: <span id="bs-left" style="color:#90caf9;">-</span></div>
-    <div>right: <span id="bs-right" style="color:#90caf9;">-</span></div>
-    <div>mid: <span id="bs-mid" style="color:#ffd740;">-</span></div>
-    <div>답: <span id="bs-ans" style="color:#69f0ae;">-</span></div>
-  </div>
+<div style="background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;margin-top:10px;">
+  <div id="bs-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.8;">시작 버튼을 누르세요.</div>
 </div>
-<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = true (duplicate exists) · red = false · amber = current mid</p>
 </div>
 <script>
 (function(){
 const cv=document.getElementById('bs-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=160,dpr=1;
-cv.style.aspectRatio='560/160';
+let W=560,H=280,dpr=1;
+cv.style.aspectRatio='560/280';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(bss)drawBs();}
 new ResizeObserver(resize).observe(cv);
 
-let bss=null,bsTimer=null;
+let bss=null;
 const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
 const RD=256,RQ=1000003;
 
 function hasDup(s,L){
-  if(L===0)return true;
-  const n=s.length;if(L>n)return false;
+  if(L===0)return{found:true,pos:[]};
+  const n=s.length;if(L>n)return{found:false,pos:[]};
   let h=1;for(let i=0;i<L-1;i++)h=(h*RD)%RQ;
   let t=0;for(let i=0;i<L;i++)t=(RD*t+s.charCodeAt(i))%RQ;
   const seen=new Map();seen.set(t,[0]);
   for(let i=1;i<=n-L;i++){
     t=((RD*(t-s.charCodeAt(i-1)*h%RQ+RQ)+s.charCodeAt(i+L-1))%RQ+RQ)%RQ;
-    if(seen.has(t)){for(const p of seen.get(t)){if(s.slice(p,p+L)===s.slice(i,i+L))return true;}seen.get(t).push(i);}
-    else seen.set(t,[i]);
+    if(seen.has(t)){
+      for(const p of seen.get(t)){
+        if(s.slice(p,p+L)===s.slice(i,i+L))return{found:true,pos:[p,i]};
+      }
+      seen.get(t).push(i);
+    } else seen.set(t,[i]);
   }
-  return false;
+  return{found:false,pos:[]};
 }
 
 function buildSteps(s){
   const n=s.length;
+  const C=(v,c)=>`<span style="color:${c}">${v}</span>`;
   const steps=[];
   let left=0,right=n,ans=0;
-  steps.push({left,right,mid:null,result:null,ans,msg:`이진탐색 시작: left=${left}, right=${right}`});
+  steps.push({left,right,mid:null,result:null,ans,winPos:[],winLen:0,
+    msg:`이진탐색 시작<br>${C('left='+left,'#90caf9')}, ${C('right='+right,'#90caf9')}`});
   while(left<=right){
     const mid=Math.floor((left+right)/2);
-    const res=hasDup(s,mid);
-    steps.push({left,right,mid,result:res,ans,msg:`check(${mid}) = ${res} → ${res?`left=${mid+1}`:`right=${mid-1}`}`});
-    if(res){ans=mid;left=mid+1;}
+    const {found,pos}=hasDup(s,mid);
+    const substr=found&&mid>0?` → "${C(s.slice(pos[0],pos[0]+mid),'#69f0ae')}" 위치 ${C(pos[0],'#ffd740')}, ${C(pos[1],'#ffd740')}`:'';
+    steps.push({left,right,mid,result:found,ans,winPos:pos,winLen:mid,
+      msg:`${C('mid='+mid,'#ffd740')}: check(${mid}) = ${found?C('True','#69f0ae'):C('False','#ef5350')}${substr}<br>→ ${found?C('left='+(mid+1),'#90caf9'):C('right='+(mid-1),'#90caf9')}`});
+    if(found){ans=mid;left=mid+1;}
     else right=mid-1;
   }
-  steps.push({left,right,mid:null,result:null,ans,msg:`완료! 최장 반복 부분문자열 길이 = ${ans}`});
+  steps.push({left,right,mid:null,result:null,ans,winPos:[],winLen:0,
+    msg:`완료! 최장 반복 부분문자열 길이 = ${C(ans,'#69f0ae')}${ans>0?` ("${C(s.slice(0,ans),'#ffd740')}..." 등)`:`  (반복 없음)`}`});
   return steps;
 }
 
@@ -1059,76 +1053,101 @@ function drawBs(){
   const {s,steps,idx}=bss;
   const n=s.length;
   const st=steps[idx];
-  const bw=Math.min(Math.floor((W-60)/(n+1)),54);
-  const bh=Math.max(42,Math.round(H*0.26));
-  const gap=4;
-  const startX=(W-(n+1)*(bw+gap))/2;
-  const ty=18;
-  const fs=Math.round(bh*0.43);
 
-  // draw length boxes 0..n
+  // === Row 1: binary search on lengths 0..n ===
+  const bw1=Math.min(Math.floor((W-40)/(n+1)),52);
+  const bh1=Math.max(36,Math.round(H*0.15));
+  const gap1=3;
+  const row1X=(W-(n+1)*(bw1+gap1))/2;
+  const row1Y=Math.round(H*0.05);
+  const fs1=Math.round(bh1*0.42);
+
+  // label
+  ctx.fillStyle='#8090a0';ctx.font=`12px ${MONO}`;ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('길이',row1X-36,row1Y+bh1/2);
+
+  // cumulative answer: all lengths ≤ ans are confirmed True
+  let curAns=0;steps.slice(0,idx+1).forEach(st=>{if(st.ans>curAns)curAns=st.ans;});
+
   for(let L=0;L<=n;L++){
-    let bg='#1e2130',border='#2a2d3a',tc='#8090a0';
+    let bg='#1e2130',border='#2a2d3a',tc='#607080';
     if(st.mid===L){bg='#2a1f00';border='#ffd740';tc='#ffd740';}
-    else if(L<=bss.answers[idx]){bg='#1b3a1f';border='#43a047';tc='#69f0ae';}
-    else if(st.result===false&&st.mid!==null&&L>st.mid){bg='#1e2130';border='#2a2d3a';tc='#37474f';}
+    else if(L<=curAns&&curAns>0){bg='#0d2818';border='#43a047';tc='#69f0ae';}
+    else if(st.result===false&&st.mid!==null&&L>st.right){tc='#37474f';}
+    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(row1X+L*(bw1+gap1),row1Y,bw1,bh1,4);ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(row1X+L*(bw1+gap1),row1Y,bw1,bh1,4);ctx.stroke();
+    ctx.fillStyle=tc;ctx.font=`bold ${fs1}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(L,row1X+L*(bw1+gap1)+bw1/2,row1Y+bh1/2);
+  }
+  // L R M pointers
+  const pY=row1Y+bh1+4;
+  ctx.font=`bold 12px sans-serif`;ctx.textBaseline='top';
+  if(st.left<=n){ctx.fillStyle='#90caf9';ctx.textAlign='center';ctx.fillText('L',row1X+st.left*(bw1+gap1)+bw1/2,pY);}
+  if(st.right>=0&&st.right<=n){ctx.fillStyle='#90caf9';ctx.textAlign='center';ctx.fillText('R',row1X+st.right*(bw1+gap1)+bw1/2,pY);}
+  if(st.mid!==null){ctx.fillStyle='#ffd740';ctx.textAlign='center';ctx.fillText('M',row1X+st.mid*(bw1+gap1)+bw1/2,pY+14);}
 
-    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(startX+L*(bw+gap),ty,bw,bh,4);ctx.fill();
-    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(startX+L*(bw+gap),ty,bw,bh,4);ctx.stroke();
-    ctx.fillStyle=tc;ctx.font=`bold ${fs}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(L,startX+L*(bw+gap)+bw/2,ty+bh/2);
+  // === Row 2: string S with sliding window for current mid ===
+  const bw2=Math.min(Math.floor((W-40)/n),52);
+  const bh2=Math.max(36,Math.round(H*0.15));
+  const gap2=3;
+  const row2X=(W-n*(bw2+gap2))/2;
+  const row2Y=Math.round(H*0.52);
+  const fs2=Math.round(bh2*0.44);
+  const L=st.winLen;
+  const [p1,p2]=st.winPos;
+
+  ctx.fillStyle='#8090a0';ctx.font=`12px ${MONO}`;ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('문자열',row2X-46,row2Y+bh2/2);
+
+  for(let k=0;k<n;k++){
+    let bg='#1e2130',border='#2a2d3a',tc='#b0b8d0';
+    if(st.result===true&&L>0){
+      if(k>=p1&&k<p1+L){bg='#0d2818';border='#43a047';tc='#69f0ae';}
+      if(k>=p2&&k<p2+L){bg='#1a0a2e';border='#7c4dff';tc='#ce93d8';}
+    } else if(st.result===false&&L>0){
+      // show last window checked = position n-L
+      const last=n-L;
+      if(k>=last&&k<last+L){bg='#2a0a0a';border='#ef5350';tc='#ef9a9a';}
+    }
+    ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(row2X+k*(bw2+gap2),row2Y,bw2,bh2,4);ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(row2X+k*(bw2+gap2),row2Y,bw2,bh2,4);ctx.stroke();
+    ctx.fillStyle=tc;ctx.font=`bold ${fs2}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(s[k],row2X+k*(bw2+gap2)+bw2/2,row2Y+bh2/2);
+    // index
+    ctx.fillStyle='#8090a0';ctx.font=`${Math.round(bh2*0.28)}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(k,row2X+k*(bw2+gap2)+bw2/2,row2Y-10);
   }
 
-  // left/right arrows
-  if(st.left!==null&&st.left<=n){
-    const lx=startX+st.left*(bw+gap);
-    ctx.fillStyle='#90caf9';ctx.font=`13px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('L',lx+bw/2,ty+bh+4);
-  }
-  if(st.right!==null&&st.right>=0&&st.right<=n){
-    const rx=startX+st.right*(bw+gap);
-    ctx.fillStyle='#90caf9';ctx.font=`13px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('R',rx+bw/2,ty+bh+4);
-  }
-  if(st.mid!==null){
-    const mx=startX+st.mid*(bw+gap);
-    ctx.fillStyle='#ffd740';ctx.font=`13px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('M',mx+bw/2,ty+bh+18);
+  // legend for row2
+  if(st.result===true&&L>0){
+    const lx=row2X,ly=row2Y+bh2+8;
+    ctx.font=`12px ${MONO}`;ctx.textBaseline='top';
+    ctx.fillStyle='#43a047';ctx.fillText(`■ 첫 번째 등장 [${p1}..${p1+L-1}]`,lx,ly);
+    ctx.fillStyle='#7c4dff';ctx.fillText(`■ 두 번째 등장 [${p2}..${p2+L-1}]`,lx+180,ly);
+  } else if(st.result===false&&L>0){
+    ctx.font=`12px ${MONO}`;ctx.textBaseline='top';
+    ctx.fillStyle='#ef5350';ctx.fillText(`■ 중복 없음 (길이 ${L})`,row2X,row2Y+bh2+8);
   }
 }
 
 window.bsRestart=function(){
-  if(bsTimer){clearInterval(bsTimer);bsTimer=null;document.getElementById('bs-auto-btn').textContent='⏩ 자동';}
   const s=document.getElementById('bs-S').value||'banana';
   const steps=buildSteps(s);
-  // precompute cumulative answers
-  const answers=new Array(steps.length).fill(0);
-  let maxAns=0;
-  steps.forEach((st,i)=>{if(st.ans>maxAns)maxAns=st.ans;answers[i]=maxAns;});
-  bss={s,steps,idx:0,answers};
-  document.getElementById('bs-left').textContent='0';
-  document.getElementById('bs-right').textContent=s.length;
-  document.getElementById('bs-mid').textContent='-';
-  document.getElementById('bs-ans').textContent='-';
-  document.getElementById('bs-info').textContent=steps[0].msg;
+  bss={s,steps,idx:0};
+  document.getElementById('bs-info').innerHTML=steps[0].msg;
+  drawBs();
+};
+window.bsBack=function(){
+  if(!bss||bss.idx<=0)return;
+  bss.idx--;
+  document.getElementById('bs-info').innerHTML=bss.steps[bss.idx].msg;
   drawBs();
 };
 window.bsStep=function(){
   if(!bss||bss.idx>=bss.steps.length-1)return;
   bss.idx++;
-  const st=bss.steps[bss.idx];
-  document.getElementById('bs-info').textContent=st.msg;
-  document.getElementById('bs-left').textContent=st.left;
-  document.getElementById('bs-right').textContent=st.right;
-  document.getElementById('bs-mid').textContent=st.mid??'-';
-  document.getElementById('bs-ans').textContent=st.ans||'-';
+  document.getElementById('bs-info').innerHTML=bss.steps[bss.idx].msg;
   drawBs();
-};
-window.bsAuto=function(){
-  if(bsTimer){clearInterval(bsTimer);bsTimer=null;document.getElementById('bs-auto-btn').textContent='⏩ 자동';return;}
-  if(!bss)bsRestart();
-  document.getElementById('bs-auto-btn').textContent='⏸ 정지';
-  bsTimer=setInterval(()=>{if(!bss||bss.idx>=bss.steps.length-1){clearInterval(bsTimer);bsTimer=null;document.getElementById('bs-auto-btn').textContent='⏩ 자동';return;}bsStep();},600);
 };
 bsRestart();
 })();
