@@ -281,15 +281,17 @@ function buildPiSteps(P){
     while(j>0&&P[i]!==P[j]){
       const jprev=j;
       j=pi[j-1];
-      steps.push({i,j,jb:jprev,jc:j,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>: P[${jprev}]='<span style="color:#ffd740">${P[jprev]}</span>' <span style="color:#ef5350;font-weight:700">≠</span> P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → fallback j=<span style="color:#ce93d8">${jprev}</span>→<span style="color:#ce93d8">${j}</span>`});
+      steps.push({i,j,jb:jprev,jc:j,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jprev}</span><br>P[${jprev}]='<span style="color:#ffd740">${P[jprev]}</span>' <span style="color:#ef5350;font-weight:700">≠</span> P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → 불일치<br>fallback: j = π[j-1] = π[${jprev-1}] = <span style="color:#ce93d8">${j}</span>`});
     }
     const jc=j;
     if(P[i]===P[j])j++;
     pi[i]=j;
     const match=P[jc]===P[i];
     const cmp=match?`<span style="color:#69f0ae;font-weight:700">=</span>`:`<span style="color:#ef5350;font-weight:700">≠</span>`;
-    const jresult=match?`j++ → j=<span style="color:#ce93d8">${j}</span>`:`j stays <span style="color:#ce93d8">0</span>`;
-    steps.push({i,j,jb:jc,jc,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jc}</span>: P[${jc}]='<span style="color:#ffd740">${P[jc]??'-'}</span>' ${cmp} P[${i}]='<span style="color:#ffd740">${P[i]}</span>' → ${jresult} → <span style="color:#69f0ae">π[${i}]=${j}</span>`});
+    const line3=match
+      ?`일치 → j++ → j=<span style="color:#ce93d8">${j}</span> → <span style="color:#69f0ae">π[${i}] = ${j}</span>`
+      :`불일치 (j=0 도달) → <span style="color:#69f0ae">π[${i}] = 0</span>`;
+    steps.push({i,j,jb:jc,jc,pi:[...pi],msg:`<span style="color:#90caf9">i=${i}</span>, <span style="color:#ef5350">j=${jc}</span><br>P[${jc}]='<span style="color:#ffd740">${P[jc]??'-'}</span>' ${cmp} P[${i}]='<span style="color:#ffd740">${P[i]}</span>'<br>${line3}`});
   }
   return steps;
 }
