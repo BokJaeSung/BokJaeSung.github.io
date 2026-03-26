@@ -461,8 +461,8 @@ def string_matching_kmp(T: str, P: str):
 (function(){
 const cv=document.getElementById('kmp-canvas');
 const ctx=cv.getContext('2d');
-let W=560,H=230,dpr=1;
-cv.style.aspectRatio='560/230';
+let W=760,H=260,dpr=1;
+cv.style.aspectRatio='760/260';
 function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(ks)drawKmp();}
 new ResizeObserver(resize).observe(cv);
 
@@ -513,9 +513,9 @@ function drawKmp(){
   const st=steps[idx];
   const n=T.length,m=P.length;
   const labelW=48;
-  const bw=Math.min(Math.floor((W-labelW-8)/n),40);
-  const bh=Math.max(36,Math.round(H*0.18));
-  const gap=2;
+  const gap=3;
+  const bw=Math.min(Math.floor((W-labelW-8-(n-1)*gap)/n),48);
+  const bh=Math.max(38,Math.round(H*0.17));
   const rowGap=Math.round(H*0.08);
   const totalH=bh*3+rowGap*2;
   const wy=Math.round((H-totalH)/2);
