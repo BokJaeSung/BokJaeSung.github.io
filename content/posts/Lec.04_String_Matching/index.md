@@ -19,7 +19,7 @@ $s$ 는 **shift** — 패턴을 텍스트 위에 갖다 댈 시작 위치다. $s
 
 ---
 
-## 2. 나이브 알고리즘
+## 2. Naive way
 
 가장 단순한 접근: 모든 $s$ 에 대해 패턴을 처음부터 비교한다.
 
@@ -478,26 +478,30 @@ function buildKmpSteps(T,P,pi){
   const cP=v=>C(v,'#ef5350');   // p_idx - red
   const cChr=v=>C(`'${v}'`,'#ffd740');
   const cRes=v=>C(v,'#ce93d8');
-  const steps=[{w:0,p:0,found:[],msg:`${cW('w_idx=0')}, ${cP('p_idx=0')} 에서 시작`}];
+  const steps=[];
   let w=0,p=0,found=[];
   while(w<n){
     if(T[w]===P[p]){
-      const msg=`${cW('w_idx='+w)}, ${cP('p_idx='+p)}<br>${cChr(T[w])} = ${cChr(P[p])} → 일치<br>w_idx: ${cW(w)}→${cW(w+1)}, p_idx: ${cP(p)}→${cP(p+1)}`;
+      // push BEFORE incrementing: show current comparison position
+      steps.push({w,p,found:[...found],match:true,
+        msg:`${cW('w_idx='+w)}, ${cP('p_idx='+p)}<br>${cChr(T[w])} = ${cChr(P[p])} → 일치<br>w_idx: ${cW(w)}→${cW(w+1)}, p_idx: ${cP(p)}→${cP(p+1)}`});
       w++;p++;
       if(p===m){
         const pos=w-m;found=[...found,pos];
-        steps.push({w,p,found:[...found],match:true,msg:`${cW('w_idx='+w)}, ${cP('p_idx='+p)}<br>패턴 발견! 위치 ${cRes(pos)}<br>p_idx = π[${m-1}] = ${cRes(pi[m-1])} (fallback)`});
+        steps.push({w,p:m,found:[...found],match:true,
+          msg:`${cW('w_idx='+w)}, ${cP('p_idx='+(m))}<br>패턴 발견! 위치 ${cRes(pos)}<br>p_idx = π[${m-1}] = ${cRes(pi[m-1])} (fallback)`});
         p=pi[m-1];
-      } else {
-        steps.push({w,p,found:[...found],match:true,msg});
       }
     } else {
       if(p>0){
         const pb=p;
-        p=pi[p-1];
-        steps.push({w,p,found:[...found],fallback:true,msg:`${cW('w_idx='+w)}, ${cP('p_idx='+pb)}<br>${cChr(T[w])} ≠ ${cChr(P[pb])} → 불일치<br>p_idx = π[${pb-1}] = ${cRes(p)} (i 고정, p fallback)`});
+        // push before fallback: show mismatch position
+        steps.push({w,p:pb,found:[...found],fallback:true,
+          msg:`${cW('w_idx='+w)}, ${cP('p_idx='+pb)}<br>${cChr(T[w])} ≠ ${cChr(P[pb])} → 불일치<br>p_idx = π[${pb-1}] = ${cRes(pi[pb-1])} (w 고정, p fallback)`});
+        p=pi[pb-1];
       } else {
-        steps.push({w,p,found:[...found],msg:`${cW('w_idx='+w)}, ${cP('p_idx=0')}<br>${cChr(T[w])} ≠ ${cChr(P[0])} → 불일치<br>p_idx=0, w_idx: ${cW(w)}→${cW(w+1)}`});
+        steps.push({w,p:0,found:[...found],
+          msg:`${cW('w_idx='+w)}, ${cP('p_idx=0')}<br>${cChr(T[w])} ≠ ${cChr(P[0])} → 불일치<br>p_idx=0 유지, w_idx: ${cW(w)}→${cW(w+1)}`});
         w++;
       }
     }
