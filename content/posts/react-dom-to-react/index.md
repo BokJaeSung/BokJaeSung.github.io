@@ -4,10 +4,7 @@ date: 2026-03-31T12:00:00+09:00
 tags: ['react', 'dom', 'frontend', 'javascript', 'refactoring']
 ---
 
-이 글은 두 파트로 구성된다.
-
-- **1~5장**: DOM, Virtual DOM, React 기초 개념 정리
-- **6장**: 실제 MPA 프로젝트를 React로 리팩터링하면서 결정한 것들
+DOM부터 React까지 개념을 정리하고, 실제 프로젝트를 React로 리팩터링하면서 결정한 것들을 함께 기록한다.
 
 ## 1. DOM (Document Object Model)
 
