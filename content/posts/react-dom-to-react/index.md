@@ -1,5 +1,5 @@
 ---
-title: "From DOM to React - Understanding the Web Frontend"
+title: "React.01 From DOM to React"
 date: 2026-03-31T12:00:00+09:00
 tags: ['react', 'dom', 'frontend', 'javascript', 'refactoring']
 description: "Covers DOM, Virtual DOM, and React fundamentals, along with decisions made while refactoring a real MPA project to React."
@@ -950,3 +950,28 @@ async function sendMessage(text) {
 개발: VITE_API_URL=http://localhost:8000
 배포: VITE_API_URL=https://api.iai.com
 ```
+
+---
+
+## 정리
+
+이 글에서 다룬 핵심 내용을 한 눈에 정리한다.
+
+| 개념 | 한 줄 요약 |
+|---|---|
+| **DOM** | 브라우저가 HTML을 읽고 메모리에 만든 트리 구조. JS가 건드리는 대상 |
+| **Virtual DOM** | 실제 DOM 건드리기 전에 메모리에서 계산하고, 바뀐 부분만 반영 |
+| **컴포넌트** | JSX를 반환하는 함수. 레고 블록처럼 조합해서 화면을 만든다 |
+| **props** | 컴포넌트에 데이터를 넘기는 방법. 함수 파라미터와 같은 개념 |
+| **useState** | React가 알아야 화면이 바뀐다. setter 함수로만 값을 바꿔야 한다 |
+| **useEffect** | 서버 요청, 타이머 같은 사이드 이펙트를 넣는 공간 |
+| **CSR / SPA** | JS가 DOM을 직접 만든다. HTML 파일은 하나, 컴포넌트만 교체 |
+| **클라이언트 보안** | 클라이언트 코드는 전부 공개된다. 중요한 건 서버에만 |
+| **SSR / Next.js** | 서버에서 HTML을 미리 만들어 보내는 방식. SEO가 필요하면 고려 |
+
+MPA → React 리팩터링에서 얻은 교훈:
+
+- **인증 로직은 Context 하나로 모아라.** 복붙된 코드가 버그의 온상이다.
+- **폴더 구조는 필요할 때 추가하라.** 처음부터 `hooks/`, `components/` 다 만들면 오히려 복잡해진다.
+- **더미 데이터로 화면 먼저 완성하고, API는 나중에 연동하라.** 화면이 있어야 API 명세도 명확해진다.
+- **React Router는 실제 배포 서비스라면 사실상 필수다.** URL이 바뀌지 않으면 뒤로가기, 새로고침, 링크 공유가 전부 망가진다.
