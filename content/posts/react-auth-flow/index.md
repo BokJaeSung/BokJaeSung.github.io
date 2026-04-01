@@ -1,6 +1,6 @@
 ---
 title: "React.02 Authentication Flow"
-date: 2026-04-01T12:00:00+09:00
+date: 2026-03-31T12:00:00+09:00
 tags: ['react', 'auth', 'context', 'axios', 'frontend', 'javascript']
 cover:
   image: 'images/cover.jpg'
