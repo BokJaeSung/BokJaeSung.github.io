@@ -110,6 +110,7 @@ def update(node, s, e, idx, val):
 
 따라서 각 레벨에서 더 내려가야 하는 노드는 최대 2개이고, 트리 높이가 `O(log n)`이므로 전체 쿼리 시간복잡도는 `O(log n)`이다.
 
+{{< rawhtml >}}
 <svg width="100%" viewBox="0 0 680 440" xmlns="http://www.w3.org/2000/svg" style="font-family:sans-serif;">
   <defs>
     <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -189,6 +190,7 @@ def update(node, s, e, idx, val):
   <text x="46" y="319" font-size="11" fill="#E24B4A" text-anchor="end">걸침 1</text>
   <text x="46" y="379" font-size="11" fill="#1D9E75" text-anchor="end">리턴 ✓</text>
 </svg>
+{{< /rawhtml >}}
 
 ### 쿼리 함수의 세 가지 케이스
 
@@ -200,6 +202,7 @@ def update(node, s, e, idx, val):
 
 쿼리 `[2~3]`에서 `inf`가 발생하는 흐름:
 
+{{< rawhtml >}}
 <svg width="100%" viewBox="0 0 680 510" xmlns="http://www.w3.org/2000/svg" style="font-family:sans-serif;">
   <rect x="60" y="10" width="12" height="12" rx="2" fill="#fde8e8" stroke="#E24B4A" stroke-width="1"/>
   <text x="78" y="20" font-size="12" fill="#5f5e5a">걸쳐있음</text>
@@ -248,6 +251,7 @@ def update(node, s, e, idx, val):
   <rect x="240" y="478" width="200" height="24" rx="6" fill="#e1f5ee" stroke="#1D9E75" stroke-width="1.5"/>
   <text x="340" y="494" font-size="13" fill="#0F6E56" text-anchor="middle" font-weight="500">min(값, inf) = 최종 답</text>
 </svg>
+{{< /rawhtml >}}
 
 ---
 
@@ -296,29 +300,29 @@ def query(L, R):
 
 ### 인터랙티브 — 직접 쿼리해보기
 
-<div style="font-family:sans-serif; padding:1rem 0;">
+{{< rawhtml >}}
+<div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);font-family:sans-serif;">
 <style>
-.sp-cell{width:42px;height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #d3d1c7;border-radius:6px;font-size:12px;background:#fff;transition:background .2s,border-color .2s;}
-.sp-cell.hl-l{background:#e1f5ee;border-color:#1D9E75;color:#085041;font-weight:500;}
-.sp-cell.hl-r{background:#eeedfe;border-color:#534AB7;color:#3C3489;font-weight:500;}
-.sp-cell.hl-b{background:#faeeda;border-color:#BA7517;color:#633806;font-weight:500;}
-.sp-cell .sp-idx{font-size:9px;opacity:.6;}
+.sp-cell{width:42px;height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #2a2d3a;border-radius:6px;font-size:12px;background:#1a1d27;color:#b0b8d0;transition:background .2s,border-color .2s;}
+.sp-cell.hl-l{background:#1b3a2e;border-color:#1D9E75;color:#69f0ae;font-weight:600;}
+.sp-cell.hl-r{background:#1e1a3a;border-color:#7986cb;color:#b39ddb;font-weight:600;}
+.sp-cell.hl-b{background:#3a2e00;border-color:#ffd740;color:#ffd740;font-weight:600;}
+.sp-cell .sp-idx{font-size:9px;opacity:.5;}
 .sp-row{display:flex;gap:5px;align-items:center;margin-bottom:5px;}
-.sp-lbl{font-size:12px;color:#888780;width:60px;text-align:right;flex-shrink:0;}
+.sp-lbl{font-size:12px;color:#556;width:68px;text-align:right;flex-shrink:0;}
 </style>
-<div style="font-size:12px;color:#888780;margin-bottom:6px;">원본 배열 A</div>
+<div style="font-size:12px;color:#556;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase;">원본 배열 A</div>
 <div class="sp-row" id="sp-arr"></div>
-<div style="font-size:12px;color:#888780;margin:14px 0 6px;">Sparse Table st[i][j]</div>
+<div style="font-size:12px;color:#556;margin:14px 0 6px;letter-spacing:.06em;text-transform:uppercase;">Sparse Table st[i][j]</div>
 <div id="sp-table"></div>
-<div style="margin:18px 0 10px;border-top:1px solid #e8e6df;padding-top:16px;font-size:12px;color:#888780;">쿼리 범위</div>
+<div style="margin:18px 0 10px;border-top:1px solid #2a2d3a;padding-top:16px;font-size:12px;color:#556;letter-spacing:.06em;text-transform:uppercase;">쿼리 범위</div>
 <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
-  <div style="display:flex;align-items:center;gap:8px;"><label style="font-size:12px;color:#888780;">L</label><input type="range" id="sp-l" min="0" max="7" value="2" step="1" style="width:90px;"><span id="sp-lv" style="font-size:13px;font-weight:500;min-width:14px;">2</span></div>
-  <div style="display:flex;align-items:center;gap:8px;"><label style="font-size:12px;color:#888780;">R</label><input type="range" id="sp-r" min="0" max="7" value="6" step="1" style="width:90px;"><span id="sp-rv" style="font-size:13px;font-weight:500;min-width:14px;">6</span></div>
+  <div style="display:flex;align-items:center;gap:8px;"><label style="font-size:12px;color:#778;">L</label><input type="range" id="sp-l" min="0" max="7" value="2" step="1" style="width:90px;"><span id="sp-lv" style="font-size:13px;font-weight:600;color:#69f0ae;min-width:14px;">2</span></div>
+  <div style="display:flex;align-items:center;gap:8px;"><label style="font-size:12px;color:#778;">R</label><input type="range" id="sp-r" min="0" max="7" value="6" step="1" style="width:90px;"><span id="sp-rv" style="font-size:13px;font-weight:600;color:#b39ddb;min-width:14px;">6</span></div>
 </div>
 <div id="sp-vis" style="margin-bottom:12px;"></div>
-<div id="sp-res" style="background:#f5f5f3;border-radius:8px;padding:12px 14px;font-size:12px;color:#5f5e5a;"></div>
+<div id="sp-res" style="background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:12px 14px;font-size:13px;color:#b0b8d0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;"></div>
 </div>
-
 <script>
 (function(){
 const A=[3,1,4,1,5,9,2,6],n=8;
@@ -331,7 +335,7 @@ function render(){
   A.forEach((v,i)=>{ar.innerHTML+=`<div class="sp-cell" id="spa${i}"><div class="sp-idx">${i}</div><div>${v}</div></div>`;});
   const tb=document.getElementById('sp-table');
   tb.innerHTML='';
-  for(let j=0;j<4;j++){if((1<<j)>n)break;const row=document.createElement('div');row.className='sp-row';row.innerHTML=`<div class="sp-lbl">j=${j}(${1<<j}개)</div>`;for(let i=0;i<n;i++){if(i+(1<<j)-1<n){row.innerHTML+=`<div class="sp-cell" id="st${i}_${j}"><div class="sp-idx">[${i}][${j}]</div><div>${st[i][j]}</div></div>`;}else{row.innerHTML+=`<div style="width:42px;flex-shrink:0;"></div>`;}}tb.appendChild(row);}
+  for(let j=0;j<4;j++){if((1<<j)>n)break;const row=document.createElement('div');row.className='sp-row';row.innerHTML=`<div class="sp-lbl">j=${j} (${1<<j}개)</div>`;for(let i=0;i<n;i++){if(i+(1<<j)-1<n){row.innerHTML+=`<div class="sp-cell" id="st${i}_${j}"><div class="sp-idx">[${i}][${j}]</div><div>${st[i][j]}</div></div>`;}else{row.innerHTML+=`<div style="width:42px;flex-shrink:0;"></div>`;}}tb.appendChild(row);}
 }
 function update(){
   let L=+document.getElementById('sp-l').value,R=+document.getElementById('sp-r').value;
@@ -345,15 +349,16 @@ function update(){
   if(sl)sl.classList.add('hl-l');
   if(sr){sr.classList.remove('hl-l');sr.classList.add(rs===L?'hl-b':'hl-r');}
   const lp=(L/n*100).toFixed(1),lw=((1<<k)/n*100).toFixed(1),rp=(rs/n*100).toFixed(1),rw=((1<<k)/n*100).toFixed(1);
-  document.getElementById('sp-vis').innerHTML=`<div style="font-size:11px;color:#888780;margin-bottom:5px;">구간 커버 (겹쳐도 OK)</div><div style="position:relative;height:46px;"><div style="position:absolute;left:${lp}%;width:${lw}%;height:18px;background:#1D9E75;opacity:.25;border-radius:3px;top:0;"></div><div style="position:absolute;left:${lp}%;width:${lw}%;height:18px;border:1.5px solid #1D9E75;border-radius:3px;top:0;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;color:#085041;font-weight:500;">[${L}~${L+(1<<k)-1}]</span></div><div style="position:absolute;left:${rp}%;width:${rw}%;height:18px;background:#534AB7;opacity:.2;border-radius:3px;top:24px;"></div><div style="position:absolute;left:${rp}%;width:${rw}%;height:18px;border:1.5px solid #534AB7;border-radius:3px;top:24px;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;color:#3C3489;font-weight:500;">[${rs}~${R}]</span></div></div>`;
+  document.getElementById('sp-vis').innerHTML=`<div style="font-size:11px;color:#556;margin-bottom:6px;letter-spacing:.05em;">구간 커버 (겹쳐도 OK)</div><div style="position:relative;height:50px;background:#111318;border-radius:6px;overflow:hidden;"><div style="position:absolute;left:${lp}%;width:${lw}%;height:24px;background:rgba(29,158,117,.25);border:1.5px solid #1D9E75;border-radius:3px;top:4px;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;color:#69f0ae;font-weight:600;">[${L}~${L+(1<<k)-1}]</span></div><div style="position:absolute;left:${rp}%;width:${rw}%;height:24px;background:rgba(121,134,203,.2);border:1.5px solid #7986cb;border-radius:3px;top:22px;display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;color:#b39ddb;font-weight:600;">[${rs}~${R}]</span></div></div>`;
   const ans=Math.min(st[L][k],st[rs][k]);
-  document.getElementById('sp-res').innerHTML=`길이 ${len} → k=floor(log2(${len}))=${k} → 2<sup>${k}</sup>=${1<<k}개짜리 2개<br><span style="color:#085041;">st[${L}][${k}]=${st[L][k]}</span> · <span style="color:#3C3489;">st[${rs}][${k}]=${st[rs][k]}</span> → <strong>min = ${ans}</strong>`;
+  document.getElementById('sp-res').innerHTML=`길이 ${len} → k=⌊log2(${len})⌋=${k} → 2<sup>${k}</sup>=${1<<k}개짜리 2개<br><span style="color:#69f0ae;">st[${L}][${k}] = ${st[L][k]}</span>  ·  <span style="color:#b39ddb;">st[${rs}][${k}] = ${st[rs][k]}</span>  →  <strong style="color:#ffd740;">min = ${ans}</strong>`;
 }
 render();update();
 document.getElementById('sp-l').addEventListener('input',update);
 document.getElementById('sp-r').addEventListener('input',update);
 })();
 </script>
+{{< /rawhtml >}}
 
 ### 업데이트가 불가능한 이유
 
