@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh api repos/Hyper-Accel/hyper-accel.github.io/contents --jq '.[].name')"
+    ]
+  }
+}

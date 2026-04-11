@@ -3,7 +3,6 @@ title: "LCA 바이너리 리프팅: DFS와 BFS 방식의 차이"
 date: 2026-04-05T22:52:30+09:00
 tags: ["algorithm", "LCA", "binary-lifting", "tree", "dp", "dfs", "bfs"]
 cover:
-  image: 'images/cover.jpg'
   alt: 'LCA 바이너리 리프팅: DFS와 BFS 방식의 차이'
   relative: true
 summary: ""
