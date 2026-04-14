@@ -694,7 +694,8 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
 .ex-chip{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:7px;font-weight:700;font-size:16px;margin:2px;border:1.5px solid;}
 .ex-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:16px;font-weight:600;color:#c9d1d9;}
 .ex-leg-dot{width:11px;height:11px;border-radius:2px;display:inline-block;margin-right:4px;border:1px solid;}
-#ex-info{background:#1e2d45;border-radius:10px;padding:12px 16px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;}
+#ex-info{background:#1e2d45;border-radius:10px;padding:12px 16px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;transition:opacity .15s ease,transform .15s ease;}
+#ex-sv,#ex-sccv,#ex-tbl{transition:opacity .15s ease,transform .15s ease;}
 </style>
 
 <div id="ex-wrap">
@@ -930,7 +931,13 @@ function render(){
       .text(isVisited?`d${s.d[d.id]} L${s.l[d.id]}`:'');
   });
 
-  document.getElementById('ex-sv').innerHTML=s.st.length
+  function fadeUpdate(id,html){
+    const el=document.getElementById(id);
+    el.style.opacity='0';el.style.transform='translateY(6px)';
+    setTimeout(()=>{el.innerHTML=html;el.style.opacity='1';el.style.transform='translateY(0)';},140);
+  }
+
+  fadeUpdate('ex-sv', s.st.length
     ?s.st.map(n=>{
       const si=getNodeScc(n,s.sc);
       const pal=si>=0?SCC_PAL[si]:{f:'#1e1b4b',s:'#4f46e5',t:'#a5b4fc'};
@@ -938,14 +945,14 @@ function render(){
       const f=isAc?'#2d2775':pal.f,sc2=isAc?'#818cf8':pal.s;
       return `<span class="ex-chip" style="background:${f};border-color:${sc2};color:${pal.t}">${n}</span>`;
     }).join('')
-    :'<span style="color:#6070a0;font-size:14px">비어있음</span>';
+    :'<span style="color:#6070a0;font-size:14px">비어있음</span>');
 
-  document.getElementById('ex-sccv').innerHTML=s.sc.length
+  fadeUpdate('ex-sccv', s.sc.length
     ?s.sc.map((g,i)=>`<span style="color:${SCC_PAL[i].t};font-weight:700;margin-right:6px">{${g.join(',')}}</span>`).join('')
-    :'<span style="color:#334155">없음</span>';
+    :'<span style="color:#334155">없음</span>');
 
   const visited=NL.filter(n=>s.d[n.id]>=0).sort((a,b)=>s.d[a.id]-s.d[b.id]);
-  document.getElementById('ex-tbl').innerHTML=visited.length
+  fadeUpdate('ex-tbl', visited.length
     ?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;font-size:13px;font-weight:700;">
         <div style="color:#6e7681;letter-spacing:.08em;text-transform:uppercase;padding:2px 4px;text-align:center;">node</div>
         <div style="color:#fbbf24;letter-spacing:.08em;text-transform:uppercase;padding:2px 4px;text-align:center;">ids</div>
@@ -968,9 +975,9 @@ function render(){
           <span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;border-radius:6px;border:1.5px solid ${lc}88;background:${lbg};color:${lc};font-size:14px;padding:0 6px;">${s.l[n.id]}${eq?' ✓':''}</span>
         </div>`;
       }).join('')+`</div>`
-    :'<span style="color:#6070a0">방문한 노드 없음</span>';
+    :'<span style="color:#6070a0">방문한 노드 없음</span>');
 
-  document.getElementById('ex-info').innerHTML=s.inf;
+  fadeUpdate('ex-info', s.inf);
   document.getElementById('ex-lbl').textContent=`단계 ${cur+1} / ${SS.length}`;
   document.getElementById('ex-bb').disabled=cur===0;
   document.getElementById('ex-bn').disabled=cur===SS.length-1;
