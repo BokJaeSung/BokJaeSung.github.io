@@ -146,7 +146,7 @@ def dfs(u):
 <script>
 (function(){
 const nodes=[{id:0,x:105,y:75},{id:1,x:265,y:75},{id:2,x:105,y:235},{id:3,x:265,y:235}];
-const edgeData=[{s:0,t:1,curve:false},{s:1,t:2,curve:false},{s:2,t:0,curve:false},{s:1,t:3,curve:false}];
+const edgeData=[{s:0,t:1,curve:false},{s:1,t:2,curve:false},{s:2,t:0,curve:false},{s:1,t:3,curve:false},{s:2,t:1,curve:true,flip:true}];
 const R=27,MF="'Space Grotesk',system-ui,sans-serif";
 const C=(v,c)=>`<span style="color:${c};font-weight:600">${v}</span>`;
 
@@ -166,6 +166,9 @@ const steps=[
   {d:[0,1,2,-1],l:[0,1,0,-1],st:[0,1,2],sc:[],ac:2,he:2,bk:true,
    cs:['  dfs(0)','  dfs(1)','▶ dfs(2) ← 2→0 발견!'],
    inf:`2→0: 이미 방문 & ${C('스택에 있음','#f87171')} → ${C('back edge!','#f87171')}<br>${C('low[2] = min(2, ids[0]) = 0','#a78bfa')}<br>"2는 0번 조상까지 거슬러 올라갈 수 있다!"`},
+  {d:[0,1,2,-1],l:[0,1,0,-1],st:[0,1,2],sc:[],ac:2,he:4,bk:true,
+   cs:['  dfs(0)','  dfs(1)','▶ dfs(2) ← 2→1 발견!'],
+   inf:`2→1: 이미 방문 & ${C('스택에 있음','#f87171')} → ${C('back edge!','#f87171')}<br>${C('low[2] = min(0, ids[1]) = min(0, 1) = 0','#a78bfa')} (변화 없음)<br>"1도 닿지만 0이 더 오래됨 — min이 기존값 유지"`},
   {d:[0,1,2,-1],l:[0,0,0,-1],st:[0,1,2],sc:[],ac:1,he:-1,bk:false,
    cs:['  dfs(0)','▶ dfs(1) ← dfs(2) 리턴'],
    inf:`dfs(2) 리턴. ${C('low[1] = min(low[1], low[2]) = min(1,0) = 0','#a78bfa')}<br>자식(2)이 발견한 정보가 부모(1)로 전파된다.`},
@@ -218,7 +221,8 @@ function getPath(e){
   const sx=s.x+ux*(R+1),sy=s.y+uy*(R+1);
   const ex=t.x-ux*(R+11),ey=t.y-uy*(R+11);
   if(e.curve){
-    const mx=(s.x+t.x)/2-55,my=(s.y+t.y)/2+55;
+    const mx=e.flip?(s.x+t.x)/2+55:(s.x+t.x)/2-55;
+    const my=e.flip?(s.y+t.y)/2-55:(s.y+t.y)/2+55;
     return `M${sx},${sy} Q${mx},${my} ${ex},${ey}`;
   }
   return `M${sx},${sy} L${ex},${ey}`;
