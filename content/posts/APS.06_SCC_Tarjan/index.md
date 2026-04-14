@@ -129,6 +129,7 @@ def dfs(u):
   <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
     <button class="tj-btn tj-btn-s" id="tj-bb" onclick="tjB()">◀ 이전</button>
     <button class="tj-btn tj-btn-p" id="tj-bn" onclick="tjN()">다음 ▶</button>
+    <button class="tj-btn tj-btn-s" onclick="tjR()" style="margin-left:4px;">↺ 초기화</button>
     <span id="tj-sl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
@@ -325,6 +326,7 @@ function render(){
 
 window.tjB=function(){if(cur>0){cur--;render();}};
 window.tjN=function(){if(cur<steps.length-1){cur++;render();}};
+window.tjR=function(){cur=0;render();};
 render();
 })();
 </script>
@@ -700,6 +702,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
   <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap;">
     <button class="ex-btn ex-btn-s" id="ex-bb" onclick="exB()">◀ 이전</button>
     <button class="ex-btn ex-btn-p" id="ex-bn" onclick="exN()">다음 ▶</button>
+    <button class="ex-btn ex-btn-s" onclick="exR()" style="margin-left:4px;">↺ 초기화</button>
     <span id="ex-lbl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
@@ -970,6 +973,7 @@ function render(){
 
 window.exB=function(){if(cur>0){cur--;render();}};
 window.exN=function(){if(cur<SS.length-1){cur++;render();}};
+window.exR=function(){cur=0;render();};
 render();
 })();
 </script>
