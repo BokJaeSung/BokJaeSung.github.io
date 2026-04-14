@@ -218,13 +218,17 @@ function getPath(e){
   const s=nodes[e.s],t=nodes[e.t];
   const dx=t.x-s.x,dy=t.y-s.y,len=Math.sqrt(dx*dx+dy*dy);
   const ux=dx/len,uy=dy/len;
-  const sx=s.x+ux*(R+1),sy=s.y+uy*(R+1);
-  const ex=t.x-ux*(R+11),ey=t.y-uy*(R+11);
   if(e.curve){
     const mx=e.flip?(s.x+t.x)/2+70:(s.x+t.x)/2-70;
     const my=e.flip?(s.y+t.y)/2-70:(s.y+t.y)/2+70;
-    return `M${sx},${sy} Q${mx},${my} ${ex},${ey}`;
+    const as=Math.atan2(my-s.y,mx-s.x);
+    const ae=Math.atan2(my-t.y,mx-t.x);
+    const sx=s.x+Math.cos(as)*(R+1),sy=s.y+Math.sin(as)*(R+1);
+    const ex=t.x+Math.cos(ae)*(R+10),ey=t.y+Math.sin(ae)*(R+10);
+    return `M${sx.toFixed(1)},${sy.toFixed(1)} Q${mx},${my} ${ex.toFixed(1)},${ey.toFixed(1)}`;
   }
+  const sx=s.x+ux*(R+1),sy=s.y+uy*(R+1);
+  const ex=t.x-ux*(R+11),ey=t.y-uy*(R+11);
   return `M${sx},${sy} L${ex},${ey}`;
 }
 
@@ -727,10 +731,10 @@ const NM={};NL.forEach(n=>NM[n.id]=n);
 const R=26;
 
 const EL=[
-  {s:1,t:2,co:-42,id:0},{s:2,t:1,co:42,id:1},
+  {s:1,t:2,co:-55,id:0},{s:2,t:1,co:55,id:1},
   {s:1,t:4,co:0,id:2},{s:2,t:5,co:0,id:3},
   {s:3,t:2,co:0,id:4},{s:3,t:6,co:0,id:5},
-  {s:3,t:7,co:-42,id:6},{s:7,t:3,co:42,id:7},
+  {s:3,t:7,co:-55,id:6},{s:7,t:3,co:55,id:7},
   {s:5,t:4,co:0,id:8},{s:6,t:5,co:0,id:9}
 ];
 
