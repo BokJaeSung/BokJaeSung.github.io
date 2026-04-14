@@ -926,28 +926,18 @@ function render(){
 
   const visited=NL.filter(n=>s.d[n.id]>=0);
   document.getElementById('ex-tbl').innerHTML=visited.length
-    ?`<table style="border-collapse:separate;border-spacing:0;width:100%;border-radius:8px;overflow:hidden;border:1px solid #21262d;">
-       <thead><tr style="background:#161b22;">
-         <th style="color:#6e7681;text-align:center;padding:6px 10px;font-size:12px;font-weight:600;letter-spacing:.05em;border-bottom:1px solid #21262d;">NODE</th>
-         <th style="color:#fbbf24;text-align:center;padding:6px 10px;font-size:12px;font-weight:600;letter-spacing:.05em;border-bottom:1px solid #21262d;">ids</th>
-         <th style="color:#a78bfa;text-align:center;padding:6px 10px;font-size:12px;font-weight:600;letter-spacing:.05em;border-bottom:1px solid #21262d;">low</th>
-       </tr></thead><tbody>`+
-      visited.map((n,i)=>{
-        const si=getNodeScc(n.id,s.sc);
-        const isActive=n.id===s.ac;
-        const nc=si>=0?SCC_PAL[si].t:isActive?'#ffffff':'#c9d1d9';
-        const rowBg=si>=0?SCC_PAL[si].f+'99':isActive?'#0d2f5e':'transparent';
-        const rowBorder=i<visited.length-1?'border-bottom:1px solid #21262d;':'';
+    ?`<table style="border-collapse:collapse;width:100%;">
+       <tr><th style="color:#8b949e;text-align:center;padding:3px 8px;border-bottom:1px solid #30363d;">node</th>
+           <th style="color:#fbbf24;text-align:center;padding:3px 8px;border-bottom:1px solid #30363d;">ids</th>
+           <th style="color:#a78bfa;text-align:center;padding:3px 8px;border-bottom:1px solid #30363d;">low</th></tr>`+
+      visited.map(n=>{
         const eq=s.d[n.id]===s.l[n.id];
-        const badge=eq?`<span style="display:inline-block;background:#0f3d20;color:#34d399;border:1px solid #34d39955;border-radius:4px;font-size:11px;padding:0 5px;margin-left:5px;font-weight:700;">✓</span>`:'';
-        const idVal=`<span style="color:#fde68a;font-weight:700;">${s.d[n.id]}</span>`;
-        const lowVal=`<span style="color:${eq?'#34d399':'#c4b5fd'};font-weight:700;">${s.l[n.id]}</span>${badge}`;
-        return `<tr style="background:${rowBg};transition:background .3s;">
-          <td style="color:${nc};padding:5px 10px;text-align:center;font-weight:700;${rowBorder}">${n.id}</td>
-          <td style="padding:5px 10px;text-align:center;${rowBorder}">${idVal}</td>
-          <td style="padding:5px 10px;text-align:center;${rowBorder}">${lowVal}</td>
+        return `<tr>
+          <td style="color:#c9d1d9;padding:3px 8px;text-align:center;">${n.id}</td>
+          <td style="color:#fbbf24;padding:3px 8px;text-align:center;">${s.d[n.id]}</td>
+          <td style="color:${eq?'#34d399':'#a78bfa'};padding:3px 8px;text-align:center;">${s.l[n.id]}${eq?' ✓':''}</td>
         </tr>`;
-      }).join('')+`</tbody></table>`
+      }).join('')+`</table>`
     :'<span style="color:#6070a0">방문한 노드 없음</span>';
 
   document.getElementById('ex-info').innerHTML=s.inf;
