@@ -145,7 +145,7 @@ def dfs(u):
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
 (function(){
-const nodes=[{id:0,x:90,y:85},{id:1,x:240,y:85},{id:2,x:240,y:200},{id:3,x:316,y:150}];
+const nodes=[{id:0,x:180,y:60},{id:1,x:75,y:225},{id:2,x:285,y:225},{id:3,x:335,y:130}];
 const edgeData=[{s:0,t:1,curve:false},{s:1,t:2,curve:false},{s:2,t:0,curve:true},{s:1,t:3,curve:false}];
 const R=27,MF="'JetBrains Mono',monospace";
 const C=(v,c)=>`<span style="color:${c};font-weight:600">${v}</span>`;
