@@ -115,28 +115,28 @@ def dfs(u):
 
 {{< rawhtml >}}
 <style>
-#tj-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+#tj-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#0d1117;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .tj-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;transition:background .15s;}
-.tj-btn-p{background:#4f46e5;color:#fff;}.tj-btn-p:hover{background:#6366f1;}
-.tj-btn-s{background:#1e2035;color:#b0bcd0;border:1px solid #2d3050;}.tj-btn-s:hover{background:#252840;}
+.tj-btn-p{background:#1f6feb;color:#fff;}.tj-btn-p:hover{background:#388bfd;}
+.tj-btn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d;}.tj-btn-s:hover{background:#30363d;}
 .tj-btn:disabled{opacity:.35;cursor:default;}
-.tj-panel{background:#1e2136;border-radius:10px;padding:12px 16px;border:1px solid #2c2f50;margin-bottom:10px;}
+.tj-panel{background:#161b22;border-radius:10px;padding:12px 16px;border:1px solid #21262d;margin-bottom:10px;}
 .tj-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .tj-chip{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;font-weight:700;font-size:17px;margin:2px;border:1.5px solid;}
-#tj-info{background:#1e2136;border-radius:10px;padding:14px 18px;border-left:3px solid #6366f1;margin-top:12px;font-size:18px;font-weight:600;color:#c8d8f0;line-height:1.9;}
+#tj-info{background:#161b22;border-radius:10px;padding:14px 18px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;}
 </style>
 <div id="tj-wrap">
   <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
     <button class="tj-btn tj-btn-s" id="tj-bb" onclick="tjB()">◀ 이전</button>
     <button class="tj-btn tj-btn-p" id="tj-bn" onclick="tjN()">다음 ▶</button>
-    <span id="tj-sl" style="font-size:16px;color:#8090b8;margin-left:4px;"></span>
+    <span id="tj-sl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;background:#16192a;border-radius:12px;border:1px solid #2c2f50;" viewBox="0 0 370 300"></svg>
+    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;background:#0d1117;border-radius:12px;border:1px solid #21262d;" viewBox="0 0 370 300"></svg>
     <div style="flex:1;min-width:200px;">
       <div class="tj-panel"><div class="tj-pt" style="color:#6366f1;">스택</div><div id="tj-sv" style="min-height:36px;"></div></div>
-      <div class="tj-panel"><div class="tj-pt" style="color:#34d399;">발견된 SCC</div><div id="tj-sv2" style="min-height:24px;font-size:17px;color:#c0d0f0;"></div></div>
-      <div class="tj-panel"><div class="tj-pt" style="color:#fbbf24;">콜스택</div><div id="tj-csv" style="min-height:24px;font-size:16px;line-height:1.8;color:#c0d0f0;"></div></div>
+      <div class="tj-panel"><div class="tj-pt" style="color:#34d399;">발견된 SCC</div><div id="tj-sv2" style="min-height:24px;font-size:17px;color:#e6edf3;"></div></div>
+      <div class="tj-panel"><div class="tj-pt" style="color:#fbbf24;">콜스택</div><div id="tj-csv" style="min-height:24px;font-size:16px;line-height:1.8;color:#e6edf3;"></div></div>
     </div>
   </div>
   <div id="tj-info"></div>
@@ -191,7 +191,7 @@ function mkMarker(id,col){
     .append('path').attr('d','M1 2L8 5L1 8').attr('fill',col)
     .attr('stroke',col).attr('stroke-width',1).attr('stroke-linecap','round');
 }
-mkMarker('m-def','#7888cc');
+mkMarker('m-def','#2f81f7');
 mkMarker('m-tree','#34d399');
 mkMarker('m-back','#f87171');
 mkMarker('m-s012','#34d399');
@@ -227,7 +227,7 @@ function getPath(e){
 const edgeG=svg.append('g');
 const edgePaths=edgeG.selectAll('path').data(edgeData).enter().append('path')
   .attr('d',e=>getPath(e)).attr('fill','none')
-  .attr('stroke','#7888cc').attr('stroke-width',2.5)
+  .attr('stroke','#2f81f7').attr('stroke-width',2.5)
   .attr('stroke-dasharray',e=>e.curve?'7,4':'none')
   .attr('marker-end','url(#m-def)');
 
@@ -238,7 +238,7 @@ const ngs=nodeG.selectAll('g').data(nodes).enter().append('g')
 ngs.append('circle').attr('class','ring')
   .attr('r',R+9).attr('fill','none').attr('stroke','transparent').attr('stroke-width',2).attr('opacity',0);
 ngs.append('circle').attr('class','bg')
-  .attr('r',R).attr('fill','#252840').attr('stroke','#7888cc').attr('stroke-width',2.5);
+  .attr('r',R).attr('fill','#1c2433').attr('stroke','#2f81f7').attr('stroke-width',2.5);
 ngs.append('text').attr('class','lbl')
   .attr('text-anchor','middle').attr('y',-5).attr('fill','#e0e8ff')
   .attr('font-size',20).attr('font-weight',700).attr('font-family',MF)
@@ -260,7 +260,7 @@ function render(){
     .attr('stroke',(e,i)=>{
       if(i===s.he) return s.bk?'#f87171':'#34d399';
       const g=scGroup(e.s,s.sc);
-      return g==='m'?'#34d399bb':g==='s'?'#fbbf24bb':'#7888cc';
+      return g==='m'?'#34d399bb':g==='s'?'#fbbf24bb':'#2f81f7';
     })
     .attr('stroke-width',(e,i)=>i===s.he?3.5:2.5)
     .attr('marker-end',(e,i)=>{
@@ -274,9 +274,9 @@ function render(){
     let fill,stroke,lc,mc,glow=null,sw=2.5;
     if(sc==='m'){fill='#0d4a28';stroke='#34d399';lc='#ffffff';mc='#6effc8';glow='url(#glow-tj)';sw=3;}
     else if(sc==='s'){fill='#3a2008';stroke='#fbbf24';lc='#ffffff';mc='#ffd770';glow='url(#glow-tj)';sw=3;}
-    else if(d.id===s.ac){fill='#2d2880';stroke='#a5b4fc';lc='#ffffff';mc='#c7d2fe';sw=3;}
-    else if(s.d[d.id]>=0){fill='#252840';stroke='#7888cc';lc='#e0e8ff';mc='#b0c4f0';}
-    else{fill='#1c1f38';stroke='#5060a0';lc='#c0ccf0';mc='#8090c8';}
+    else if(d.id===s.ac){fill='#0d2f5e';stroke='#58a6ff';lc='#ffffff';mc='#79c0ff';sw=3;}
+    else if(s.d[d.id]>=0){fill='#1c2d45';stroke='#2f81f7';lc='#e6edf3';mc='#79c0ff';}
+    else{fill='#161b22';stroke='#30363d';lc='#8b949e';mc='#6e7681';}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
       .attr('stroke-width',sw).attr('filter',glow);
     g.select('.ring').transition().duration(T)
@@ -467,16 +467,16 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
 
 {{< rawhtml >}}
 <style>
-#cmp-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+#cmp-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#0d1117;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .cmp-card{flex:1;min-width:240px;}
 .cmp-hd{font-size:17px;font-weight:700;margin-bottom:12px;padding:8px 14px;border-radius:8px;}
-.cmp-note{margin-top:10px;background:#1e2136;border-radius:8px;padding:10px 14px;font-size:17px;color:#c0d0f0;line-height:1.8;border-left:3px solid;}
+.cmp-note{margin-top:10px;background:#161b22;border-radius:8px;padding:10px 14px;font-size:17px;color:#e6edf3;line-height:1.8;border-left:3px solid;}
 </style>
 <div id="cmp-wrap">
   <div style="display:flex;gap:16px;flex-wrap:wrap;">
     <div class="cmp-card">
       <div class="cmp-hd" style="background:#1f0a0a;color:#f87171;border:1px solid #3d0f0f;">❌ back edge 발견 즉시 끊으면?</div>
-      <div style="background:#16192a;border-radius:10px;border:1px solid #2c2f50;">
+      <div style="background:#0d1117;border-radius:10px;border:1px solid #21262d;">
         <svg id="cmp-w" width="100%" viewBox="0 0 260 230"></svg>
       </div>
       <div class="cmp-note" style="border-color:#f8717155;">
@@ -486,7 +486,7 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
     </div>
     <div class="cmp-card">
       <div class="cmp-hd" style="background:#052e16;color:#34d399;border:1px solid #0f3d1f;">✓ dfs(0) 끝난 뒤 체크하면?</div>
-      <div style="background:#16192a;border-radius:10px;border:1px solid #2c2f50;">
+      <div style="background:#0d1117;border-radius:10px;border:1px solid #21262d;">
         <svg id="cmp-r" width="100%" viewBox="0 0 260 230"></svg>
       </div>
       <div class="cmp-note" style="border-color:#34d39955;">
@@ -667,17 +667,17 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
 
 {{< rawhtml >}}
 <style>
-#ex-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+#ex-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#0d1117;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .ex-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;transition:background .15s;}
-.ex-btn-p{background:#4f46e5;color:#fff;}.ex-btn-p:hover{background:#6366f1;}
-.ex-btn-s{background:#1e2035;color:#b0bcd0;border:1px solid #2d3050;}.ex-btn-s:hover{background:#252840;}
+.ex-btn-p{background:#1f6feb;color:#fff;}.ex-btn-p:hover{background:#388bfd;}
+.ex-btn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d;}.ex-btn-s:hover{background:#30363d;}
 .ex-btn:disabled{opacity:.35;cursor:default;}
-.ex-panel{background:#1e2136;border-radius:10px;padding:10px 14px;border:1px solid #2c2f50;margin-bottom:8px;}
+.ex-panel{background:#161b22;border-radius:10px;padding:10px 14px;border:1px solid #21262d;margin-bottom:8px;}
 .ex-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
 .ex-chip{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:7px;font-weight:700;font-size:16px;margin:2px;border:1.5px solid;}
-.ex-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:16px;font-weight:600;color:#c0d0f0;}
+.ex-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:16px;font-weight:600;color:#c9d1d9;}
 .ex-leg-dot{width:11px;height:11px;border-radius:2px;display:inline-block;margin-right:4px;border:1px solid;}
-#ex-info{background:#1e2136;border-radius:10px;padding:12px 16px;border-left:3px solid #6366f1;margin-top:12px;font-size:18px;font-weight:600;color:#c8d8f0;line-height:1.9;}
+#ex-info{background:#161b22;border-radius:10px;padding:12px 16px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;}
 </style>
 
 <div id="ex-wrap">
@@ -690,10 +690,10 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
   <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap;">
     <button class="ex-btn ex-btn-s" id="ex-bb" onclick="exB()">◀ 이전</button>
     <button class="ex-btn ex-btn-p" id="ex-bn" onclick="exN()">다음 ▶</button>
-    <span id="ex-lbl" style="font-size:16px;color:#8090b8;margin-left:4px;"></span>
+    <span id="ex-lbl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-    <svg id="ex-g" style="flex:2;min-width:300px;background:#16192a;border-radius:12px;border:1px solid #2c2f50;" viewBox="0 0 560 310"></svg>
+    <svg id="ex-g" style="flex:2;min-width:300px;background:#0d1117;border-radius:12px;border:1px solid #21262d;" viewBox="0 0 560 310"></svg>
     <div style="flex:1;min-width:190px;">
       <div class="ex-panel">
         <div class="ex-pt" style="color:#6366f1;">스택</div>
@@ -831,7 +831,7 @@ function mkM(id,col){
     .append('path').attr('d','M1 2L8 5L1 8').attr('fill',col)
     .attr('stroke',col).attr('stroke-width',1).attr('stroke-linecap','round');
 }
-mkM('m-def','#7888cc');mkM('m-tree','#34d399');mkM('m-back','#f87171');mkM('m-cross','#fbbf24');
+mkM('m-def','#2f81f7');mkM('m-tree','#34d399');mkM('m-back','#f87171');mkM('m-cross','#fbbf24');
 ['#fbbf24','#f472b6','#34d399','#a78bfa','#60a5fa'].forEach((c,i)=>mkM('m-sc'+i,c));
 
 const gF=defs.append('filter').attr('id','gx').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
@@ -846,7 +846,7 @@ const MF="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
 const eG=svg.append('g');
 const ePaths=eG.selectAll('path').data(EL).enter().append('path')
   .attr('d',e=>edgePath(e)).attr('fill','none')
-  .attr('stroke','#7888cc').attr('stroke-width',2.5)
+  .attr('stroke','#2f81f7').attr('stroke-width',2.5)
   .attr('marker-end','url(#m-def)');
 
 const nG=svg.append('g');
@@ -855,7 +855,7 @@ const nGs=nG.selectAll('g').data(NL).enter().append('g')
 nGs.append('circle').attr('class','ring').attr('r',R+9)
   .attr('fill','none').attr('stroke','transparent').attr('stroke-width',2.5).attr('opacity',0);
 nGs.append('circle').attr('class','bg').attr('r',R)
-  .attr('fill','#252840').attr('stroke','#7888cc').attr('stroke-width',2.5);
+  .attr('fill','#1c2433').attr('stroke','#2f81f7').attr('stroke-width',2.5);
 nGs.append('text').attr('class','lbl').attr('text-anchor','middle').attr('y',-5)
   .attr('dominant-baseline','central').attr('fill','#e0e8ff')
   .attr('font-size',19).attr('font-weight',700).attr('font-family',MF).text(d=>d.id);
@@ -870,7 +870,7 @@ function render(){
     .attr('stroke',(e,i)=>{
       if(i===s.he) return s.et==='tree'?'#34d399':s.et==='back'?'#f87171':'#fbbf24';
       const si=getNodeScc(e.s,s.sc);
-      return si>=0?SCC_PAL[si].s:'#7888cc';
+      return si>=0?SCC_PAL[si].s:'#2f81f7';
     })
     .attr('stroke-width',(e,i)=>i===s.he?3.5:2.5)
     .attr('opacity',(e,i)=>{
@@ -891,11 +891,11 @@ function render(){
     const pal=si>=0?SCC_PAL[si]:null;
     const isActive=d.id===s.ac;
     const isVisited=s.d[d.id]>=0;
-    let fill,stroke,lc,mc,glw=null,sw=1.5;
+    let fill,stroke,lc,mc,glw=null,sw=2.5;
     if(pal){fill=pal.f;stroke=pal.s;lc='#ffffff';mc=pal.t;glw='url(#gx)';sw=3;}
-    else if(isActive){fill='#2d2880';stroke='#a5b4fc';lc='#ffffff';mc='#c7d2fe';sw=3;}
-    else if(isVisited){fill='#252840';stroke='#7888cc';lc='#e0e8ff';mc='#b0c4f0';sw=2.5;}
-    else{fill='#1c1f38';stroke='#5060a0';lc='#c0ccf0';mc='#8090c8';sw=2.5;}
+    else if(isActive){fill='#0d2f5e';stroke='#58a6ff';lc='#ffffff';mc='#79c0ff';sw=3;}
+    else if(isVisited){fill='#1c2d45';stroke='#2f81f7';lc='#e6edf3';mc='#79c0ff';sw=2.5;}
+    else{fill='#161b22';stroke='#30363d';lc='#8b949e';mc='#6e7681';sw=2.5;}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
       .attr('stroke-width',sw).attr('filter',glw);
     g.select('.ring').transition().duration(T)
