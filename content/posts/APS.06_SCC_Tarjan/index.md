@@ -115,15 +115,15 @@ def dfs(u):
 {{< rawhtml >}}
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-#tj-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1a2235 0%,#1e2d45 60%,#192238 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
+#tj-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1e3050 0%,#253c60 60%,#1c2d50 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .tj-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;transition:background .15s;}
 .tj-btn-p{background:#1f6feb;color:#fff;}.tj-btn-p:hover{background:#388bfd;}
 .tj-btn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d;}.tj-btn-s:hover{background:#30363d;}
 .tj-btn:disabled{opacity:.35;cursor:default;}
-.tj-panel{background:#161b22;border-radius:10px;padding:12px 16px;border:1px solid #21262d;margin-bottom:10px;}
+.tj-panel{background:#1e2d45;border-radius:10px;padding:12px 16px;border:1px solid #21262d;margin-bottom:10px;}
 .tj-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .tj-chip{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;font-weight:700;font-size:17px;margin:2px;border:1.5px solid;}
-#tj-info{background:#161b22;border-radius:10px;padding:14px 18px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;}
+#tj-info{background:#1e2d45;border-radius:10px;padding:14px 18px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;}
 </style>
 <div id="tj-wrap">
   <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
@@ -132,7 +132,7 @@ def dfs(u):
     <span id="tj-sl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;background:linear-gradient(135deg,#162032 0%,#1a2a40 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 370 300"></svg>
+    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;background:linear-gradient(135deg,#1d3050 0%,#223a5e 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 370 300"></svg>
     <div style="flex:1;min-width:200px;">
       <div class="tj-panel"><div class="tj-pt" style="color:#6366f1;">스택</div><div id="tj-sv" style="min-height:36px;"></div></div>
       <div class="tj-panel"><div class="tj-pt" style="color:#34d399;">발견된 SCC</div><div id="tj-sv2" style="min-height:24px;font-size:17px;color:#e6edf3;"></div></div>
@@ -280,7 +280,7 @@ function render(){
     else if(sc==='s'){fill='#3a2008';stroke='#fbbf24';lc='#ffffff';mc='#ffd770';glow='url(#glow-tj)';sw=3;}
     else if(d.id===s.ac){fill='#0d2f5e';stroke='#58a6ff';lc='#ffffff';mc='#79c0ff';sw=3;}
     else if(s.d[d.id]>=0){fill='#1c2d45';stroke='#2f81f7';lc='#e6edf3';mc='#79c0ff';}
-    else{fill='#161b22';stroke='#30363d';lc='#8b949e';mc='#6e7681';}
+    else{fill='#1e2d45';stroke='#3a4f6a';lc='#8b949e';mc='#6e7681';}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
       .attr('stroke-width',sw).attr('filter',glow);
     g.select('.ring').transition().duration(T)
@@ -471,16 +471,16 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
 
 {{< rawhtml >}}
 <style>
-#cmp-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1a2235 0%,#1e2d45 60%,#192238 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
+#cmp-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1e3050 0%,#253c60 60%,#1c2d50 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .cmp-card{flex:1;min-width:240px;}
 .cmp-hd{font-size:17px;font-weight:700;margin-bottom:12px;padding:8px 14px;border-radius:8px;}
-.cmp-note{margin-top:10px;background:#161b22;border-radius:8px;padding:10px 14px;font-size:17px;color:#e6edf3;line-height:1.8;border-left:3px solid;}
+.cmp-note{margin-top:10px;background:#1e2d45;border-radius:8px;padding:10px 14px;font-size:17px;color:#e6edf3;line-height:1.8;border-left:3px solid;}
 </style>
 <div id="cmp-wrap">
   <div style="display:flex;gap:16px;flex-wrap:wrap;">
     <div class="cmp-card">
       <div class="cmp-hd" style="background:#1f0a0a;color:#f87171;border:1px solid #3d0f0f;">❌ back edge 발견 즉시 끊으면?</div>
-      <div style="background:linear-gradient(135deg,#162032 0%,#1a2a40 100%);border-radius:10px;border:1px solid #21262d;">
+      <div style="background:linear-gradient(135deg,#1d3050 0%,#223a5e 100%);border-radius:10px;border:1px solid #21262d;">
         <svg id="cmp-w" width="100%" viewBox="0 0 260 230"></svg>
       </div>
       <div class="cmp-note" style="border-color:#f8717155;">
@@ -490,7 +490,7 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
     </div>
     <div class="cmp-card">
       <div class="cmp-hd" style="background:#052e16;color:#34d399;border:1px solid #0f3d1f;">✓ dfs(0) 끝난 뒤 체크하면?</div>
-      <div style="background:linear-gradient(135deg,#162032 0%,#1a2a40 100%);border-radius:10px;border:1px solid #21262d;">
+      <div style="background:linear-gradient(135deg,#1d3050 0%,#223a5e 100%);border-radius:10px;border:1px solid #21262d;">
         <svg id="cmp-r" width="100%" viewBox="0 0 260 230"></svg>
       </div>
       <div class="cmp-note" style="border-color:#34d39955;">
@@ -511,8 +511,8 @@ function buildSvg(id,wrong){
     {t:'dfs(1) 실행 중',s:'ids=1, low=0',stroke:'#3949ab',fill:'#0d1030'},
     {t:'dfs(2) 실행 중',s:'2→0 back edge 발견!',stroke:'#f87171',fill:'#200808'},
   ]:[
-    {t:'dfs(2) 종료',s:'low[2]=0 → 1로 전파 ↑',stroke:'#334155',fill:'#0d0f18'},
-    {t:'dfs(1) 종료',s:'low[1]=0 → 0으로 전파 ↑',stroke:'#334155',fill:'#0d0f18'},
+    {t:'dfs(2) 종료',s:'low[2]=0 → 1로 전파 ↑',stroke:'#334155',fill:'#1e2d45'},
+    {t:'dfs(1) 종료',s:'low[1]=0 → 0으로 전파 ↑',stroke:'#334155',fill:'#1e2d45'},
     {t:'dfs(0) 종료!',s:'ids[0]==low[0]==0 ← 여기!',stroke:'#34d399',fill:'#052e16'},
   ];
   let y=16;
@@ -671,17 +671,17 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
 
 {{< rawhtml >}}
 <style>
-#ex-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1a2235 0%,#1e2d45 60%,#192238 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
+#ex-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1e3050 0%,#253c60 60%,#1c2d50 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .ex-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;transition:background .15s;}
 .ex-btn-p{background:#1f6feb;color:#fff;}.ex-btn-p:hover{background:#388bfd;}
 .ex-btn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d;}.ex-btn-s:hover{background:#30363d;}
 .ex-btn:disabled{opacity:.35;cursor:default;}
-.ex-panel{background:#161b22;border-radius:10px;padding:10px 14px;border:1px solid #21262d;margin-bottom:8px;}
+.ex-panel{background:#1e2d45;border-radius:10px;padding:10px 14px;border:1px solid #21262d;margin-bottom:8px;}
 .ex-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
 .ex-chip{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:7px;font-weight:700;font-size:16px;margin:2px;border:1.5px solid;}
 .ex-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:16px;font-weight:600;color:#c9d1d9;}
 .ex-leg-dot{width:11px;height:11px;border-radius:2px;display:inline-block;margin-right:4px;border:1px solid;}
-#ex-info{background:#161b22;border-radius:10px;padding:12px 16px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;}
+#ex-info{background:#1e2d45;border-radius:10px;padding:12px 16px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;}
 </style>
 
 <div id="ex-wrap">
@@ -697,7 +697,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
     <span id="ex-lbl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-    <svg id="ex-g" style="flex:2;min-width:300px;background:linear-gradient(135deg,#162032 0%,#1a2a40 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 560 310"></svg>
+    <svg id="ex-g" style="flex:2;min-width:300px;background:linear-gradient(135deg,#1d3050 0%,#223a5e 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 560 310"></svg>
     <div style="flex:1;min-width:190px;">
       <div class="ex-panel">
         <div class="ex-pt" style="color:#6366f1;">스택</div>
@@ -899,7 +899,7 @@ function render(){
     if(pal){fill=pal.f;stroke=pal.s;lc='#ffffff';mc=pal.t;glw='url(#gx)';sw=3;}
     else if(isActive){fill='#0d2f5e';stroke='#58a6ff';lc='#ffffff';mc='#79c0ff';sw=3;}
     else if(isVisited){fill='#1c2d45';stroke='#2f81f7';lc='#e6edf3';mc='#79c0ff';sw=2.5;}
-    else{fill='#161b22';stroke='#30363d';lc='#8b949e';mc='#6e7681';sw=2.5;}
+    else{fill='#1e2d45';stroke='#3a4f6a';lc='#8b949e';mc='#6e7681';sw=2.5;}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
       .attr('stroke-width',sw).attr('filter',glw);
     g.select('.ring').transition().duration(T)
