@@ -115,24 +115,24 @@ def dfs(u):
 
 {{< rawhtml >}}
 <style>
-#tj-wrap{font-family:'JetBrains Mono','Fira Code',monospace;background:#0d0f18;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
-.tj-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s;}
+#tj-wrap{font-family:'JetBrains Mono','Fira Code',monospace;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+.tj-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:background .15s;}
 .tj-btn-p{background:#4f46e5;color:#fff;}.tj-btn-p:hover{background:#6366f1;}
-.tj-btn-s{background:#1e2035;color:#94a3b8;border:1px solid #2d3050;}.tj-btn-s:hover{background:#252840;}
+.tj-btn-s{background:#1e2035;color:#b0bcd0;border:1px solid #2d3050;}.tj-btn-s:hover{background:#252840;}
 .tj-btn:disabled{opacity:.35;cursor:default;}
-.tj-panel{background:#131525;border-radius:10px;padding:12px 16px;border:1px solid #1e2240;margin-bottom:10px;}
-.tj-pt{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
-.tj-chip{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;font-weight:700;font-size:14px;margin:2px;border:1.5px solid;}
-#tj-info{background:#131525;border-radius:10px;padding:14px 18px;border-left:3px solid #6366f1;margin-top:12px;font-size:14px;color:#94a3b8;line-height:1.9;}
+.tj-panel{background:#1e2136;border-radius:10px;padding:12px 16px;border:1px solid #2c2f50;margin-bottom:10px;}
+.tj-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
+.tj-chip{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;font-weight:700;font-size:17px;margin:2px;border:1.5px solid;}
+#tj-info{background:#1e2136;border-radius:10px;padding:14px 18px;border-left:3px solid #6366f1;margin-top:12px;font-size:15px;color:#c0cce0;line-height:1.9;}
 </style>
 <div id="tj-wrap">
   <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
     <button class="tj-btn tj-btn-s" id="tj-bb" onclick="tjB()">◀ 이전</button>
     <button class="tj-btn tj-btn-p" id="tj-bn" onclick="tjN()">다음 ▶</button>
-    <span id="tj-sl" style="font-size:12px;color:#475569;margin-left:4px;"></span>
+    <span id="tj-sl" style="font-size:13px;color:#8090b8;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-    <svg id="tj-g" style="flex:1;min-width:260px;max-width:360px;background:#0d0f18;border-radius:12px;border:1px solid #1e2240;" viewBox="0 0 340 280"></svg>
+    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;background:#16192a;border-radius:12px;border:1px solid #2c2f50;" viewBox="0 0 370 300"></svg>
     <div style="flex:1;min-width:200px;">
       <div class="tj-panel"><div class="tj-pt" style="color:#6366f1;">스택</div><div id="tj-sv" style="min-height:36px;"></div></div>
       <div class="tj-panel"><div class="tj-pt" style="color:#34d399;">발견된 SCC</div><div id="tj-sv2" style="min-height:24px;font-size:14px;color:#334155;"></div></div>
@@ -147,7 +147,7 @@ def dfs(u):
 (function(){
 const nodes=[{id:0,x:90,y:85},{id:1,x:240,y:85},{id:2,x:240,y:200},{id:3,x:316,y:150}];
 const edgeData=[{s:0,t:1,curve:false},{s:1,t:2,curve:false},{s:2,t:0,curve:true},{s:1,t:3,curve:false}];
-const R=24,MF="'JetBrains Mono',monospace";
+const R=27,MF="'JetBrains Mono',monospace";
 const C=(v,c)=>`<span style="color:${c};font-weight:600">${v}</span>`;
 
 const steps=[
@@ -240,12 +240,12 @@ ngs.append('circle').attr('class','ring')
 ngs.append('circle').attr('class','bg')
   .attr('r',R).attr('fill','#131525').attr('stroke','#2d3250').attr('stroke-width',1.5);
 ngs.append('text').attr('class','lbl')
-  .attr('text-anchor','middle').attr('y',-4).attr('fill','#64748b')
-  .attr('font-size',15).attr('font-weight',700).attr('font-family',MF)
+  .attr('text-anchor','middle').attr('y',-5).attr('fill','#7888b8')
+  .attr('font-size',19).attr('font-weight',700).attr('font-family',MF)
   .attr('dominant-baseline','central').text(d=>d.id);
 ngs.append('text').attr('class','meta')
-  .attr('text-anchor','middle').attr('y',10).attr('fill','#475569')
-  .attr('font-size',9).attr('font-family',MF)
+  .attr('text-anchor','middle').attr('y',12).attr('fill','#8090b8')
+  .attr('font-size',12).attr('font-family',MF)
   .attr('dominant-baseline','central').text('');
 
 function scGroup(nid,scc){
@@ -275,8 +275,8 @@ function render(){
     if(sc==='m'){fill='#052e16';stroke='#34d399';lc='#34d399';mc='#16a34a';glow='url(#glow-tj)';sw=2;}
     else if(sc==='s'){fill='#1c1008';stroke='#fbbf24';lc='#fbbf24';mc='#d97706';glow='url(#glow-tj)';sw=2;}
     else if(d.id===s.ac){fill='#1e1b4b';stroke='#6366f1';lc='#a5b4fc';mc='#6366f1';sw=2;}
-    else if(s.d[d.id]>=0){fill='#131a2e';stroke='#334155';lc='#7986cb';mc='#475569';}
-    else{fill='#0d0f18';stroke='#1e2240';lc='#334155';mc='#1e2240';}
+    else if(s.d[d.id]>=0){fill='#1a2040';stroke='#4a5580';lc='#9aabcf';mc='#8090b8';}
+    else{fill='#16192a';stroke='#2c3060';lc='#6070a0';mc='#5060a0';}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
       .attr('stroke-width',sw).attr('filter',glow);
     g.select('.ring').transition().duration(T)
@@ -295,7 +295,7 @@ function render(){
       if(n===s.ac){bg='#2d2775';bc='#818cf8';}
       return `<span class="tj-chip" style="background:${bg};border-color:${bc};color:${c}">${n}</span>`;
     }).join('')
-    :'<span style="color:#334155;font-size:13px">비어있음</span>';
+    :'<span style="color:#6070a0;font-size:14px">비어있음</span>';
 
   document.getElementById('tj-sv2').innerHTML=s.sc.length
     ?s.sc.map(g=>`<span style="color:${g.length>1?'#34d399':'#fbbf24'};font-weight:700;margin-right:8px">{${g.join(',')}}</span>`).join('')
@@ -467,16 +467,16 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
 
 {{< rawhtml >}}
 <style>
-#cmp-wrap{font-family:'JetBrains Mono','Fira Code',monospace;background:#0d0f18;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+#cmp-wrap{font-family:'JetBrains Mono','Fira Code',monospace;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
 .cmp-card{flex:1;min-width:240px;}
-.cmp-hd{font-size:13px;font-weight:700;margin-bottom:12px;padding:8px 14px;border-radius:8px;}
-.cmp-note{margin-top:10px;background:#131525;border-radius:8px;padding:10px 14px;font-size:12px;color:#64748b;line-height:1.8;border-left:3px solid;}
+.cmp-hd{font-size:14px;font-weight:700;margin-bottom:12px;padding:8px 14px;border-radius:8px;}
+.cmp-note{margin-top:10px;background:#1e2136;border-radius:8px;padding:10px 14px;font-size:13px;color:#9aaac0;line-height:1.8;border-left:3px solid;}
 </style>
 <div id="cmp-wrap">
   <div style="display:flex;gap:16px;flex-wrap:wrap;">
     <div class="cmp-card">
       <div class="cmp-hd" style="background:#1f0a0a;color:#f87171;border:1px solid #3d0f0f;">❌ back edge 발견 즉시 끊으면?</div>
-      <div style="background:#0d0f1e;border-radius:10px;border:1px solid #1e2240;">
+      <div style="background:#16192a;border-radius:10px;border:1px solid #2c2f50;">
         <svg id="cmp-w" width="100%" viewBox="0 0 260 230"></svg>
       </div>
       <div class="cmp-note" style="border-color:#f8717155;">
@@ -486,7 +486,7 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
     </div>
     <div class="cmp-card">
       <div class="cmp-hd" style="background:#052e16;color:#34d399;border:1px solid #0f3d1f;">✓ dfs(0) 끝난 뒤 체크하면?</div>
-      <div style="background:#0d0f1e;border-radius:10px;border:1px solid #1e2240;">
+      <div style="background:#16192a;border-radius:10px;border:1px solid #2c2f50;">
         <svg id="cmp-r" width="100%" viewBox="0 0 260 230"></svg>
       </div>
       <div class="cmp-note" style="border-color:#34d39955;">
@@ -520,7 +520,7 @@ function buildSvg(id,wrong){
       .attr('fill',it.stroke==='#334155'?'#94a3b8':it.stroke)
       .attr('font-size',12).attr('font-weight',700).attr('font-family',MF).text(it.t);
     g.append('text').attr('x',x+bw/2).attr('y',y+28).attr('text-anchor','middle')
-      .attr('fill','#475569').attr('font-size',9.5).attr('font-family',MF).text(it.s);
+      .attr('fill','#8090b8').attr('font-size',11).attr('font-family',MF).text(it.s);
     if(i<items.length-1){
       const ay=y+bh+gap/2;
       sv.append('line').attr('x1',W/2).attr('y1',y+bh+1).attr('x2',W/2).attr('y2',ay)
@@ -536,7 +536,7 @@ function buildSvg(id,wrong){
     .attr('stroke',dc).attr('stroke-width',2).attr('stroke-dasharray','5 3');
   sv.append('text').attr('x',W/2).attr('y',y+14).attr('text-anchor','middle')
     .attr('fill',dc).attr('font-size',10.5).attr('font-family',MF)
-    .text(wrong?'← 여기서 자르면 틀림':'← 여기서 잘라야 함');
+    .attr('font-size',12).text(wrong?'← 여기서 자르면 틀림':'← 여기서 잘라야 함');
   y+=30;
   const rf=wrong?'#200808':'#052e16',rs=wrong?'#f87171':'#34d399';
   const rg=sv.append('g');
@@ -654,3 +654,301 @@ $$O(V + E)$$
 | Brute Force | $O(V^3)$ | 모든 쌍 | 불필요 |
 
 Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 한 번 뒤집어야 해서 실제 상수가 Tarjan보다 크다. Tarjan이 DFS 한 번에 끝내므로 실용적으로 더 빠르다.
+
+---
+
+## 8. 실전 예제 시각화
+
+아래 7개 노드 그래프(강의 슬라이드 예제)에서 타잔 알고리즘이 실제로 어떻게 동작하는지 27단계로 확인한다.
+
+그래프 구조: `1↔2`, `1→4`, `2→5`, `3→2`, `3→6`, `3↔7`, `5→4`, `6→5`
+
+최종 SCC: `{4}`, `{5}`, `{1,2}`, `{6}`, `{3,7}`
+
+{{< rawhtml >}}
+<style>
+#ex-wrap{font-family:'JetBrains Mono','Fira Code',monospace;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+.ex-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:background .15s;}
+.ex-btn-p{background:#4f46e5;color:#fff;}.ex-btn-p:hover{background:#6366f1;}
+.ex-btn-s{background:#1e2035;color:#b0bcd0;border:1px solid #2d3050;}.ex-btn-s:hover{background:#252840;}
+.ex-btn:disabled{opacity:.35;cursor:default;}
+.ex-panel{background:#1e2136;border-radius:10px;padding:10px 14px;border:1px solid #2c2f50;margin-bottom:8px;}
+.ex-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+.ex-chip{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:7px;font-weight:700;font-size:16px;margin:2px;border:1.5px solid;}
+.ex-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:13px;}
+.ex-leg-dot{width:11px;height:11px;border-radius:2px;display:inline-block;margin-right:4px;border:1px solid;}
+#ex-info{background:#1e2136;border-radius:10px;padding:12px 16px;border-left:3px solid #6366f1;margin-top:12px;font-size:15px;color:#c0cce0;line-height:1.9;}
+</style>
+
+<div id="ex-wrap">
+  <div class="ex-legend">
+    <span><span class="ex-leg-dot" style="background:#34d39922;border-color:#34d399;"></span>tree edge</span>
+    <span><span class="ex-leg-dot" style="background:#f8717122;border-color:#f87171;"></span>back edge</span>
+    <span><span class="ex-leg-dot" style="background:#fbbf2422;border-color:#fbbf24;"></span>cross edge</span>
+    <span><span class="ex-leg-dot" style="background:#1e1b4b;border-color:#6366f1;"></span>활성 노드</span>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap;">
+    <button class="ex-btn ex-btn-s" id="ex-bb" onclick="exB()">◀ 이전</button>
+    <button class="ex-btn ex-btn-p" id="ex-bn" onclick="exN()">다음 ▶</button>
+    <span id="ex-lbl" style="font-size:13px;color:#8090b8;margin-left:4px;"></span>
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+    <svg id="ex-g" style="flex:2;min-width:300px;background:#16192a;border-radius:12px;border:1px solid #2c2f50;" viewBox="0 0 560 310"></svg>
+    <div style="flex:1;min-width:190px;">
+      <div class="ex-panel">
+        <div class="ex-pt" style="color:#6366f1;">스택</div>
+        <div id="ex-sv" style="min-height:32px;"></div>
+      </div>
+      <div class="ex-panel">
+        <div class="ex-pt" style="color:#b0bcd0;">발견된 SCC</div>
+        <div id="ex-sccv" style="font-size:12px;min-height:24px;line-height:2;"></div>
+      </div>
+      <div class="ex-panel">
+        <div class="ex-pt" style="color:#fbbf24;">ids / low 테이블</div>
+        <div id="ex-tbl" style="font-size:13px;color:#8090b8;line-height:1.9;"></div>
+      </div>
+    </div>
+  </div>
+  <div id="ex-info"></div>
+</div>
+
+<script>
+(function(){
+const NL=[
+  {id:1,x:80,y:85},{id:2,x:210,y:85},{id:3,x:350,y:85},
+  {id:4,x:80,y:215},{id:5,x:210,y:215},{id:6,x:350,y:215},
+  {id:7,x:475,y:85}
+];
+const NM={};NL.forEach(n=>NM[n.id]=n);
+const R=26;
+
+const EL=[
+  {s:1,t:2,co:-22,id:0},{s:2,t:1,co:22,id:1},
+  {s:1,t:4,co:0,id:2},{s:2,t:5,co:0,id:3},
+  {s:3,t:2,co:0,id:4},{s:3,t:6,co:0,id:5},
+  {s:3,t:7,co:-22,id:6},{s:7,t:3,co:22,id:7},
+  {s:5,t:4,co:0,id:8},{s:6,t:5,co:0,id:9}
+];
+
+const SCC_PAL=[
+  {f:'#1c1008',s:'#fbbf24',t:'#fbbf24'},
+  {f:'#200a14',s:'#f472b6',t:'#f472b6'},
+  {f:'#052e16',s:'#34d399',t:'#34d399'},
+  {f:'#170a30',s:'#a78bfa',t:'#a78bfa'},
+  {f:'#061428',s:'#60a5fa',t:'#60a5fa'},
+];
+
+function i8(){return [-1,-1,-1,-1,-1,-1,-1,-1];}
+const C=(v,c)=>`<span style="color:${c};font-weight:700">${v}</span>`;
+
+const SS=[
+  {d:i8(),l:i8(),st:[],sc:[],ac:0,he:-1,et:null,
+   inf:'DFS 시작. 아직 아무 노드도 방문하지 않았다.'},
+  {d:[-1,0,-1,-1,-1,-1,-1,-1],l:[-1,0,-1,-1,-1,-1,-1,-1],st:[1],sc:[],ac:1,he:-1,et:null,
+   inf:`노드 1 방문. ${C('ids[1]=0, low[1]=0','#fbbf24')}. 스택에 push.`},
+  {d:[-1,0,1,-1,-1,-1,-1,-1],l:[-1,0,1,-1,-1,-1,-1,-1],st:[1,2],sc:[],ac:2,he:0,et:'tree',
+   inf:`1→2 ${C('tree edge','#34d399')}. ${C('ids[2]=1, low[2]=1','#fbbf24')}.`},
+  {d:[-1,0,1,-1,-1,-1,-1,-1],l:[-1,0,0,-1,-1,-1,-1,-1],st:[1,2],sc:[],ac:2,he:1,et:'back',
+   inf:`2→1 ${C('back edge','#f87171')}. 1은 스택에 있음.<br>${C('low[2]=min(1, ids[1])=min(1,0)=0','#a78bfa')}.`},
+  {d:[-1,0,1,-1,-1,2,-1,-1],l:[-1,0,0,-1,-1,2,-1,-1],st:[1,2,5],sc:[],ac:5,he:3,et:'tree',
+   inf:`2→5 ${C('tree edge','#34d399')}. ${C('ids[5]=2, low[5]=2','#fbbf24')}.`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2,5,4],sc:[],ac:4,he:8,et:'tree',
+   inf:`5→4 ${C('tree edge','#34d399')}. ${C('ids[4]=3, low[4]=3','#fbbf24')}.`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2,5,4],sc:[],ac:4,he:-1,et:null,
+   inf:`노드 4: 이웃 탐색 완료. ${C('ids[4]=low[4]=3','#34d399')} → SCC 루트!`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2,5],sc:[[4]],ac:5,he:-1,et:null,
+   inf:`${C('SCC {4} 완성.','#fbbf24')} 스택에서 4 pop. 노드 5로 복귀.`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2,5],sc:[[4]],ac:5,he:8,et:'cross',
+   inf:`5→4 확인: 4가 스택에 없음 (이미 완성된 SCC). ${C('low 갱신 없음.','#94a3b8')}`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2,5],sc:[[4]],ac:5,he:-1,et:null,
+   inf:`노드 5: ${C('ids[5]=low[5]=2','#34d399')} → SCC 루트!`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2],sc:[[4],[5]],ac:2,he:-1,et:null,
+   inf:`${C('SCC {5} 완성.','#f472b6')} 스택에서 5 pop. 노드 2로 복귀.`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2],sc:[[4],[5]],ac:2,he:-1,et:null,
+   inf:`dfs(5) 리턴. low[2]=min(0, low[5])=min(0,2)=0 (변화 없음).<br>ids[2]=1 ≠ low[2]=0 → 노드 2는 SCC 루트 아님.`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2],sc:[[4],[5]],ac:1,he:2,et:'cross',
+   inf:`노드 1이 1→4 확인: 4는 스택에 없음 (완성된 SCC). ${C('low 갱신 없음.','#94a3b8')}`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[1,2],sc:[[4],[5]],ac:1,he:-1,et:null,
+   inf:`노드 1: ${C('ids[1]=low[1]=0','#34d399')} → SCC 루트!`},
+  {d:[-1,0,1,-1,3,2,-1,-1],l:[-1,0,0,-1,3,2,-1,-1],st:[],sc:[[4],[5],[2,1]],ac:0,he:-1,et:null,
+   inf:`${C('SCC {2,1} 완성!','#34d399')} 스택에서 2→1 순서로 pop. 스택이 비었다.`},
+  {d:[-1,0,1,4,-1,2,-1,-1],l:[-1,0,0,4,-1,2,-1,-1],st:[3],sc:[[4],[5],[2,1]],ac:3,he:-1,et:null,
+   inf:`새 탐색: 노드 3 방문. ${C('ids[3]=4, low[3]=4','#fbbf24')}.`},
+  {d:[-1,0,1,4,-1,2,-1,-1],l:[-1,0,0,4,-1,2,-1,-1],st:[3],sc:[[4],[5],[2,1]],ac:3,he:4,et:'cross',
+   inf:`3→2 확인: 2가 스택에 없음 (완성된 SCC). ${C('low 갱신 없음.','#94a3b8')}`},
+  {d:[-1,0,1,4,-1,2,5,-1],l:[-1,0,0,4,-1,2,5,-1],st:[3,6],sc:[[4],[5],[2,1]],ac:6,he:5,et:'tree',
+   inf:`3→6 ${C('tree edge','#34d399')}. ${C('ids[6]=5, low[6]=5','#fbbf24')}.`},
+  {d:[-1,0,1,4,-1,2,5,-1],l:[-1,0,0,4,-1,2,5,-1],st:[3,6],sc:[[4],[5],[2,1]],ac:6,he:9,et:'cross',
+   inf:`6→5 확인: 5가 스택에 없음 (완성된 SCC). ${C('low 갱신 없음.','#94a3b8')}`},
+  {d:[-1,0,1,4,-1,2,5,-1],l:[-1,0,0,4,-1,2,5,-1],st:[3,6],sc:[[4],[5],[2,1]],ac:6,he:-1,et:null,
+   inf:`노드 6: ${C('ids[6]=low[6]=5','#34d399')} → SCC 루트!`},
+  {d:[-1,0,1,4,-1,2,5,-1],l:[-1,0,0,4,-1,2,5,-1],st:[3],sc:[[4],[5],[2,1],[6]],ac:3,he:-1,et:null,
+   inf:`${C('SCC {6} 완성.','#a78bfa')} 스택에서 6 pop. 노드 3으로 복귀.`},
+  {d:[-1,0,1,4,-1,2,5,6],l:[-1,0,0,4,-1,2,5,6],st:[3,7],sc:[[4],[5],[2,1],[6]],ac:7,he:6,et:'tree',
+   inf:`3→7 ${C('tree edge','#34d399')}. ${C('ids[7]=6, low[7]=6','#fbbf24')}.`},
+  {d:[-1,0,1,4,-1,2,5,6],l:[-1,0,0,4,-1,2,4,6],st:[3,7],sc:[[4],[5],[2,1],[6]],ac:7,he:7,et:'back',
+   inf:`7→3 ${C('back edge','#f87171')}. 3은 스택에 있음.<br>${C('low[7]=min(6, ids[3])=min(6,4)=4','#a78bfa')}.`},
+  {d:[-1,0,1,4,-1,2,5,6],l:[-1,0,0,4,-1,2,4,6],st:[3,7],sc:[[4],[5],[2,1],[6]],ac:7,he:-1,et:null,
+   inf:`노드 7: ids[7]=6 ≠ low[7]=4 → SCC 루트 아님.`},
+  {d:[-1,0,1,4,-1,2,5,6],l:[-1,0,0,4,-1,2,4,6],st:[3,7],sc:[[4],[5],[2,1],[6]],ac:3,he:-1,et:null,
+   inf:`dfs(7) 리턴. ${C('low[3]=min(4, low[7])=min(4,4)=4','#a78bfa')} (변화 없음).`},
+  {d:[-1,0,1,4,-1,2,5,6],l:[-1,0,0,4,-1,2,4,6],st:[3,7],sc:[[4],[5],[2,1],[6]],ac:3,he:-1,et:null,
+   inf:`노드 3: ${C('ids[3]=low[3]=4','#34d399')} → SCC 루트!`},
+  {d:[-1,0,1,4,-1,2,5,6],l:[-1,0,0,4,-1,2,4,6],st:[],sc:[[4],[5],[2,1],[6],[7,3]],ac:0,he:-1,et:null,
+   inf:`${C('SCC {7,3} 완성!','#60a5fa')} 스택에서 7→3 순서로 pop.<br>모든 탐색 완료. 최종 SCC: ${C('{4}','#fbbf24')} ${C('{5}','#f472b6')} ${C('{1,2}','#34d399')} ${C('{6}','#a78bfa')} ${C('{3,7}','#60a5fa')}`},
+];
+
+let cur=0;
+
+function getNodeScc(nid,scc){
+  for(let i=0;i<scc.length;i++) if(scc[i].includes(nid)) return i;
+  return -1;
+}
+
+function edgePath(e){
+  const s=NM[e.s],t=NM[e.t];
+  const dx=t.x-s.x,dy=t.y-s.y,len=Math.sqrt(dx*dx+dy*dy);
+  const ux=dx/len,uy=dy/len,px=-uy,py=ux;
+  if(e.co!==0){
+    const cpx=(s.x+t.x)/2+px*e.co,cpy=(s.y+t.y)/2+py*e.co;
+    const angle_s=Math.atan2(cpy-s.y,cpx-s.x);
+    const angle_e=Math.atan2(cpy-t.y,cpx-t.x);
+    const sx=s.x+Math.cos(angle_s)*(R+1),sy=s.y+Math.sin(angle_s)*(R+1);
+    const ex=t.x+Math.cos(angle_e)*(R+10),ey=t.y+Math.sin(angle_e)*(R+10);
+    return `M${sx.toFixed(1)},${sy.toFixed(1)} Q${cpx.toFixed(1)},${cpy.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
+  }
+  const sx=s.x+ux*(R+1),sy=s.y+uy*(R+1);
+  const ex=t.x-ux*(R+11),ey=t.y-uy*(R+11);
+  return `M${sx.toFixed(1)},${sy.toFixed(1)} L${ex.toFixed(1)},${ey.toFixed(1)}`;
+}
+
+const svg=d3.select('#ex-g');
+const defs=svg.append('defs');
+function mkM(id,col){
+  defs.append('marker').attr('id',id)
+    .attr('viewBox','0 0 10 10').attr('refX',8).attr('refY',5)
+    .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto-start-reverse')
+    .append('path').attr('d','M2 2L8 5L2 8').attr('fill','none')
+    .attr('stroke',col).attr('stroke-width',1.8).attr('stroke-linecap','round');
+}
+mkM('m-def','#2d3250');mkM('m-tree','#34d399');mkM('m-back','#f87171');mkM('m-cross','#fbbf24');
+['#fbbf24','#f472b6','#34d399','#a78bfa','#60a5fa'].forEach((c,i)=>mkM('m-sc'+i,c));
+
+const gF=defs.append('filter').attr('id','gx').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+gF.append('feGaussianBlur').attr('stdDeviation',5).attr('result','b');
+const fm=gF.append('feMerge');fm.append('feMergeNode').attr('in','b');fm.append('feMergeNode').attr('in','SourceGraphic');
+
+const gF2=defs.append('filter').attr('id','gx2').attr('x','-80%').attr('y','-80%').attr('width','260%').attr('height','260%');
+gF2.append('feGaussianBlur').attr('stdDeviation',9).attr('result','b2');
+const fm2=gF2.append('feMerge');fm2.append('feMergeNode').attr('in','b2');fm2.append('feMergeNode').attr('in','SourceGraphic');
+
+const MF="'JetBrains Mono',monospace";
+const eG=svg.append('g');
+const ePaths=eG.selectAll('path').data(EL).enter().append('path')
+  .attr('d',e=>edgePath(e)).attr('fill','none')
+  .attr('stroke','#2d3250').attr('stroke-width',1.5)
+  .attr('marker-end','url(#m-def)');
+
+const nG=svg.append('g');
+const nGs=nG.selectAll('g').data(NL).enter().append('g')
+  .attr('transform',d=>`translate(${d.x},${d.y})`);
+nGs.append('circle').attr('class','ring').attr('r',R+9)
+  .attr('fill','none').attr('stroke','transparent').attr('stroke-width',2.5).attr('opacity',0);
+nGs.append('circle').attr('class','bg').attr('r',R)
+  .attr('fill','#131525').attr('stroke','#2d3250').attr('stroke-width',1.5);
+nGs.append('text').attr('class','lbl').attr('text-anchor','middle').attr('y',-5)
+  .attr('dominant-baseline','central').attr('fill','#7888b8')
+  .attr('font-size',18).attr('font-weight',700).attr('font-family',MF).text(d=>d.id);
+nGs.append('text').attr('class','meta').attr('text-anchor','middle').attr('y',12)
+  .attr('dominant-baseline','central').attr('fill','#8090b8')
+  .attr('font-size',11).attr('font-family',MF).text('');
+
+function render(){
+  const s=SS[cur],T=360;
+  
+  ePaths.transition().duration(T).ease(d3.easeQuadInOut)
+    .attr('stroke',(e,i)=>{
+      if(i===s.he) return s.et==='tree'?'#34d399':s.et==='back'?'#f87171':'#fbbf24';
+      const si=getNodeScc(e.s,s.sc);
+      return si>=0?SCC_PAL[si].s+'55':'#2d3250';
+    })
+    .attr('stroke-width',(e,i)=>i===s.he?2.5:1.5)
+    .attr('opacity',(e,i)=>{
+      if(i===s.he) return 1;
+      const vis=s.d[e.s]>=0&&s.d[e.t]>=0;
+      return vis?0.8:0.3;
+    })
+    .attr('marker-end',(e,i)=>{
+      if(i===s.he) return `url(#m-${s.et||'def'})`;
+      const si=getNodeScc(e.s,s.sc);
+      return si>=0?`url(#m-sc${si})`:'url(#m-def)';
+    });
+
+  const prevScc=cur>0?SS[cur-1].sc:[];
+  nGs.each(function(d){
+    const g=d3.select(this);
+    const si=getNodeScc(d.id,s.sc);
+    const pal=si>=0?SCC_PAL[si]:null;
+    const isActive=d.id===s.ac;
+    const isVisited=s.d[d.id]>=0;
+    let fill,stroke,lc,mc,glw=null,sw=1.5;
+    if(pal){fill=pal.f;stroke=pal.s;lc=pal.t;mc=pal.s+'aa';glw='url(#gx)';sw=2;}
+    else if(isActive){fill='#1e1b4b';stroke='#6366f1';lc='#a5b4fc';mc='#6366f1';sw=2;}
+    else if(isVisited){fill='#1a2040';stroke='#4a5580';lc='#9aabcf';mc='#8090b8';}
+    else{fill='#16192a';stroke='#2c3060';lc='#6070a0';mc='#5060a0';}
+    g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
+      .attr('stroke-width',sw).attr('filter',glw);
+    g.select('.ring').transition().duration(T)
+      .attr('stroke',pal?pal.s:'transparent').attr('opacity',pal?.28:0);
+    g.select('.lbl').transition().duration(T).attr('fill',lc);
+    const prevSi=getNodeScc(d.id,prevScc);
+    if(si>=0&&prevSi<0){
+      g.select('.bg').attr('filter','url(#gx2)')
+        .transition().delay(T*0.6).duration(700).attr('filter','url(#gx)');
+    }
+    g.select('.meta').transition().duration(T).attr('fill',mc)
+      .text(isVisited?`d${s.d[d.id]} L${s.l[d.id]}`:'');
+  });
+
+  document.getElementById('ex-sv').innerHTML=s.st.length
+    ?s.st.map(n=>{
+      const si=getNodeScc(n,s.sc);
+      const pal=si>=0?SCC_PAL[si]:{f:'#1e1b4b',s:'#4f46e5',t:'#a5b4fc'};
+      const isAc=n===s.ac;
+      const f=isAc?'#2d2775':pal.f,sc2=isAc?'#818cf8':pal.s;
+      return `<span class="ex-chip" style="background:${f};border-color:${sc2};color:${pal.t}">${n}</span>`;
+    }).join('')
+    :'<span style="color:#6070a0;font-size:14px">비어있음</span>';
+
+  document.getElementById('ex-sccv').innerHTML=s.sc.length
+    ?s.sc.map((g,i)=>`<span style="color:${SCC_PAL[i].t};font-weight:700;margin-right:6px">{${g.join(',')}}</span>`).join('')
+    :'<span style="color:#334155">없음</span>';
+
+  const visited=NL.filter(n=>s.d[n.id]>=0);
+  document.getElementById('ex-tbl').innerHTML=visited.length
+    ?`<table style="border-collapse:collapse;width:100%">
+       <tr><th style="color:#8090b8;text-align:left;padding:1px 6px">node</th>
+           <th style="color:#fbbf24;padding:1px 6px">ids</th>
+           <th style="color:#a78bfa;padding:1px 6px">low</th></tr>`+
+      visited.map(n=>{
+        const si=getNodeScc(n.id,s.sc);
+        const c=si>=0?SCC_PAL[si].t:n.id===s.ac?'#a5b4fc':'#8090b8';
+        const eqSign=s.d[n.id]===s.l[n.id]?'<span style="color:#34d399"> ✓</span>':'';
+        return `<tr><td style="color:${c};padding:1px 6px;font-weight:700">${n.id}</td>
+          <td style="color:#fbbf24;padding:1px 6px;text-align:center">${s.d[n.id]}</td>
+          <td style="color:#a78bfa;padding:1px 6px;text-align:center">${s.l[n.id]}${eqSign}</td></tr>`;
+      }).join('')+`</table>`
+    :'<span style="color:#6070a0">방문한 노드 없음</span>';
+
+  document.getElementById('ex-info').innerHTML=s.inf;
+  document.getElementById('ex-lbl').textContent=`단계 ${cur+1} / ${SS.length}`;
+  document.getElementById('ex-bb').disabled=cur===0;
+  document.getElementById('ex-bn').disabled=cur===SS.length-1;
+}
+
+window.exB=function(){if(cur>0){cur--;render();}};
+window.exN=function(){if(cur<SS.length-1){cur++;render();}};
+render();
+})();
+</script>
+{{< /rawhtml >}}
