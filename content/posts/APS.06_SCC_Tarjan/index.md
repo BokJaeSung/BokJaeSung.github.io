@@ -123,7 +123,7 @@ def dfs(u):
 .tj-panel{background:#1e2136;border-radius:10px;padding:12px 16px;border:1px solid #2c2f50;margin-bottom:10px;}
 .tj-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .tj-chip{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;font-weight:700;font-size:17px;margin:2px;border:1.5px solid;}
-#tj-info{background:#1e2136;border-radius:10px;padding:14px 18px;border-left:3px solid #6366f1;margin-top:12px;font-size:15px;color:#c0cce0;line-height:1.9;}
+#tj-info{background:#1e2136;border-radius:10px;padding:14px 18px;border-left:3px solid #6366f1;margin-top:12px;font-size:15px;font-weight:600;color:#c8d8f0;line-height:1.9;}
 </style>
 <div id="tj-wrap">
   <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
@@ -227,8 +227,8 @@ function getPath(e){
 const edgeG=svg.append('g');
 const edgePaths=edgeG.selectAll('path').data(edgeData).enter().append('path')
   .attr('d',e=>getPath(e)).attr('fill','none')
-  .attr('stroke','#2d3250').attr('stroke-width',1.5)
-  .attr('stroke-dasharray',e=>e.curve?'5,4':'none')
+  .attr('stroke','#4a5590').attr('stroke-width',2)
+  .attr('stroke-dasharray',e=>e.curve?'6,4':'none')
   .attr('marker-end','url(#m-def)');
 
 const nodeG=svg.append('g');
@@ -238,7 +238,7 @@ const ngs=nodeG.selectAll('g').data(nodes).enter().append('g')
 ngs.append('circle').attr('class','ring')
   .attr('r',R+9).attr('fill','none').attr('stroke','transparent').attr('stroke-width',2).attr('opacity',0);
 ngs.append('circle').attr('class','bg')
-  .attr('r',R).attr('fill','#131525').attr('stroke','#2d3250').attr('stroke-width',1.5);
+  .attr('r',R).attr('fill','#1e2238').attr('stroke','#4a5590').attr('stroke-width',2);
 ngs.append('text').attr('class','lbl')
   .attr('text-anchor','middle').attr('y',-5).attr('fill','#7888b8')
   .attr('font-size',19).attr('font-weight',700).attr('font-family',MF)
@@ -260,9 +260,9 @@ function render(){
     .attr('stroke',(e,i)=>{
       if(i===s.he) return s.bk?'#f87171':'#34d399';
       const g=scGroup(e.s,s.sc);
-      return g==='m'?'#34d39940':g==='s'?'#fbbf2440':'#2d3250';
+      return g==='m'?'#34d39990':g==='s'?'#fbbf2490':'#4a5590';
     })
-    .attr('stroke-width',(e,i)=>i===s.he?2.5:1.5)
+    .attr('stroke-width',(e,i)=>i===s.he?3:2)
     .attr('marker-end',(e,i)=>{
       if(i===s.he) return s.bk?'url(#m-back)':'url(#m-tree)';
       const g=scGroup(e.s,s.sc);
@@ -272,9 +272,9 @@ function render(){
   ngs.each(function(d){
     const g=d3.select(this),sc=scGroup(d.id,s.sc);
     let fill,stroke,lc,mc,glow=null,sw=1.5;
-    if(sc==='m'){fill='#052e16';stroke='#34d399';lc='#34d399';mc='#16a34a';glow='url(#glow-tj)';sw=2;}
-    else if(sc==='s'){fill='#1c1008';stroke='#fbbf24';lc='#fbbf24';mc='#d97706';glow='url(#glow-tj)';sw=2;}
-    else if(d.id===s.ac){fill='#1e1b4b';stroke='#6366f1';lc='#a5b4fc';mc='#6366f1';sw=2;}
+    if(sc==='m'){fill='#0d4a28';stroke='#34d399';lc='#6effc8';mc='#34d399';glow='url(#glow-tj)';sw=2.5;}
+    else if(sc==='s'){fill='#3a2008';stroke='#fbbf24';lc='#ffd770';mc='#fbbf24';glow='url(#glow-tj)';sw=2.5;}
+    else if(d.id===s.ac){fill='#252060';stroke='#818cf8';lc='#c7d2fe';mc='#818cf8';sw=2.5;}
     else if(s.d[d.id]>=0){fill='#1a2040';stroke='#4a5580';lc='#9aabcf';mc='#8090b8';}
     else{fill='#16192a';stroke='#2c3060';lc='#6070a0';mc='#5060a0';}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
@@ -303,8 +303,8 @@ function render(){
 
   document.getElementById('tj-csv').innerHTML=s.cs.map(l=>
     l.startsWith('▶')
-      ?`<span style="color:#fbbf24">${l}</span>`
-      :`<span style="color:#475569">${l}</span>`
+      ?`<span style="color:#ffd770;font-weight:700">${l}</span>`
+      :`<span style="color:#8090b8;font-weight:600">${l}</span>`
   ).join('<br>');
 
   document.getElementById('tj-info').innerHTML=s.inf;
@@ -677,7 +677,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
 .ex-chip{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:7px;font-weight:700;font-size:16px;margin:2px;border:1.5px solid;}
 .ex-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:13px;}
 .ex-leg-dot{width:11px;height:11px;border-radius:2px;display:inline-block;margin-right:4px;border:1px solid;}
-#ex-info{background:#1e2136;border-radius:10px;padding:12px 16px;border-left:3px solid #6366f1;margin-top:12px;font-size:15px;color:#c0cce0;line-height:1.9;}
+#ex-info{background:#1e2136;border-radius:10px;padding:12px 16px;border-left:3px solid #6366f1;margin-top:12px;font-size:15px;font-weight:600;color:#c8d8f0;line-height:1.9;}
 </style>
 
 <div id="ex-wrap">
@@ -705,7 +705,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
       </div>
       <div class="ex-panel">
         <div class="ex-pt" style="color:#fbbf24;">ids / low 테이블</div>
-        <div id="ex-tbl" style="font-size:13px;color:#8090b8;line-height:1.9;"></div>
+        <div id="ex-tbl" style="font-size:13px;font-weight:600;color:#9aaac8;line-height:1.9;"></div>
       </div>
     </div>
   </div>
@@ -731,11 +731,11 @@ const EL=[
 ];
 
 const SCC_PAL=[
-  {f:'#1c1008',s:'#fbbf24',t:'#fbbf24'},
-  {f:'#200a14',s:'#f472b6',t:'#f472b6'},
-  {f:'#052e16',s:'#34d399',t:'#34d399'},
-  {f:'#170a30',s:'#a78bfa',t:'#a78bfa'},
-  {f:'#061428',s:'#60a5fa',t:'#60a5fa'},
+  {f:'#3a2008',s:'#fbbf24',t:'#ffd770'},
+  {f:'#3a1030',s:'#f472b6',t:'#f9a8d4'},
+  {f:'#0d4a28',s:'#34d399',t:'#6effc8'},
+  {f:'#280a50',s:'#a78bfa',t:'#c4b5fd'},
+  {f:'#0a2848',s:'#60a5fa',t:'#93c5fd'},
 ];
 
 function i8(){return [-1,-1,-1,-1,-1,-1,-1,-1];}
@@ -846,7 +846,7 @@ const MF="'JetBrains Mono',monospace";
 const eG=svg.append('g');
 const ePaths=eG.selectAll('path').data(EL).enter().append('path')
   .attr('d',e=>edgePath(e)).attr('fill','none')
-  .attr('stroke','#2d3250').attr('stroke-width',1.5)
+  .attr('stroke','#4a5590').attr('stroke-width',2)
   .attr('marker-end','url(#m-def)');
 
 const nG=svg.append('g');
@@ -855,7 +855,7 @@ const nGs=nG.selectAll('g').data(NL).enter().append('g')
 nGs.append('circle').attr('class','ring').attr('r',R+9)
   .attr('fill','none').attr('stroke','transparent').attr('stroke-width',2.5).attr('opacity',0);
 nGs.append('circle').attr('class','bg').attr('r',R)
-  .attr('fill','#131525').attr('stroke','#2d3250').attr('stroke-width',1.5);
+  .attr('fill','#1e2238').attr('stroke','#4a5590').attr('stroke-width',2);
 nGs.append('text').attr('class','lbl').attr('text-anchor','middle').attr('y',-5)
   .attr('dominant-baseline','central').attr('fill','#7888b8')
   .attr('font-size',18).attr('font-weight',700).attr('font-family',MF).text(d=>d.id);
@@ -870,13 +870,13 @@ function render(){
     .attr('stroke',(e,i)=>{
       if(i===s.he) return s.et==='tree'?'#34d399':s.et==='back'?'#f87171':'#fbbf24';
       const si=getNodeScc(e.s,s.sc);
-      return si>=0?SCC_PAL[si].s+'55':'#2d3250';
+      return si>=0?SCC_PAL[si].s+'cc':'#4a5590';
     })
-    .attr('stroke-width',(e,i)=>i===s.he?2.5:1.5)
+    .attr('stroke-width',(e,i)=>i===s.he?3:2)
     .attr('opacity',(e,i)=>{
       if(i===s.he) return 1;
       const vis=s.d[e.s]>=0&&s.d[e.t]>=0;
-      return vis?0.8:0.3;
+      return vis?0.9:0.5;
     })
     .attr('marker-end',(e,i)=>{
       if(i===s.he) return `url(#m-${s.et||'def'})`;
@@ -892,8 +892,8 @@ function render(){
     const isActive=d.id===s.ac;
     const isVisited=s.d[d.id]>=0;
     let fill,stroke,lc,mc,glw=null,sw=1.5;
-    if(pal){fill=pal.f;stroke=pal.s;lc=pal.t;mc=pal.s+'aa';glw='url(#gx)';sw=2;}
-    else if(isActive){fill='#1e1b4b';stroke='#6366f1';lc='#a5b4fc';mc='#6366f1';sw=2;}
+    if(pal){fill=pal.f;stroke=pal.s;lc=pal.t;mc=pal.s;glw='url(#gx)';sw=2.5;}
+    else if(isActive){fill='#252060';stroke='#818cf8';lc='#c7d2fe';mc='#818cf8';sw=2.5;}
     else if(isVisited){fill='#1a2040';stroke='#4a5580';lc='#9aabcf';mc='#8090b8';}
     else{fill='#16192a';stroke='#2c3060';lc='#6070a0';mc='#5060a0';}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
