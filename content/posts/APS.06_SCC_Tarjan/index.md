@@ -934,7 +934,7 @@ function render(){
     ?s.sc.map((g,i)=>`<span style="color:${SCC_PAL[i].t};font-weight:700;margin-right:6px">{${g.join(',')}}</span>`).join('')
     :'<span style="color:#334155">없음</span>';
 
-  const visited=NL.filter(n=>s.d[n.id]>=0);
+  const visited=NL.filter(n=>s.d[n.id]>=0).sort((a,b)=>s.d[a.id]-s.d[b.id]);
   document.getElementById('ex-tbl').innerHTML=visited.length
     ?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;font-size:13px;font-weight:700;">
         <div style="color:#6e7681;letter-spacing:.08em;text-transform:uppercase;padding:2px 4px;text-align:center;">node</div>
