@@ -123,7 +123,7 @@ def dfs(u):
 .tj-panel{background:#1e2d45;border-radius:10px;padding:12px 16px;border:1px solid #21262d;margin-bottom:10px;}
 .tj-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .tj-chip{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;font-weight:700;font-size:17px;margin:2px;border:1.5px solid;}
-#tj-info{background:#1e2d45;border-radius:10px;padding:14px 18px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;}
+#tj-info{background:#1e2d45;border-radius:10px;padding:14px 18px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;transition:opacity .15s ease,transform .15s ease;}
 </style>
 <div id="tj-wrap">
   <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
@@ -318,7 +318,12 @@ function render(){
       :`<span style="color:#8090b8;font-weight:600">${l}</span>`
   ).join('<br>');
 
-  document.getElementById('tj-info').innerHTML=s.inf;
+  const info=document.getElementById('tj-info');
+  info.style.opacity='0';info.style.transform='translateY(6px)';
+  setTimeout(()=>{
+    info.innerHTML=s.inf;
+    info.style.opacity='1';info.style.transform='translateY(0)';
+  },140);
   document.getElementById('tj-sl').textContent=`단계 ${cur+1} / ${steps.length}`;
   document.getElementById('tj-bb').disabled=cur===0;
   document.getElementById('tj-bn').disabled=cur===steps.length-1;
