@@ -133,8 +133,8 @@ def dfs(u):
     <button class="tj-btn tj-btn-s" onclick="tjR()" style="margin-left:4px;">↺ 초기화</button>
     <span id="tj-sl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;">
-    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;min-height:300px;background:linear-gradient(135deg,#1d3050 0%,#223a5e 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 370 300" preserveAspectRatio="xMidYMid meet"></svg>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;height:340px;background:linear-gradient(135deg,#1d3050 0%,#223a5e 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 370 300" preserveAspectRatio="xMidYMid meet"></svg>
     <div style="flex:1;min-width:200px;">
       <div class="tj-panel"><div class="tj-pt" style="color:#6366f1;">스택</div><div id="tj-sv" style="min-height:44px;"></div></div>
       <div class="tj-panel"><div class="tj-pt" style="color:#34d399;">발견된 SCC</div><div id="tj-sv2" style="min-height:24px;font-size:17px;color:#e6edf3;"></div></div>
