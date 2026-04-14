@@ -115,7 +115,7 @@ def dfs(u):
 
 {{< rawhtml >}}
 <style>
-#tj-wrap{font-family:'JetBrains Mono','Fira Code',monospace;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+#tj-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
 .tj-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:background .15s;}
 .tj-btn-p{background:#4f46e5;color:#fff;}.tj-btn-p:hover{background:#6366f1;}
 .tj-btn-s{background:#1e2035;color:#b0bcd0;border:1px solid #2d3050;}.tj-btn-s:hover{background:#252840;}
@@ -467,7 +467,7 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
 
 {{< rawhtml >}}
 <style>
-#cmp-wrap{font-family:'JetBrains Mono','Fira Code',monospace;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+#cmp-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
 .cmp-card{flex:1;min-width:240px;}
 .cmp-hd{font-size:14px;font-weight:700;margin-bottom:12px;padding:8px 14px;border-radius:8px;}
 .cmp-note{margin-top:10px;background:#1e2136;border-radius:8px;padding:10px 14px;font-size:13px;color:#9aaac0;line-height:1.8;border-left:3px solid;}
@@ -498,7 +498,7 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
 </div>
 <script>
 (function(){
-const MF="'JetBrains Mono',monospace";
+const MF="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
 function buildSvg(id,wrong){
   const sv=d3.select('#'+id);
   const W=260,bw=190,bh=40,gap=8,x=(W-bw)/2;
@@ -667,7 +667,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
 
 {{< rawhtml >}}
 <style>
-#ex-wrap{font-family:'JetBrains Mono','Fira Code',monospace;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
+#ex-wrap{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#16192a;border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.5);margin:1.5rem 0;}
 .ex-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:background .15s;}
 .ex-btn-p{background:#4f46e5;color:#fff;}.ex-btn-p:hover{background:#6366f1;}
 .ex-btn-s{background:#1e2035;color:#b0bcd0;border:1px solid #2d3050;}.ex-btn-s:hover{background:#252840;}
@@ -842,7 +842,7 @@ const gF2=defs.append('filter').attr('id','gx2').attr('x','-80%').attr('y','-80%
 gF2.append('feGaussianBlur').attr('stdDeviation',9).attr('result','b2');
 const fm2=gF2.append('feMerge');fm2.append('feMergeNode').attr('in','b2');fm2.append('feMergeNode').attr('in','SourceGraphic');
 
-const MF="'JetBrains Mono',monospace";
+const MF="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
 const eG=svg.append('g');
 const ePaths=eG.selectAll('path').data(EL).enter().append('path')
   .attr('d',e=>edgePath(e)).attr('fill','none')
