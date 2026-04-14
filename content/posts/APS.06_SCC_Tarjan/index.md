@@ -219,13 +219,15 @@ function getPath(e){
   const dx=t.x-s.x,dy=t.y-s.y,len=Math.sqrt(dx*dx+dy*dy);
   const ux=dx/len,uy=dy/len;
   if(e.curve){
-    const mx=e.flip?(s.x+t.x)/2+70:(s.x+t.x)/2-70;
-    const my=e.flip?(s.y+t.y)/2-70:(s.y+t.y)/2+70;
+    let px=-uy,py=ux;
+    if(py<0||(py===0&&px<0)){px=-px;py=-py;}
+    const off=e.flip?70:-70;
+    const mx=(s.x+t.x)/2+px*off,my=(s.y+t.y)/2+py*off;
     const as=Math.atan2(my-s.y,mx-s.x);
     const ae=Math.atan2(my-t.y,mx-t.x);
     const sx=s.x+Math.cos(as)*(R+1),sy=s.y+Math.sin(as)*(R+1);
     const ex=t.x+Math.cos(ae)*(R+10),ey=t.y+Math.sin(ae)*(R+10);
-    return `M${sx.toFixed(1)},${sy.toFixed(1)} Q${mx},${my} ${ex.toFixed(1)},${ey.toFixed(1)}`;
+    return `M${sx.toFixed(1)},${sy.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
   }
   const sx=s.x+ux*(R+1),sy=s.y+uy*(R+1);
   const ex=t.x-ux*(R+11),ey=t.y-uy*(R+11);
