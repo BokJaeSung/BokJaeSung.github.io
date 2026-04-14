@@ -123,7 +123,7 @@ def dfs(u):
 .tj-panel{background:#1e2d45;border-radius:10px;padding:12px 16px;border:1px solid #21262d;margin-bottom:10px;}
 .tj-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .tj-chip{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;font-weight:700;font-size:17px;margin:2px;border:1.5px solid;}
-#tj-info{background:#1e2d45;border-radius:10px;padding:14px 18px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;transition:opacity .15s ease,transform .15s ease;}
+#tj-info{background:#1e2d45;border-radius:10px;padding:14px 18px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;min-height:120px;transition:opacity .15s ease,transform .15s ease;}
 #tj-sv,#tj-sv2,#tj-csv{transition:opacity .15s ease,transform .15s ease;}
 </style>
 <div id="tj-wrap">
@@ -727,7 +727,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
       </div>
       <div class="ex-panel">
         <div class="ex-pt" style="color:#fbbf24;">ids / low 테이블</div>
-        <div id="ex-tbl" style="font-size:15px;font-weight:600;color:#9aaac8;"></div>
+        <div id="ex-tbl" style="font-size:15px;font-weight:600;color:#9aaac8;min-height:284px;"></div>
       </div>
     </div>
   </div>
