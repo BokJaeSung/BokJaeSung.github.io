@@ -240,7 +240,7 @@ const edgeG=svg.append('g');
 const edgePaths=edgeG.selectAll('path').data(edgeData).enter().append('path')
   .attr('d',e=>getPath(e)).attr('fill','none')
   .attr('stroke','#2f81f7').attr('stroke-width',2.5)
-  .attr('stroke-dasharray',e=>e.curve?'7,4':'none')
+  .attr('stroke-dasharray','none')
   .attr('marker-end','url(#m-def)');
 
 const nodeG=svg.append('g');
