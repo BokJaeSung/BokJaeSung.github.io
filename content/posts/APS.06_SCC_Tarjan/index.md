@@ -136,7 +136,7 @@ def dfs(u):
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
     <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;background:linear-gradient(135deg,#1d3050 0%,#223a5e 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 370 300"></svg>
     <div style="flex:1;min-width:200px;">
-      <div class="tj-panel"><div class="tj-pt" style="color:#6366f1;">스택</div><div id="tj-sv" style="min-height:36px;"></div></div>
+      <div class="tj-panel"><div class="tj-pt" style="color:#6366f1;">스택</div><div id="tj-sv" style="min-height:44px;"></div></div>
       <div class="tj-panel"><div class="tj-pt" style="color:#34d399;">발견된 SCC</div><div id="tj-sv2" style="min-height:24px;font-size:17px;color:#e6edf3;"></div></div>
       <div class="tj-panel"><div class="tj-pt" style="color:#fbbf24;">콜스택</div><div id="tj-csv" style="min-height:24px;font-size:16px;line-height:1.8;color:#e6edf3;"></div></div>
     </div>
@@ -722,7 +722,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
     <div style="flex:1;min-width:190px;">
       <div class="ex-panel">
         <div class="ex-pt" style="color:#6366f1;">스택</div>
-        <div id="ex-sv" style="min-height:32px;"></div>
+        <div id="ex-sv" style="min-height:40px;"></div>
       </div>
       <div class="ex-panel">
         <div class="ex-pt" style="color:#b0bcd0;">발견된 SCC</div>
