@@ -816,7 +816,9 @@ function getNodeScc(nid,scc){
 function edgePath(e){
   const s=NM[e.s],t=NM[e.t];
   const dx=t.x-s.x,dy=t.y-s.y,len=Math.sqrt(dx*dx+dy*dy);
-  const ux=dx/len,uy=dy/len,px=-uy,py=ux;
+  const ux=dx/len,uy=dy/len;
+  let px=-uy,py=ux;
+  if(py<0||(py===0&&px<0)){px=-px;py=-py;}
   if(e.co!==0){
     const cpx=(s.x+t.x)/2+px*e.co,cpy=(s.y+t.y)/2+py*e.co;
     const angle_s=Math.atan2(cpy-s.y,cpx-s.x);
