@@ -124,6 +124,7 @@ def dfs(u):
 .tj-pt{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .tj-chip{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;font-weight:700;font-size:17px;margin:2px;border:1.5px solid;}
 #tj-info{background:#1e2d45;border-radius:10px;padding:14px 18px;border-left:3px solid #2f81f7;margin-top:12px;font-size:18px;font-weight:600;color:#e6edf3;line-height:1.9;transition:opacity .15s ease,transform .15s ease;}
+#tj-sv,#tj-sv2,#tj-csv{transition:opacity .15s ease,transform .15s ease;}
 </style>
 <div id="tj-wrap">
   <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
@@ -297,7 +298,13 @@ function render(){
       .text(s.d[d.id]>=0?`d${s.d[d.id]} L${s.l[d.id]}`:'');
   });
 
-  document.getElementById('tj-sv').innerHTML=s.st.length
+  function tjFade(id,html){
+    const el=document.getElementById(id);
+    el.style.opacity='0';el.style.transform='translateY(6px)';
+    setTimeout(()=>{el.innerHTML=html;el.style.opacity='1';el.style.transform='translateY(0)';},140);
+  }
+
+  tjFade('tj-sv', s.st.length
     ?s.st.map(n=>{
       const sc2=scGroup(n,s.sc);
       let bg='#1e1b4b',bc='#4f46e5',c='#a5b4fc';
@@ -306,24 +313,19 @@ function render(){
       if(n===s.ac){bg='#2d2775';bc='#818cf8';}
       return `<span class="tj-chip" style="background:${bg};border-color:${bc};color:${c}">${n}</span>`;
     }).join('')
-    :'<span style="color:#6070a0;font-size:14px">비어있음</span>';
+    :'<span style="color:#6070a0;font-size:14px">비어있음</span>');
 
-  document.getElementById('tj-sv2').innerHTML=s.sc.length
+  tjFade('tj-sv2', s.sc.length
     ?s.sc.map(g=>`<span style="color:${g.length>1?'#34d399':'#fbbf24'};font-weight:700;margin-right:8px">{${g.join(',')}}</span>`).join('')
-    :'<span style="color:#334155">없음</span>';
+    :'<span style="color:#334155">없음</span>');
 
-  document.getElementById('tj-csv').innerHTML=s.cs.map(l=>
+  tjFade('tj-csv', s.cs.map(l=>
     l.startsWith('▶')
       ?`<span style="color:#ffd770;font-weight:700">${l}</span>`
       :`<span style="color:#8090b8;font-weight:600">${l}</span>`
-  ).join('<br>');
+  ).join('<br>'));
 
-  const info=document.getElementById('tj-info');
-  info.style.opacity='0';info.style.transform='translateY(6px)';
-  setTimeout(()=>{
-    info.innerHTML=s.inf;
-    info.style.opacity='1';info.style.transform='translateY(0)';
-  },140);
+  tjFade('tj-info', s.inf);
   document.getElementById('tj-sl').textContent=`단계 ${cur+1} / ${steps.length}`;
   document.getElementById('tj-bb').disabled=cur===0;
   document.getElementById('tj-bn').disabled=cur===steps.length-1;
