@@ -300,6 +300,7 @@ function render(){
 
   function tjFade(id,html){
     const el=document.getElementById(id);
+    if(el.innerHTML===html) return;
     el.style.opacity='0';el.style.transform='translateY(6px)';
     setTimeout(()=>{el.innerHTML=html;el.style.opacity='1';el.style.transform='translateY(0)';},140);
   }
@@ -935,6 +936,7 @@ function render(){
 
   function fadeUpdate(id,html){
     const el=document.getElementById(id);
+    if(el.innerHTML===html) return;
     el.style.opacity='0';el.style.transform='translateY(6px)';
     setTimeout(()=>{el.innerHTML=html;el.style.opacity='1';el.style.transform='translateY(0)';},140);
   }
@@ -979,7 +981,7 @@ function render(){
       }).join('')+`</div>`
     :'<span style="color:#6070a0">방문한 노드 없음</span>');
 
-  fadeUpdate('ex-info', s.inf);
+  fadeUpdate('ex-info',s.inf);
   document.getElementById('ex-lbl').textContent=`단계 ${cur+1} / ${SS.length}`;
   document.getElementById('ex-bb').disabled=cur===0;
   document.getElementById('ex-bn').disabled=cur===SS.length-1;
