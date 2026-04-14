@@ -934,18 +934,28 @@ function render(){
 
   const visited=NL.filter(n=>s.d[n.id]>=0);
   document.getElementById('ex-tbl').innerHTML=visited.length
-    ?`<table style="border-collapse:collapse;width:100%;">
-       <tr><th style="color:#8b949e;text-align:center;padding:3px 8px;border-bottom:1px solid #30363d;">node</th>
-           <th style="color:#fbbf24;text-align:center;padding:3px 8px;border-bottom:1px solid #30363d;">ids</th>
-           <th style="color:#a78bfa;text-align:center;padding:3px 8px;border-bottom:1px solid #30363d;">low</th></tr>`+
+    ?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;font-size:13px;font-weight:700;">
+        <div style="color:#6e7681;letter-spacing:.08em;text-transform:uppercase;padding:2px 4px;text-align:center;">node</div>
+        <div style="color:#fbbf24;letter-spacing:.08em;text-transform:uppercase;padding:2px 4px;text-align:center;">ids</div>
+        <div style="color:#a78bfa;letter-spacing:.08em;text-transform:uppercase;padding:2px 4px;text-align:center;">low</div>`+
       visited.map(n=>{
         const eq=s.d[n.id]===s.l[n.id];
-        return `<tr>
-          <td style="color:#c9d1d9;padding:3px 8px;text-align:center;">${n.id}</td>
-          <td style="color:#fbbf24;padding:3px 8px;text-align:center;">${s.d[n.id]}</td>
-          <td style="color:${eq?'#34d399':'#a78bfa'};padding:3px 8px;text-align:center;">${s.l[n.id]}${eq?' ✓':''}</td>
-        </tr>`;
-      }).join('')+`</table>`
+        const si=getNodeScc(n.id,s.sc);
+        const nc=si>=0?SCC_PAL[si%SCC_PAL.length].s:(n.id===s.ac?'#818cf8':'#8b949e');
+        const nbg=si>=0?SCC_PAL[si%SCC_PAL.length].f:(n.id===s.ac?'#2d2775':'#243450');
+        const lc=eq?'#34d399':'#a78bfa';
+        const lbg=eq?'#0f3d2055':'#28205055';
+        return `
+        <div style="display:flex;align-items:center;justify-content:center;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:7px;border:1.5px solid ${nc};background:${nbg};color:${nc};font-size:15px;">${n.id}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;border-radius:6px;border:1.5px solid #fbbf2488;background:#2a1f0044;color:#fde68a;font-size:14px;padding:0 6px;">${s.d[n.id]}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;border-radius:6px;border:1.5px solid ${lc}88;background:${lbg};color:${lc};font-size:14px;padding:0 6px;">${s.l[n.id]}${eq?' ✓':''}</span>
+        </div>`;
+      }).join('')+`</div>`
     :'<span style="color:#6070a0">방문한 노드 없음</span>';
 
   document.getElementById('ex-info').innerHTML=s.inf;
