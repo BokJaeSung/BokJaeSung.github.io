@@ -115,7 +115,7 @@ def dfs(u):
 {{< rawhtml >}}
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-#tj-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#0d1117 0%,#111827 60%,#0f172a 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
+#tj-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1a2235 0%,#1e2d45 60%,#192238 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .tj-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;transition:background .15s;}
 .tj-btn-p{background:#1f6feb;color:#fff;}.tj-btn-p:hover{background:#388bfd;}
 .tj-btn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d;}.tj-btn-s:hover{background:#30363d;}
@@ -132,7 +132,7 @@ def dfs(u):
     <span id="tj-sl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;background:linear-gradient(135deg,#0d1117 0%,#131c2e 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 370 300"></svg>
+    <svg id="tj-g" style="flex:1;min-width:260px;max-width:380px;background:linear-gradient(135deg,#162032 0%,#1a2a40 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 370 300"></svg>
     <div style="flex:1;min-width:200px;">
       <div class="tj-panel"><div class="tj-pt" style="color:#6366f1;">스택</div><div id="tj-sv" style="min-height:36px;"></div></div>
       <div class="tj-panel"><div class="tj-pt" style="color:#34d399;">발견된 SCC</div><div id="tj-sv2" style="min-height:24px;font-size:17px;color:#e6edf3;"></div></div>
@@ -467,7 +467,7 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
 
 {{< rawhtml >}}
 <style>
-#cmp-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#0d1117 0%,#111827 60%,#0f172a 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
+#cmp-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1a2235 0%,#1e2d45 60%,#192238 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .cmp-card{flex:1;min-width:240px;}
 .cmp-hd{font-size:17px;font-weight:700;margin-bottom:12px;padding:8px 14px;border-radius:8px;}
 .cmp-note{margin-top:10px;background:#161b22;border-radius:8px;padding:10px 14px;font-size:17px;color:#e6edf3;line-height:1.8;border-left:3px solid;}
@@ -476,7 +476,7 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
   <div style="display:flex;gap:16px;flex-wrap:wrap;">
     <div class="cmp-card">
       <div class="cmp-hd" style="background:#1f0a0a;color:#f87171;border:1px solid #3d0f0f;">❌ back edge 발견 즉시 끊으면?</div>
-      <div style="background:linear-gradient(135deg,#0d1117 0%,#131c2e 100%);border-radius:10px;border:1px solid #21262d;">
+      <div style="background:linear-gradient(135deg,#162032 0%,#1a2a40 100%);border-radius:10px;border:1px solid #21262d;">
         <svg id="cmp-w" width="100%" viewBox="0 0 260 230"></svg>
       </div>
       <div class="cmp-note" style="border-color:#f8717155;">
@@ -486,7 +486,7 @@ back edge를 발견해도 SCC가 바로 만들어지지 않는다. 아래 비교
     </div>
     <div class="cmp-card">
       <div class="cmp-hd" style="background:#052e16;color:#34d399;border:1px solid #0f3d1f;">✓ dfs(0) 끝난 뒤 체크하면?</div>
-      <div style="background:linear-gradient(135deg,#0d1117 0%,#131c2e 100%);border-radius:10px;border:1px solid #21262d;">
+      <div style="background:linear-gradient(135deg,#162032 0%,#1a2a40 100%);border-radius:10px;border:1px solid #21262d;">
         <svg id="cmp-r" width="100%" viewBox="0 0 260 230"></svg>
       </div>
       <div class="cmp-note" style="border-color:#34d39955;">
@@ -667,7 +667,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
 
 {{< rawhtml >}}
 <style>
-#ex-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#0d1117 0%,#111827 60%,#0f172a 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
+#ex-wrap{font-family:'Space Grotesk',system-ui,sans-serif;background:linear-gradient(135deg,#1a2235 0%,#1e2d45 60%,#192238 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
 .ex-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;transition:background .15s;}
 .ex-btn-p{background:#1f6feb;color:#fff;}.ex-btn-p:hover{background:#388bfd;}
 .ex-btn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d;}.ex-btn-s:hover{background:#30363d;}
@@ -693,7 +693,7 @@ Kosaraju도 같은 시간복잡도이지만 DFS를 두 번 돌고 그래프를 �
     <span id="ex-lbl" style="font-size:16px;color:#8b949e;margin-left:4px;"></span>
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-    <svg id="ex-g" style="flex:2;min-width:300px;background:linear-gradient(135deg,#0d1117 0%,#131c2e 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 560 310"></svg>
+    <svg id="ex-g" style="flex:2;min-width:300px;background:linear-gradient(135deg,#162032 0%,#1a2a40 100%);border-radius:12px;border:1px solid #21262d;" viewBox="0 0 560 310"></svg>
     <div style="flex:1;min-width:190px;">
       <div class="ex-panel">
         <div class="ex-pt" style="color:#6366f1;">스택</div>
