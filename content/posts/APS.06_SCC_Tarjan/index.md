@@ -186,12 +186,12 @@ const defs=svg.append('defs');
 
 function mkMarker(id,col){
   defs.append('marker').attr('id',id)
-    .attr('viewBox','0 0 10 10').attr('refX',9).attr('refY',5)
-    .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto-start-reverse')
-    .append('path').attr('d','M2 2L8 5L2 8').attr('fill','none')
-    .attr('stroke',col).attr('stroke-width',1.8).attr('stroke-linecap','round');
+    .attr('viewBox','0 0 10 10').attr('refX',8).attr('refY',5)
+    .attr('markerWidth',8).attr('markerHeight',8).attr('orient','auto-start-reverse')
+    .append('path').attr('d','M1 2L8 5L1 8').attr('fill',col)
+    .attr('stroke',col).attr('stroke-width',1).attr('stroke-linecap','round');
 }
-mkMarker('m-def','#2d3250');
+mkMarker('m-def','#7888cc');
 mkMarker('m-tree','#34d399');
 mkMarker('m-back','#f87171');
 mkMarker('m-s012','#34d399');
@@ -227,8 +227,8 @@ function getPath(e){
 const edgeG=svg.append('g');
 const edgePaths=edgeG.selectAll('path').data(edgeData).enter().append('path')
   .attr('d',e=>getPath(e)).attr('fill','none')
-  .attr('stroke','#4a5590').attr('stroke-width',2)
-  .attr('stroke-dasharray',e=>e.curve?'6,4':'none')
+  .attr('stroke','#7888cc').attr('stroke-width',2.5)
+  .attr('stroke-dasharray',e=>e.curve?'7,4':'none')
   .attr('marker-end','url(#m-def)');
 
 const nodeG=svg.append('g');
@@ -238,14 +238,14 @@ const ngs=nodeG.selectAll('g').data(nodes).enter().append('g')
 ngs.append('circle').attr('class','ring')
   .attr('r',R+9).attr('fill','none').attr('stroke','transparent').attr('stroke-width',2).attr('opacity',0);
 ngs.append('circle').attr('class','bg')
-  .attr('r',R).attr('fill','#1e2238').attr('stroke','#4a5590').attr('stroke-width',2);
+  .attr('r',R).attr('fill','#252840').attr('stroke','#7888cc').attr('stroke-width',2.5);
 ngs.append('text').attr('class','lbl')
-  .attr('text-anchor','middle').attr('y',-5).attr('fill','#7888b8')
-  .attr('font-size',19).attr('font-weight',700).attr('font-family',MF)
+  .attr('text-anchor','middle').attr('y',-5).attr('fill','#e0e8ff')
+  .attr('font-size',20).attr('font-weight',700).attr('font-family',MF)
   .attr('dominant-baseline','central').text(d=>d.id);
 ngs.append('text').attr('class','meta')
-  .attr('text-anchor','middle').attr('y',12).attr('fill','#8090b8')
-  .attr('font-size',12).attr('font-family',MF)
+  .attr('text-anchor','middle').attr('y',13).attr('fill','#b0c4f0')
+  .attr('font-size',12).attr('font-weight',700).attr('font-family',MF)
   .attr('dominant-baseline','central').text('');
 
 function scGroup(nid,scc){
@@ -260,9 +260,9 @@ function render(){
     .attr('stroke',(e,i)=>{
       if(i===s.he) return s.bk?'#f87171':'#34d399';
       const g=scGroup(e.s,s.sc);
-      return g==='m'?'#34d39990':g==='s'?'#fbbf2490':'#4a5590';
+      return g==='m'?'#34d399bb':g==='s'?'#fbbf24bb':'#7888cc';
     })
-    .attr('stroke-width',(e,i)=>i===s.he?3:2)
+    .attr('stroke-width',(e,i)=>i===s.he?3.5:2.5)
     .attr('marker-end',(e,i)=>{
       if(i===s.he) return s.bk?'url(#m-back)':'url(#m-tree)';
       const g=scGroup(e.s,s.sc);
@@ -271,12 +271,12 @@ function render(){
 
   ngs.each(function(d){
     const g=d3.select(this),sc=scGroup(d.id,s.sc);
-    let fill,stroke,lc,mc,glow=null,sw=1.5;
-    if(sc==='m'){fill='#0d4a28';stroke='#34d399';lc='#6effc8';mc='#34d399';glow='url(#glow-tj)';sw=2.5;}
-    else if(sc==='s'){fill='#3a2008';stroke='#fbbf24';lc='#ffd770';mc='#fbbf24';glow='url(#glow-tj)';sw=2.5;}
-    else if(d.id===s.ac){fill='#252060';stroke='#818cf8';lc='#c7d2fe';mc='#818cf8';sw=2.5;}
-    else if(s.d[d.id]>=0){fill='#1a2040';stroke='#4a5580';lc='#9aabcf';mc='#8090b8';}
-    else{fill='#16192a';stroke='#2c3060';lc='#6070a0';mc='#5060a0';}
+    let fill,stroke,lc,mc,glow=null,sw=2.5;
+    if(sc==='m'){fill='#0d4a28';stroke='#34d399';lc='#ffffff';mc='#6effc8';glow='url(#glow-tj)';sw=3;}
+    else if(sc==='s'){fill='#3a2008';stroke='#fbbf24';lc='#ffffff';mc='#ffd770';glow='url(#glow-tj)';sw=3;}
+    else if(d.id===s.ac){fill='#2d2880';stroke='#a5b4fc';lc='#ffffff';mc='#c7d2fe';sw=3;}
+    else if(s.d[d.id]>=0){fill='#252840';stroke='#7888cc';lc='#e0e8ff';mc='#b0c4f0';}
+    else{fill='#1c1f38';stroke='#5060a0';lc='#c0ccf0';mc='#8090c8';}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
       .attr('stroke-width',sw).attr('filter',glow);
     g.select('.ring').transition().duration(T)
@@ -827,11 +827,11 @@ const defs=svg.append('defs');
 function mkM(id,col){
   defs.append('marker').attr('id',id)
     .attr('viewBox','0 0 10 10').attr('refX',8).attr('refY',5)
-    .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto-start-reverse')
-    .append('path').attr('d','M2 2L8 5L2 8').attr('fill','none')
-    .attr('stroke',col).attr('stroke-width',1.8).attr('stroke-linecap','round');
+    .attr('markerWidth',8).attr('markerHeight',8).attr('orient','auto-start-reverse')
+    .append('path').attr('d','M1 2L8 5L1 8').attr('fill',col)
+    .attr('stroke',col).attr('stroke-width',1).attr('stroke-linecap','round');
 }
-mkM('m-def','#2d3250');mkM('m-tree','#34d399');mkM('m-back','#f87171');mkM('m-cross','#fbbf24');
+mkM('m-def','#7888cc');mkM('m-tree','#34d399');mkM('m-back','#f87171');mkM('m-cross','#fbbf24');
 ['#fbbf24','#f472b6','#34d399','#a78bfa','#60a5fa'].forEach((c,i)=>mkM('m-sc'+i,c));
 
 const gF=defs.append('filter').attr('id','gx').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
@@ -846,7 +846,7 @@ const MF="'JetBrains Mono',monospace";
 const eG=svg.append('g');
 const ePaths=eG.selectAll('path').data(EL).enter().append('path')
   .attr('d',e=>edgePath(e)).attr('fill','none')
-  .attr('stroke','#4a5590').attr('stroke-width',2)
+  .attr('stroke','#7888cc').attr('stroke-width',2.5)
   .attr('marker-end','url(#m-def)');
 
 const nG=svg.append('g');
@@ -855,13 +855,13 @@ const nGs=nG.selectAll('g').data(NL).enter().append('g')
 nGs.append('circle').attr('class','ring').attr('r',R+9)
   .attr('fill','none').attr('stroke','transparent').attr('stroke-width',2.5).attr('opacity',0);
 nGs.append('circle').attr('class','bg').attr('r',R)
-  .attr('fill','#1e2238').attr('stroke','#4a5590').attr('stroke-width',2);
+  .attr('fill','#252840').attr('stroke','#7888cc').attr('stroke-width',2.5);
 nGs.append('text').attr('class','lbl').attr('text-anchor','middle').attr('y',-5)
-  .attr('dominant-baseline','central').attr('fill','#7888b8')
-  .attr('font-size',18).attr('font-weight',700).attr('font-family',MF).text(d=>d.id);
-nGs.append('text').attr('class','meta').attr('text-anchor','middle').attr('y',12)
-  .attr('dominant-baseline','central').attr('fill','#8090b8')
-  .attr('font-size',11).attr('font-family',MF).text('');
+  .attr('dominant-baseline','central').attr('fill','#e0e8ff')
+  .attr('font-size',19).attr('font-weight',700).attr('font-family',MF).text(d=>d.id);
+nGs.append('text').attr('class','meta').attr('text-anchor','middle').attr('y',13)
+  .attr('dominant-baseline','central').attr('fill','#b0c4f0')
+  .attr('font-size',11).attr('font-weight',700).attr('font-family',MF).text('');
 
 function render(){
   const s=SS[cur],T=360;
@@ -870,13 +870,13 @@ function render(){
     .attr('stroke',(e,i)=>{
       if(i===s.he) return s.et==='tree'?'#34d399':s.et==='back'?'#f87171':'#fbbf24';
       const si=getNodeScc(e.s,s.sc);
-      return si>=0?SCC_PAL[si].s+'cc':'#4a5590';
+      return si>=0?SCC_PAL[si].s:'#7888cc';
     })
-    .attr('stroke-width',(e,i)=>i===s.he?3:2)
+    .attr('stroke-width',(e,i)=>i===s.he?3.5:2.5)
     .attr('opacity',(e,i)=>{
       if(i===s.he) return 1;
       const vis=s.d[e.s]>=0&&s.d[e.t]>=0;
-      return vis?0.9:0.5;
+      return vis?1:0.6;
     })
     .attr('marker-end',(e,i)=>{
       if(i===s.he) return `url(#m-${s.et||'def'})`;
@@ -892,10 +892,10 @@ function render(){
     const isActive=d.id===s.ac;
     const isVisited=s.d[d.id]>=0;
     let fill,stroke,lc,mc,glw=null,sw=1.5;
-    if(pal){fill=pal.f;stroke=pal.s;lc=pal.t;mc=pal.s;glw='url(#gx)';sw=2.5;}
-    else if(isActive){fill='#252060';stroke='#818cf8';lc='#c7d2fe';mc='#818cf8';sw=2.5;}
-    else if(isVisited){fill='#1a2040';stroke='#4a5580';lc='#9aabcf';mc='#8090b8';}
-    else{fill='#16192a';stroke='#2c3060';lc='#6070a0';mc='#5060a0';}
+    if(pal){fill=pal.f;stroke=pal.s;lc='#ffffff';mc=pal.t;glw='url(#gx)';sw=3;}
+    else if(isActive){fill='#2d2880';stroke='#a5b4fc';lc='#ffffff';mc='#c7d2fe';sw=3;}
+    else if(isVisited){fill='#252840';stroke='#7888cc';lc='#e0e8ff';mc='#b0c4f0';sw=2.5;}
+    else{fill='#1c1f38';stroke='#5060a0';lc='#c0ccf0';mc='#8090c8';sw=2.5;}
     g.select('.bg').transition().duration(T).attr('fill',fill).attr('stroke',stroke)
       .attr('stroke-width',sw).attr('filter',glw);
     g.select('.ring').transition().duration(T)
