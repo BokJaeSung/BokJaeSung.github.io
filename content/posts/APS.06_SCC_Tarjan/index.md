@@ -1,12 +1,12 @@
 ---
-title: "APS.05 Tarjan's SCC Algorithm"
+title: "APS.06 Tarjan's SCC Algorithm"
 date: 2026-04-14T09:00:00+09:00
 tags: ["알고리즘", "그래프", "SCC", "Tarjan", "DFS", "강한연결요소"]
 cover:
   image: 'images/cover.jpg'
   alt: 'APS.05 Tarjan SCC Algorithm'
   relative: true
-summary: "DFS 한 번으로 강한 연결 요소를 찾는 Tarjan 알고리즘의 원리를 비유, 시각화, Q&A로 완전히 이해한다."
+summary: "How a single depth-first walk unravels every cycle in a directed graph, without ever looking back."
 ---
 
 ## 1. 강한 연결 요소 (SCC) 란?
@@ -146,7 +146,7 @@ def dfs(u):
 <script>
 (function(){
 const nodes=[{id:0,x:105,y:75},{id:1,x:265,y:75},{id:2,x:105,y:235},{id:3,x:265,y:235}];
-const edgeData=[{s:0,t:1,curve:false},{s:1,t:2,curve:false},{s:2,t:0,curve:false},{s:1,t:3,curve:false},{s:2,t:1,curve:true,flip:true}];
+const edgeData=[{s:0,t:1,curve:false},{s:1,t:2,curve:true},{s:2,t:0,curve:false},{s:1,t:3,curve:false},{s:2,t:1,curve:true,flip:true}];
 const R=27,MF="'Space Grotesk',system-ui,sans-serif";
 const C=(v,c)=>`<span style="color:${c};font-weight:600">${v}</span>`;
 
@@ -221,8 +221,8 @@ function getPath(e){
   const sx=s.x+ux*(R+1),sy=s.y+uy*(R+1);
   const ex=t.x-ux*(R+11),ey=t.y-uy*(R+11);
   if(e.curve){
-    const mx=e.flip?(s.x+t.x)/2+55:(s.x+t.x)/2-55;
-    const my=e.flip?(s.y+t.y)/2-55:(s.y+t.y)/2+55;
+    const mx=e.flip?(s.x+t.x)/2+70:(s.x+t.x)/2-70;
+    const my=e.flip?(s.y+t.y)/2-70:(s.y+t.y)/2+70;
     return `M${sx},${sy} Q${mx},${my} ${ex},${ey}`;
   }
   return `M${sx},${sy} L${ex},${ey}`;
@@ -727,10 +727,10 @@ const NM={};NL.forEach(n=>NM[n.id]=n);
 const R=26;
 
 const EL=[
-  {s:1,t:2,co:-22,id:0},{s:2,t:1,co:22,id:1},
+  {s:1,t:2,co:-42,id:0},{s:2,t:1,co:42,id:1},
   {s:1,t:4,co:0,id:2},{s:2,t:5,co:0,id:3},
   {s:3,t:2,co:0,id:4},{s:3,t:6,co:0,id:5},
-  {s:3,t:7,co:-22,id:6},{s:7,t:3,co:22,id:7},
+  {s:3,t:7,co:-42,id:6},{s:7,t:3,co:42,id:7},
   {s:5,t:4,co:0,id:8},{s:6,t:5,co:0,id:9}
 ];
 
