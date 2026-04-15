@@ -118,6 +118,8 @@ function render(){
   const startX=(560-totalW)/2;
   const patStartX=startX+s*(BW+GAP);
   const T_Y=TOP,P_Y=TOP+BH+ROW_GAP;
+  const T=ns.T,P2=ns.P;
+
   svg.selectAll('*').remove();
 
   // index labels
