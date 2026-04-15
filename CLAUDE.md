@@ -99,6 +99,50 @@ fix: APS.05 다크테마 색상 수정
 
 ---
 
+## APS 시리즈 포스트 스타일 레퍼런스 (APS.06 기준)
+
+### 목차
+- rawhtml `<details>` 태그로 접기/펼치기 구현 (기본: 닫힌 상태)
+- 스타일: 배경 투명, 테두리 `#30363d`, 폰트 `inherit`
+- 메인 항목 색상: `#c9d1d9`, 서브 항목 색상: `#6e7681`
+- summary 텍스트: `목차 — Table of Contents`
+- 섹션 번호는 `0.`부터 시작 가능 (인터랙티브 데모가 맨 앞)
+
+```html
+{{< rawhtml >}}
+<details style="background:transparent;border:1px solid #30363d;border-radius:8px;padding:10px 16px;margin:1.2rem 0;font-family:inherit;">
+<summary style="cursor:pointer;font-weight:600;font-size:14px;color:#8b949e;user-select:none;font-family:inherit;">목차 — Table of Contents</summary>
+<div style="margin-top:10px;font-size:14px;line-height:2;font-family:inherit;">
+  <div><a href="#0-..." style="color:#c9d1d9;text-decoration:none;">0. ...</a></div>
+  <div style="padding-left:16px;font-size:13px;">
+    <div><a href="#..." style="color:#6e7681;text-decoration:none;">서브항목</a></div>
+  </div>
+</div>
+</details>
+{{< /rawhtml >}}
+```
+
+### 섹션 헤딩
+- 헤딩 텍스트는 **영문 우선**. 한글 헤딩은 앵커 ID가 한글로 생성되어 목차 링크 관리가 번거로움
+- 목차 링크 앵커는 헤딩 텍스트 기반 자동 생성 규칙 따름 (소문자, 공백→`-`, 특수문자 제거)
+
+### 인터랙티브 애니메이션 (d3.js)
+- d3.js CDN을 해당 섹션 `<script>` 바로 위에 로드
+  ```html
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  ```
+- 같은 페이지에 d3 애니메이션이 여러 개면 각각 로드해도 무방 (브라우저 캐시됨)
+- 색상 팔레트 (다크 배경 기준):
+  - tree edge: `#34d399`, back edge: `#f87171`, cross edge: `#fbbf24`
+  - 활성 노드: `#58a6ff`, 완성된 SCC: `#fbbf24` / `#f472b6` / `#34d399` / `#a78bfa` / `#60a5fa`
+  - 배경: `linear-gradient(135deg, #1e3050, #253c60, #1c2d50)`
+
+### Q & A 섹션
+- 깊은 개념 질문들은 `## 5. Q & A` 하나로 묶고 `### 5.1`, `### 5.2` ... 형식으로 나열
+- 목차에서는 `Q1.`, `Q2.` ... 형식으로 표기
+
+---
+
 ## 포스트 작성 시 체크리스트
 
 - [ ] `content/posts/{슬러그}/index.md` 생성
