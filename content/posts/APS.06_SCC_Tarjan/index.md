@@ -97,6 +97,7 @@ summary: "How a single depth-first walk unravels every cycle in a directed graph
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
 (function(){
 const NL=[
