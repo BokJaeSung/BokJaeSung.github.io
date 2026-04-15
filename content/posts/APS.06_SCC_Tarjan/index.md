@@ -9,32 +9,41 @@ cover:
 summary: "How a single depth-first walk unravels every cycle in a directed graph, without ever looking back."
 ---
 
-## 목차
-
-0. [Step-by-Step Walkthrough](#0-step-by-step-walkthrough)
-1. [Strongly Connected Component](#1-강한-연결-요소-scc-란)
-2. [Brute Force — O(V³)](#2-brute-force--ov3)
-3. [Tarjan 알고리즘 — O(V+E)](#3-tarjan-알고리즘--ove)
-   - [3.1 핵심 변수](#31-핵심-변수)
-   - [3.2 알고리즘 코드](#32-알고리즘-코드)
-   - [3.3 단계별 실행 시각화](#33-단계별-실행-시각화)
-4. [The Detective Analogy](#4-the-detective-analogy)
-5. [Q & A](#5-q--a)
-   - [Q1. 왜 visited 배열이 없는가?](#51-왜-visited-배열이-없는가)
-   - [Q2. low는 어떻게 변하는가?](#52-low는-어떻게-변하는가)
-   - [Q3. "오래됨"이 min인 이유](#53-오래됨이-min인-이유)
-   - [Q4. "먼저 온 것"이 왜 중요한가?](#54-먼저-온-것이-왜-중요한가)
-   - [Q5. Tree Edge vs Back Edge](#55-tree-edge-vs-back-edge)
-   - [Q6. back edge에서 왜 ids[v]만 쓰는가?](#56-back-edge에서-왜-idsv만-쓰는가)
-   - [Q7. SCC 체크 타이밍 — 왜 dfs 끝에서?](#57-scc-체크-타이밍--왜-dfs-끝에서)
-   - [Q8. ids[v] == low[v] 의 의미](#58-idsv--lowv-의-의미)
-   - [Q9. 조상 발견 ≠ SCC 즉시 완성](#59-조상-발견--scc-즉시-완성)
-   - [Q10. on_stack 체크 — 왜 스택에 없는 노드를 무시해야 하는가?](#510-on_stack-체크--왜-스택에-없는-노드를-무시해야-하는가)
-   - [Q11. low 전파는 언제 되는가?](#511-low-전파는-언제-되는가)
-   - [Q12. min을 하는 이유](#512-min을-하는-이유)
-   - [Q13. dfs(0)가 끝나면 반드시 0을 포함하는 SCC가 완성되는가?](#513-dfs0가-끝나면-반드시-0을-포함하는-scc가-완성되는가)
-6. [시간복잡도](#6-시간복잡도)
-7. [알고리즘 비교](#7-알고리즘-비교)
+{{< rawhtml >}}
+<details style="background:#1a2744;border:1px solid #2a3f6a;border-radius:10px;padding:12px 18px;margin:1.2rem 0;">
+<summary style="cursor:pointer;font-weight:700;font-size:15px;color:#7aa2e0;letter-spacing:.04em;user-select:none;">목차 — Table of Contents</summary>
+<div style="margin-top:12px;font-size:14px;line-height:2;color:#c9d1d9;">
+  <div><a href="#0-step-by-step-walkthrough" style="color:#60a5fa;text-decoration:none;">0. Step-by-Step Walkthrough</a></div>
+  <div><a href="#1-강한-연결-요소-scc-란" style="color:#34d399;text-decoration:none;">1. Strongly Connected Component</a></div>
+  <div><a href="#2-brute-force--ov3" style="color:#f87171;text-decoration:none;">2. Brute Force — O(V³)</a></div>
+  <div><a href="#3-tarjan-알고리즘--ove" style="color:#fbbf24;text-decoration:none;">3. Tarjan 알고리즘 — O(V+E)</a></div>
+  <div style="padding-left:16px;font-size:13px;color:#8b949e;">
+    <div><a href="#31-핵심-변수" style="color:#8b949e;text-decoration:none;">3.1 핵심 변수</a></div>
+    <div><a href="#32-알고리즘-코드" style="color:#8b949e;text-decoration:none;">3.2 알고리즘 코드</a></div>
+    <div><a href="#33-단계별-실행-시각화" style="color:#8b949e;text-decoration:none;">3.3 단계별 실행 시각화</a></div>
+  </div>
+  <div><a href="#4-the-detective-analogy" style="color:#a78bfa;text-decoration:none;">4. The Detective Analogy</a></div>
+  <div><a href="#5-q--a" style="color:#f472b6;text-decoration:none;">5. Q &amp; A</a></div>
+  <div style="padding-left:16px;font-size:13px;color:#8b949e;">
+    <div><a href="#51-왜-visited-배열이-없는가" style="color:#8b949e;text-decoration:none;">Q1. 왜 visited 배열이 없는가?</a></div>
+    <div><a href="#52-low는-어떻게-변하는가" style="color:#8b949e;text-decoration:none;">Q2. low는 어떻게 변하는가?</a></div>
+    <div><a href="#53-오래됨이-min인-이유" style="color:#8b949e;text-decoration:none;">Q3. "오래됨"이 min인 이유</a></div>
+    <div><a href="#54-먼저-온-것이-왜-중요한가" style="color:#8b949e;text-decoration:none;">Q4. "먼저 온 것"이 왜 중요한가?</a></div>
+    <div><a href="#55-tree-edge-vs-back-edge" style="color:#8b949e;text-decoration:none;">Q5. Tree Edge vs Back Edge</a></div>
+    <div><a href="#56-back-edge에서-왜-idsv만-쓰는가" style="color:#8b949e;text-decoration:none;">Q6. back edge에서 왜 ids[v]만 쓰는가?</a></div>
+    <div><a href="#57-scc-체크-타이밍--왜-dfs-끝에서" style="color:#8b949e;text-decoration:none;">Q7. SCC 체크 타이밍 — 왜 dfs 끝에서?</a></div>
+    <div><a href="#58-idsv--lowv-의-의미" style="color:#8b949e;text-decoration:none;">Q8. ids[v] == low[v] 의 의미</a></div>
+    <div><a href="#59-조상-발견--scc-즉시-완성" style="color:#8b949e;text-decoration:none;">Q9. 조상 발견 ≠ SCC 즉시 완성</a></div>
+    <div><a href="#510-on_stack-체크--왜-스택에-없는-노드를-무시해야-하는가" style="color:#8b949e;text-decoration:none;">Q10. on_stack 체크 — 왜 스택에 없는 노드를 무시해야 하는가?</a></div>
+    <div><a href="#511-low-전파는-언제-되는가" style="color:#8b949e;text-decoration:none;">Q11. low 전파는 언제 되는가?</a></div>
+    <div><a href="#512-min을-하는-이유" style="color:#8b949e;text-decoration:none;">Q12. min을 하는 이유</a></div>
+    <div><a href="#513-dfs0가-끝나면-반드시-0을-포함하는-scc가-완성되는가" style="color:#8b949e;text-decoration:none;">Q13. dfs(0)가 끝나면 반드시 0을 포함하는 SCC가 완성되는가?</a></div>
+  </div>
+  <div><a href="#6-시간복잡도" style="color:#34d399;text-decoration:none;">6. 시간복잡도</a></div>
+  <div><a href="#7-알고리즘-비교" style="color:#60a5fa;text-decoration:none;">7. 알고리즘 비교</a></div>
+</div>
+</details>
+{{< /rawhtml >}}
 
 ---
 
