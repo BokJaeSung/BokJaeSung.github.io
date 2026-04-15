@@ -14,7 +14,7 @@ summary: "How a single depth-first walk unravels every cycle in a directed graph
 <summary style="cursor:pointer;font-weight:600;font-size:14px;color:#8b949e;user-select:none;font-family:inherit;">목차 — Table of Contents</summary>
 <div style="margin-top:10px;font-size:14px;line-height:2;font-family:inherit;">
   <div><a href="#0-step-by-step-walkthrough" style="color:#c9d1d9;text-decoration:none;">0. Step-by-Step Walkthrough</a></div>
-  <div><a href="#1-강한-연결-요소-scc-란" style="color:#c9d1d9;text-decoration:none;">1. Strongly Connected Component</a></div>
+  <div><a href="#1-strongly-connected-component" style="color:#c9d1d9;text-decoration:none;">1. Strongly Connected Component</a></div>
   <div><a href="#2-brute-force--ov3" style="color:#c9d1d9;text-decoration:none;">2. Brute Force — O(V³)</a></div>
   <div><a href="#3-tarjan-알고리즘--ove" style="color:#c9d1d9;text-decoration:none;">3. Tarjan 알고리즘 — O(V+E)</a></div>
   <div style="padding-left:16px;font-size:13px;">
@@ -369,7 +369,7 @@ render();
 {{< /rawhtml >}}
 
 
-## 1. 강한 연결 요소 (SCC) 란?
+## 1. Strongly Connected Component
 
 방향 그래프에서 **Strongly Connected Component (SCC)** 란, 그 안의 **모든 노드 쌍** $(u, v)$ 에 대해 $u \to v$ 경로와 $v \to u$ 경로가 모두 존재하는 **극대 부분 그래프**다.
 
