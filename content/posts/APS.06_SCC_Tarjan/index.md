@@ -12,7 +12,7 @@ summary: "How a single depth-first walk unravels every cycle in a directed graph
 ## 목차
 
 0. [Step-by-Step Walkthrough](#0-step-by-step-walkthrough)
-1. [강한 연결 요소 (SCC) 란?](#1-강한-연결-요소-scc-란)
+1. [Strongly Connected Component](#1-강한-연결-요소-scc-란)
 2. [Brute Force — O(V³)](#2-brute-force--ov3)
 3. [Tarjan 알고리즘 — O(V+E)](#3-tarjan-알고리즘--ove)
    - [3.1 핵심 변수](#31-핵심-변수)
