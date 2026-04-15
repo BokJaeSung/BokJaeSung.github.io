@@ -9,123 +9,32 @@ cover:
 summary: "How a single depth-first walk unravels every cycle in a directed graph, without ever looking back."
 ---
 
-{{< rawhtml >}}
-<style>
-.toc-wrap{font-family:'Space Grotesk',system-ui,sans-serif;margin:1.5rem 0;}
-.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:10px;}
-.toc-card{display:flex;align-items:flex-start;gap:10px;background:#1a2744;border:1px solid #2a3f6a;border-radius:10px;padding:12px 14px;text-decoration:none;color:#c9d1d9;transition:background .15s,border-color .15s,transform .12s;}
-.toc-card:hover{background:#1f3260;border-color:#4f7fcc;transform:translateY(-2px);color:#e6edf3;text-decoration:none;}
-.toc-num{font-size:11px;font-weight:800;letter-spacing:.08em;min-width:22px;padding-top:2px;opacity:.7;}
-.toc-title{font-size:14px;font-weight:600;line-height:1.4;}
-.toc-sub{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;padding-left:4px;}
-.toc-sub-card{display:flex;align-items:flex-start;gap:8px;background:#131e33;border:1px solid #1e2d45;border-radius:8px;padding:8px 12px;text-decoration:none;color:#8b949e;transition:background .15s,border-color .15s;}
-.toc-sub-card:hover{background:#1a2744;border-color:#2a3f6a;color:#c9d1d9;text-decoration:none;}
-.toc-sub-num{font-size:10px;font-weight:700;min-width:20px;padding-top:1px;opacity:.6;}
-.toc-sub-title{font-size:13px;font-weight:600;line-height:1.4;}
-</style>
-<div class="toc-wrap">
-  <div class="toc-grid">
-    <a class="toc-card" href="#0-step-by-step-walkthrough">
-      <span class="toc-num" style="color:#60a5fa;">0.</span>
-      <span class="toc-title">Step-by-Step Walkthrough</span>
-    </a>
-    <a class="toc-card" href="#1-강한-연결-요소-scc-란">
-      <span class="toc-num" style="color:#34d399;">1.</span>
-      <span class="toc-title">Strongly Connected Component</span>
-    </a>
-    <a class="toc-card" href="#2-brute-force--ov3">
-      <span class="toc-num" style="color:#f87171;">2.</span>
-      <span class="toc-title">Brute Force — O(V³)</span>
-    </a>
-    <a class="toc-card" href="#3-tarjan-알고리즘--ove">
-      <span class="toc-num" style="color:#fbbf24;">3.</span>
-      <span class="toc-title">Tarjan 알고리즘 — O(V+E)</span>
-    </a>
-    <a class="toc-card" href="#4-the-detective-analogy">
-      <span class="toc-num" style="color:#a78bfa;">4.</span>
-      <span class="toc-title">The Detective Analogy</span>
-    </a>
-    <a class="toc-card" href="#5-q--a">
-      <span class="toc-num" style="color:#f472b6;">5.</span>
-      <span class="toc-title">Q &amp; A</span>
-    </a>
-    <a class="toc-card" href="#6-시간복잡도">
-      <span class="toc-num" style="color:#34d399;">6.</span>
-      <span class="toc-title">시간복잡도</span>
-    </a>
-    <a class="toc-card" href="#7-알고리즘-비교">
-      <span class="toc-num" style="color:#60a5fa;">7.</span>
-      <span class="toc-title">알고리즘 비교</span>
-    </a>
-  </div>
-  <div class="toc-sub">
-    <a class="toc-sub-card" href="#31-핵심-변수">
-      <span class="toc-sub-num" style="color:#fbbf24;">3.1</span>
-      <span class="toc-sub-title">핵심 변수</span>
-    </a>
-    <a class="toc-sub-card" href="#32-알고리즘-코드">
-      <span class="toc-sub-num" style="color:#fbbf24;">3.2</span>
-      <span class="toc-sub-title">알고리즘 코드</span>
-    </a>
-    <a class="toc-sub-card" href="#33-단계별-실행-시각화">
-      <span class="toc-sub-num" style="color:#fbbf24;">3.3</span>
-      <span class="toc-sub-title">단계별 실행 시각화</span>
-    </a>
-    <a class="toc-sub-card" href="#51-왜-visited-배열이-없는가">
-      <span class="toc-sub-num" style="color:#f472b6;">Q1</span>
-      <span class="toc-sub-title">왜 visited 배열이 없는가?</span>
-    </a>
-    <a class="toc-sub-card" href="#52-low는-어떻게-변하는가">
-      <span class="toc-sub-num" style="color:#f472b6;">Q2</span>
-      <span class="toc-sub-title">low는 어떻게 변하는가?</span>
-    </a>
-    <a class="toc-sub-card" href="#53-오래됨이-min인-이유">
-      <span class="toc-sub-num" style="color:#f472b6;">Q3</span>
-      <span class="toc-sub-title">"오래됨"이 min인 이유</span>
-    </a>
-    <a class="toc-sub-card" href="#54-먼저-온-것이-왜-중요한가">
-      <span class="toc-sub-num" style="color:#f472b6;">Q4</span>
-      <span class="toc-sub-title">"먼저 온 것"이 왜 중요한가?</span>
-    </a>
-    <a class="toc-sub-card" href="#55-tree-edge-vs-back-edge">
-      <span class="toc-sub-num" style="color:#f472b6;">Q5</span>
-      <span class="toc-sub-title">Tree Edge vs Back Edge</span>
-    </a>
-    <a class="toc-sub-card" href="#56-back-edge에서-왜-idsv만-쓰는가">
-      <span class="toc-sub-num" style="color:#f472b6;">Q6</span>
-      <span class="toc-sub-title">back edge에서 왜 ids[v]만 쓰는가?</span>
-    </a>
-    <a class="toc-sub-card" href="#57-scc-체크-타이밍--왜-dfs-끝에서">
-      <span class="toc-sub-num" style="color:#f472b6;">Q7</span>
-      <span class="toc-sub-title">SCC 체크 타이밍 — 왜 dfs 끝에서?</span>
-    </a>
-    <a class="toc-sub-card" href="#58-idsv--lowv-의-의미">
-      <span class="toc-sub-num" style="color:#f472b6;">Q8</span>
-      <span class="toc-sub-title">ids[v] == low[v] 의 의미</span>
-    </a>
-    <a class="toc-sub-card" href="#59-조상-발견--scc-즉시-완성">
-      <span class="toc-sub-num" style="color:#f472b6;">Q9</span>
-      <span class="toc-sub-title">조상 발견 ≠ SCC 즉시 완성</span>
-    </a>
-    <a class="toc-sub-card" href="#510-on_stack-체크--왜-스택에-없는-노드를-무시해야-하는가">
-      <span class="toc-sub-num" style="color:#f472b6;">Q10</span>
-      <span class="toc-sub-title">on_stack 체크 — 왜 무시해야 하는가?</span>
-    </a>
-    <a class="toc-sub-card" href="#511-low-전파는-언제-되는가">
-      <span class="toc-sub-num" style="color:#f472b6;">Q11</span>
-      <span class="toc-sub-title">low 전파는 언제 되는가?</span>
-    </a>
-    <a class="toc-sub-card" href="#512-min을-하는-이유">
-      <span class="toc-sub-num" style="color:#f472b6;">Q12</span>
-      <span class="toc-sub-title">min을 하는 이유</span>
-    </a>
-    <a class="toc-sub-card" href="#513-dfs0가-끝나면-반드시-0을-포함하는-scc가-완성되는가">
-      <span class="toc-sub-num" style="color:#f472b6;">Q13</span>
-      <span class="toc-sub-title">dfs(0)가 끝나면 SCC가 완성되는가?</span>
-    </a>
-  </div>
-</div>
-{{< /rawhtml >}}
+## 목차
+
+0. [Step-by-Step Walkthrough](#0-step-by-step-walkthrough)
+1. [강한 연결 요소 (SCC) 란?](#1-강한-연결-요소-scc-란)
+2. [Brute Force — O(V³)](#2-brute-force--ov3)
+3. [Tarjan 알고리즘 — O(V+E)](#3-tarjan-알고리즘--ove)
+   - [3.1 핵심 변수](#31-핵심-변수)
+   - [3.2 알고리즘 코드](#32-알고리즘-코드)
+   - [3.3 단계별 실행 시각화](#33-단계별-실행-시각화)
+4. [The Detective Analogy](#4-the-detective-analogy)
+5. [Q & A](#5-q--a)
+   - [Q1. 왜 visited 배열이 없는가?](#51-왜-visited-배열이-없는가)
+   - [Q2. low는 어떻게 변하는가?](#52-low는-어떻게-변하는가)
+   - [Q3. "오래됨"이 min인 이유](#53-오래됨이-min인-이유)
+   - [Q4. "먼저 온 것"이 왜 중요한가?](#54-먼저-온-것이-왜-중요한가)
+   - [Q5. Tree Edge vs Back Edge](#55-tree-edge-vs-back-edge)
+   - [Q6. back edge에서 왜 ids[v]만 쓰는가?](#56-back-edge에서-왜-idsv만-쓰는가)
+   - [Q7. SCC 체크 타이밍 — 왜 dfs 끝에서?](#57-scc-체크-타이밍--왜-dfs-끝에서)
+   - [Q8. ids[v] == low[v] 의 의미](#58-idsv--lowv-의-의미)
+   - [Q9. 조상 발견 ≠ SCC 즉시 완성](#59-조상-발견--scc-즉시-완성)
+   - [Q10. on_stack 체크 — 왜 스택에 없는 노드를 무시해야 하는가?](#510-on_stack-체크--왜-스택에-없는-노드를-무시해야-하는가)
+   - [Q11. low 전파는 언제 되는가?](#511-low-전파는-언제-되는가)
+   - [Q12. min을 하는 이유](#512-min을-하는-이유)
+   - [Q13. dfs(0)가 끝나면 반드시 0을 포함하는 SCC가 완성되는가?](#513-dfs0가-끝나면-반드시-0을-포함하는-scc가-완성되는가)
+6. [시간복잡도](#6-시간복잡도)
+7. [알고리즘 비교](#7-알고리즘-비교)
 
 ---
 
