@@ -10,9 +10,9 @@ summary: "How a single depth-first walk unravels every cycle in a directed graph
 ---
 
 {{< rawhtml >}}
-<details style="background:transparent;border:1px solid #30363d;border-radius:8px;padding:10px 16px;margin:1.2rem 0;">
-<summary style="cursor:pointer;font-weight:600;font-size:14px;color:#8b949e;user-select:none;">목차 — Table of Contents</summary>
-<div style="margin-top:10px;font-size:14px;line-height:2;">
+<details style="background:transparent;border:1px solid #30363d;border-radius:8px;padding:10px 16px;margin:1.2rem 0;font-family:inherit;">
+<summary style="cursor:pointer;font-weight:600;font-size:14px;color:#8b949e;user-select:none;font-family:inherit;">목차 — Table of Contents</summary>
+<div style="margin-top:10px;font-size:14px;line-height:2;font-family:inherit;">
   <div><a href="#0-step-by-step-walkthrough" style="color:#c9d1d9;text-decoration:none;">0. Step-by-Step Walkthrough</a></div>
   <div><a href="#1-강한-연결-요소-scc-란" style="color:#c9d1d9;text-decoration:none;">1. Strongly Connected Component</a></div>
   <div><a href="#2-brute-force--ov3" style="color:#c9d1d9;text-decoration:none;">2. Brute Force — O(V³)</a></div>
