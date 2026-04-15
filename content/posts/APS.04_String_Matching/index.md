@@ -48,198 +48,141 @@ def string_matching_naive(T: str, P: str):
 | 20,000 | 10,000 | 200,000,000 (약 6초) |
 
 {{< rawhtml >}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<style>
-.sm-wrap{font-family:inherit;background:linear-gradient(135deg,#1e3050 0%,#253c60 60%,#1c2d50 100%);border-radius:14px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,.6);margin:1.5rem 0;}
-.sm-btn{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:background .15s;font-family:inherit;}
-.sm-btn-p{background:#1f6feb;color:#fff;}.sm-btn-p:hover{background:#388bfd;}
-.sm-btn-s{background:#21262d;color:#c9d1d9;border:1px solid #30363d;}.sm-btn-s:hover{background:#30363d;}
-.sm-btn:disabled{opacity:.35;cursor:default;}
-.sm-input{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 10px;color:#e6edf3;font-size:14px;font-family:'JetBrains Mono','Fira Code',monospace;}
-.sm-panel{background:#1e2d45;border-radius:10px;padding:10px 14px;border:1px solid #21262d;}
-.sm-info{background:#1e2d45;border-radius:10px;padding:12px 16px;border-left:3px solid #2f81f7;margin-top:12px;font-size:15px;font-weight:600;color:#e6edf3;line-height:1.8;min-height:52px;transition:opacity .15s;}
-</style>
-
-<div class="sm-wrap" id="naive-wrap">
-  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap;">
-    <input id="naive-T" class="sm-input" value="abcababcab" maxlength="16" placeholder="Text T" style="width:180px;">
-    <input id="naive-P" class="sm-input" value="abc" maxlength="8" placeholder="Pattern P" style="width:100px;">
-    <button class="sm-btn sm-btn-p" onclick="naiveRestart()">시작</button>
-    <button class="sm-btn sm-btn-s" onclick="naiveStep()">▶ 한 칸</button>
-    <button class="sm-btn sm-btn-s" id="naive-auto-btn" onclick="naiveAuto()">⏩ 자동</button>
-    <span id="naive-lbl" style="font-size:13px;color:#8b949e;margin-left:4px;"></span>
+<div style="margin:1.5rem 0;background:#0f1117;border-radius:12px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.18);">
+<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
+  <input id="naive-T" value="abcababcab" maxlength="16" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:180px;" placeholder="Text T">
+  <input id="naive-P" value="abc" maxlength="8" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:6px;padding:6px 10px;color:#e0e0e0;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:14px;width:120px;" placeholder="Pattern P">
+  <button onclick="naiveRestart()" style="padding:6px 16px;border:none;border-radius:6px;background:#5c6bc0;cursor:pointer;font-size:13px;color:#fff;font-weight:600;" onmouseover="this.style.background='#7986cb'" onmouseout="this.style.background='#5c6bc0'">시작</button>
+  <button onclick="naiveStep()" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">▶ 한 칸</button>
+  <button onclick="naiveAuto()" id="naive-auto-btn" style="padding:6px 16px;border:none;border-radius:6px;background:#2a2d3a;cursor:pointer;font-size:13px;color:#b0b8d0;" onmouseover="this.style.background='#3a3f50'" onmouseout="this.style.background='#2a2d3a'">⏩ 자동</button>
+</div>
+<canvas id="naive-canvas" style="width:100%;border-radius:8px;background:#1a1d27;display:block;"></canvas>
+<div style="display:flex;gap:10px;margin-top:10px;align-items:stretch;">
+  <div style="flex:1;background:#1a1d27;border-left:3px solid #5c6bc0;border-radius:6px;padding:10px 14px;">
+    <div id="naive-info" style="font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:16px;color:#b0b8d0;line-height:1.6;">시작 버튼을 누르세요.</div>
   </div>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
-    <div style="flex:1;min-width:260px;">
-      <svg id="naive-svg" style="width:100%;background:#0d1117;border-radius:10px;border:1px solid #21262d;" viewBox="0 0 560 160"></svg>
-      <div class="sm-info" id="naive-info">시작 버튼을 누르세요.</div>
-    </div>
-    <div style="min-width:130px;">
-      <div class="sm-panel">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2f81f7;margin-bottom:8px;">Stats</div>
-        <div style="font-size:14px;font-weight:600;color:#c9d1d9;">비교: <span id="naive-cmp" style="color:#fbbf24;">0</span></div>
-        <div style="font-size:14px;font-weight:600;color:#c9d1d9;margin-top:4px;">발견: <span id="naive-found" style="color:#34d399;">-</span></div>
-      </div>
-    </div>
+  <div style="min-width:140px;background:#1a1d27;border-left:3px solid #37474f;border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono','Fira Code','Courier New',monospace;font-size:15px;color:#b0b8d0;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5c6bc0;margin-bottom:6px;">Stats</div>
+    <div>비교: <span id="naive-cmp" style="color:#ffd740;">0</span></div>
+    <div>발견: <span id="naive-found" style="color:#69f0ae;">-</span></div>
   </div>
 </div>
-
+<p style="font-size:13px;color:#778;margin-top:8px;letter-spacing:.04em;text-transform:uppercase;">green = match · red = mismatch · amber = current window</p>
+</div>
 <script>
 (function(){
-const C=(v,c)=>`<span style="color:${c};font-weight:700">${v}</span>`;
-const nI=id=>document.getElementById(id);
-
-const BW=34,BH=36,GAP=4,ROW_GAP=28,TOP=28,MF="'JetBrains Mono','Fira Code',monospace";
+const cv=document.getElementById('naive-canvas');
+const ctx=cv.getContext('2d');
+let W=560,H=180,dpr=1;
+function resize(){dpr=window.devicePixelRatio||1;const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);if(ns)drawNaive();}
+new ResizeObserver(resize).observe(cv);
+cv.style.aspectRatio='560/180';
 
 let ns=null,naiveTimer=null;
+const MONO="'JetBrains Mono','Fira Code','Courier New',monospace";
 
-const svg=d3.select('#naive-svg');
-
-function cellColor(type){
-  // type: 'default','matched','active_match','active_cur','active_dim','pat_default','pat_match','pat_mismatch'
-  const map={
-    default:    {fill:'#161b22',stroke:'#30363d',text:'#8b949e'},
-    matched:    {fill:'#0d2818',stroke:'#34d399',text:'#34d399'},
-    active_match:{fill:'#0d2818',stroke:'#238636',text:'#34d399'},
-    active_cur: {fill:'#0d1526',stroke:'#2f81f7',text:'#79c0ff'},
-    active_dim: {fill:'#161b22',stroke:'#21262d',text:'#484f58'},
-    pat_default:{fill:'#161b22',stroke:'#388bfd',text:'#79c0ff'},
-    pat_match:  {fill:'#0d2818',stroke:'#238636',text:'#34d399'},
-    pat_mismatch:{fill:'#2a1010',stroke:'#f87171',text:'#f87171'},
-  };
-  return map[type]||map.default;
+function drawBox(x,y,w,h,bg,border,text,textCol,fontSize){
+  ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(x,y,w,h,4);ctx.fill();
+  ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x,y,w,h,4);ctx.stroke();
+  if(text){ctx.fillStyle=textCol;ctx.font=`bold ${fontSize}px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x+w/2,y+h/2);}
 }
 
-function render(){
+function drawNaive(){
   if(!ns)return;
+  ctx.clearRect(0,0,W,H);
   const {T,P,s,j,found,done}=ns;
   const n=T.length,m=P.length;
-  const totalW=n*(BW+GAP)-GAP;
-  const startX=(560-totalW)/2;
-  const patStartX=startX+s*(BW+GAP);
-  const T_Y=TOP,P_Y=TOP+BH+ROW_GAP;
-  const T=ns.T,P2=ns.P;
+  const bw=Math.min(Math.floor((W-40)/Math.max(n,m+1)),54);
+  const bh=Math.max(42,Math.min(bw,Math.round(H*0.24)));
+  const gap=3;
+  const rowGap=Math.round(H*0.12);
+  const labelH=16;
+  const totalH=labelH+bh+rowGap+bh;
+  const ty=Math.round((H-totalH)/2)+labelH;
+  const py=ty+bh+rowGap;
+  const fs=Math.round(bh*0.45);
+  const startX=(W-n*(bw+gap))/2;
+  const patStart=startX+s*(bw+gap);
+  const patW=m*(bw+gap)-gap;
 
-  svg.selectAll('*').remove();
+  // index labels (T행 위)
+  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let i=0;i<n;i++) ctx.fillText(i,startX+i*(bw+gap)+bw/2,ty-10);
 
-  // index labels
+  // T text boxes
   for(let i=0;i<n;i++){
-    svg.append('text')
-      .attr('x',startX+i*(BW+GAP)+BW/2).attr('y',T_Y-8)
-      .attr('text-anchor','middle').attr('font-size',10).attr('fill','#484f58')
-      .attr('font-family',MF).text(i);
-  }
-
-  // T boxes
-  for(let i=0;i<n;i++){
-    let type='default';
-    if(found.some(f=>i>=f&&i<f+m)) type='matched';
+    let bg='#1e2130',border='#2a2d3a',textCol='#b0b8d0';
+    if(found.some(f=>i>=f&&i<f+m)){bg='#1b3a1f';border='#69f0ae';textCol='#69f0ae';}
     else if(!done&&i>=s&&i<s+m){
       const pj=i-s;
-      if(pj<j) type='active_match';
-      else if(pj===j) type='active_cur';
-      else type='active_dim';
+      if(pj<j){bg='#1b3a1f';border='#43a047';textCol='#69f0ae';}
+      else if(pj===j){bg='#1a237e';border='#5c6bc0';textCol='#9fa8da';}
+      else{bg='#1e2130';border='#37474f';textCol='#546e7a';}
     }
-    const col=cellColor(type);
-    const g=svg.append('g');
-    g.append('rect')
-      .attr('x',startX+i*(BW+GAP)).attr('y',T_Y)
-      .attr('width',BW).attr('height',BH).attr('rx',5)
-      .attr('fill',col.fill).attr('stroke',col.stroke).attr('stroke-width',1.5);
-    g.append('text')
-      .attr('x',startX+i*(BW+GAP)+BW/2).attr('y',T_Y+BH/2+1)
-      .attr('text-anchor','middle').attr('dominant-baseline','middle')
-      .attr('font-size',15).attr('font-weight',700).attr('fill',col.text)
-      .attr('font-family',MF).text(T[i]);
+    drawBox(startX+i*(bw+gap),ty,bw,bh,bg,border,T[i],textCol,fs);
   }
 
-  // P boxes
+  // P pattern boxes — centered under the matching T window
   for(let i=0;i<m;i++){
-    let type='pat_default';
+    let bg='#1a1a2e',border='#3949ab',textCol='#7986cb';
     if(!done){
-      if(i<j) type='pat_match';
-      else if(i===j) type='pat_mismatch';
+      if(i<j){bg='#1b3a1f';border='#43a047';textCol='#69f0ae';}
+      else if(i===j){bg='#3a1a1a';border='#e53935';textCol='#ef9a9a';}
     }
-    const col=cellColor(type);
-    const g=svg.append('g');
-    g.append('rect')
-      .attr('x',patStartX+i*(BW+GAP)).attr('y',P_Y)
-      .attr('width',BW).attr('height',BH).attr('rx',5)
-      .attr('fill',col.fill).attr('stroke',col.stroke).attr('stroke-width',1.5);
-    g.append('text')
-      .attr('x',patStartX+i*(BW+GAP)+BW/2).attr('y',P_Y+BH/2+1)
-      .attr('text-anchor','middle').attr('dominant-baseline','middle')
-      .attr('font-size',15).attr('font-weight',700).attr('fill',col.text)
-      .attr('font-family',MF).text(P[i]);
+    drawBox(patStart+i*(bw+gap),py,bw,bh,bg,border,P[i],textCol,fs);
   }
-
-  // s= label
-  const patW=m*(BW+GAP)-GAP;
-  svg.append('text')
-    .attr('x',patStartX+patW/2).attr('y',P_Y+BH+14)
-    .attr('text-anchor','middle').attr('font-size',11).attr('fill','#8b949e')
-    .attr('font-family',MF).text(`s=${s}`);
-
-  nI('naive-lbl').textContent=done?'완료':'';
-}
-
-function fadeInfo(html){
-  const el=nI('naive-info');
-  el.style.opacity='0';
-  setTimeout(()=>{el.innerHTML=html;el.style.opacity='1';},120);
+  // s= label below P row, centered
+  ctx.fillStyle='#8090a0';ctx.font=`13px ${MONO}`;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(`s=${s}`,patStart+patW/2,py+bh+4);
+  if(done&&found.length===0){
+    ctx.fillStyle='#ef9a9a';ctx.font=`14px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('패턴 없음',W/2,py+bh+4);
+  }
 }
 
 window.naiveRestart=function(){
-  if(naiveTimer){clearInterval(naiveTimer);naiveTimer=null;nI('naive-auto-btn').textContent='⏩ 자동';}
-  const T=nI('naive-T').value||'abcababcab';
-  const P=nI('naive-P').value||'abc';
+  if(naiveTimer){clearInterval(naiveTimer);naiveTimer=null;document.getElementById('naive-auto-btn').textContent='⏩ 자동';}
+  const T=document.getElementById('naive-T').value||'abcababcab';
+  const P=document.getElementById('naive-P').value||'abc';
   if(P.length>T.length)return;
   ns={T,P,s:0,j:0,cmp:0,found:[],done:false};
-  nI('naive-cmp').textContent='0';
-  nI('naive-found').textContent='-';
-  fadeInfo(`${C('s=0','#79c0ff')}, ${C('j=0','#79c0ff')} 에서 비교 시작`);
-  render();
+  document.getElementById('naive-cmp').textContent='0';
+  document.getElementById('naive-found').textContent='-';
+  document.getElementById('naive-info').innerHTML=`<span style="color:#90caf9">s=0</span>, <span style="color:#90caf9">j=0</span> 에서 비교 시작`;
+  drawNaive();
 };
+const nI=id=>document.getElementById(id);
+const nC=(v,c)=>`<span style="color:${c}">${v}</span>`;
+const nIdx=v=>nC(v,'#90caf9');
+const nChr=v=>nC(`'${v}'`,'#ffd740');
+const nRes=v=>nC(v,'#ce93d8');
+const nOk=v=>nC(v,'#69f0ae');
+const nNg=v=>nC(v,'#ef5350');
 
 window.naiveStep=function(){
   if(!ns||ns.done)return;
   const {T,P}=ns;const n=T.length,m=P.length;
-  if(ns.s>n-m){
-    ns.done=true;
-    fadeInfo(`완료! 총 ${C(ns.cmp+'번','#fbbf24')} 비교 | 발견: ${ns.found.length?C(ns.found.join(', '),'#34d399'):C('없음','#f87171')}`);
-    render();return;
-  }
-  ns.cmp++;nI('naive-cmp').textContent=ns.cmp;
+  if(ns.s>n-m){ns.done=true;nI('naive-info').innerHTML=`완료! 총 <span style="color:#ffd740">${ns.cmp}</span>번 비교`;drawNaive();return;}
+  ns.cmp++;
+  nI('naive-cmp').textContent=ns.cmp;
   if(T[ns.s+ns.j]===P[ns.j]){
-    fadeInfo(`${C('s='+ns.s,'#79c0ff')}, ${C('j='+ns.j,'#79c0ff')}: T[${ns.s+ns.j}]=${C("'"+T[ns.s+ns.j]+"'",'#fbbf24')} <b style="color:#34d399">=</b> P[${ns.j}]=${C("'"+P[ns.j]+"'",'#fbbf24')} ${C('✓','#34d399')}`);
+    nI('naive-info').innerHTML=`${nIdx('s='+ns.s)}, ${nIdx('j='+ns.j)}: T[${ns.s+ns.j}]=${nChr(T[ns.s+ns.j])} <b style="color:#69f0ae">=</b> P[${ns.j}]=${nChr(P[ns.j])} ${nOk('✓')}`;
     ns.j++;
-    if(ns.j===m){
-      ns.found.push(ns.s);
-      nI('naive-found').textContent=ns.found.join(', ');
-      fadeInfo(`${C('✓ 패턴 발견!','#34d399')} ${C('s='+ns.s,'#79c0ff')}`);
-      ns.s++;ns.j=0;
-    }
+    if(ns.j===m){ns.found.push(ns.s);nI('naive-found').textContent=ns.found.join(', ');nI('naive-info').innerHTML=`${nOk('✓ 패턴 발견!')} ${nIdx('s='+ns.s)}`;ns.s++;ns.j=0;}
   } else {
-    fadeInfo(`${C('s='+ns.s,'#79c0ff')}, ${C('j='+ns.j,'#79c0ff')}: T[${ns.s+ns.j}]=${C("'"+T[ns.s+ns.j]+"'",'#fbbf24')} <b style="color:#f87171">≠</b> P[${ns.j}]=${C("'"+P[ns.j]+"'",'#fbbf24')} → ${C('s+1','#a78bfa')}`);
+    nI('naive-info').innerHTML=`${nIdx('s='+ns.s)}, ${nIdx('j='+ns.j)}: T[${ns.s+ns.j}]=${nChr(T[ns.s+ns.j])} <b style="color:#ef5350">≠</b> P[${ns.j}]=${nChr(P[ns.j])} → ${nRes('s+1')}`;
     ns.s++;ns.j=0;
   }
-  if(ns.s>n-m){
-    ns.done=true;
-    fadeInfo(`완료! 총 ${C(ns.cmp+'번','#fbbf24')} 비교 | 발견: ${ns.found.length?C(ns.found.join(', '),'#34d399'):C('없음','#f87171')}`);
-  }
-  render();
+  if(ns.s>n-m){ns.done=true;nI('naive-info').innerHTML=`완료! 총 <span style="color:#ffd740">${ns.cmp}</span>번 | 발견: ${ns.found.length?nOk(ns.found.join(', ')):nNg('없음')}`;}
+  drawNaive();
 };
 
 window.naiveAuto=function(){
-  if(naiveTimer){clearInterval(naiveTimer);naiveTimer=null;nI('naive-auto-btn').textContent='⏩ 자동';return;}
+  if(naiveTimer){clearInterval(naiveTimer);naiveTimer=null;document.getElementById('naive-auto-btn').textContent='⏩ 자동';return;}
   if(!ns)naiveRestart();
-  nI('naive-auto-btn').textContent='⏸ 정지';
-  naiveTimer=setInterval(()=>{
-    if(!ns||ns.done){clearInterval(naiveTimer);naiveTimer=null;nI('naive-auto-btn').textContent='⏩ 자동';return;}
-    naiveStep();
-  },250);
+  document.getElementById('naive-auto-btn').textContent='⏸ 정지';
+  naiveTimer=setInterval(()=>{if(!ns||ns.done){clearInterval(naiveTimer);naiveTimer=null;document.getElementById('naive-auto-btn').textContent='⏩ 자동';return;}naiveStep();},220);
 };
-
 naiveRestart();
 })();
 </script>
