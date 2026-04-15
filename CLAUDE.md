@@ -131,7 +131,7 @@ fix: APS.05 다크테마 색상 수정
   ```html
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   ```
-- 같은 페이지에 d3 애니메이션이 여러 개면 각각 로드해도 무방 (브라우저 캐시됨)
+- 같은 페이지에 d3 애니메이션이 여러 개여도 `<script src>` 태그는 **첫 번째 애니메이션 앞에 1개만** 두면 됨 (d3는 전역에 남아있어 이후 스크립트에서 재사용 가능)
 - 색상 팔레트 (다크 배경 기준):
   - tree edge: `#34d399`, back edge: `#f87171`, cross edge: `#fbbf24`
   - 활성 노드: `#58a6ff`, 완성된 SCC: `#fbbf24` / `#f472b6` / `#34d399` / `#a78bfa` / `#60a5fa`
