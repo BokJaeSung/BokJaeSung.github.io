@@ -350,8 +350,6 @@ dev namespace | testing namespace | production namespace
 | Annotation | 기계가 읽는 메모장 | 책 뒷면 상세정보 📖 |
 | Namespace | 클러스터를 나누는 칸막이 | 사무실 부서 칸막이 🚧 |
 
-![Kubernetes Primitives 전체 구조 (책 원본)](/posts/kubernetes-patterns-01/images/1.png)
-
 ---
 
 ## 마치며
