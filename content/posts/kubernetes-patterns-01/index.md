@@ -191,9 +191,54 @@ Pod 안에 컨테이너가 여러 개라면, 스케줄러는 **모든 컨테이�
 | IPC | 프로세스간 직접 통신 | 매우 빠름 ⚡⚡ |
 
 {{< rawhtml >}}
-<div style="margin:2rem auto;width:60%;text-align:center;">
-  <img src="/posts/kubernetes-patterns-01/images/image.png" alt="Pod 내부 컨테이너 공유" style="width:100%;border-radius:8px;display:block;">
-  <p style="font-size:13px;color:#6e7681;margin-top:8px;">같은 Pod 안의 컨테이너들은 localhost와 Disk를 공유한다</p>
+<div style="margin:2rem auto;width:65%;text-align:center;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" style="width:100%;font-family:inherit;">
+  <defs>
+    <marker id="kp1-gray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#c9d1d9"/>
+    </marker>
+    <marker id="kp1-gold-r" markerWidth="8" markerHeight="6" refX="1" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6 Z" fill="#fbbf24"/>
+    </marker>
+    <marker id="kp1-gold" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <!-- Pod border -->
+  <rect x="8" y="8" width="504" height="322" rx="10" fill="none" stroke="#6e7681" stroke-width="2" stroke-dasharray="10,5"/>
+  <text x="492" y="318" fill="#8b949e" font-size="13" text-anchor="end" font-family="inherit">Pod</text>
+
+  <!-- Container 1 (Python) -->
+  <rect x="30" y="40" width="165" height="120" rx="8" fill="rgba(52,211,153,0.07)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="112" y="68" fill="#c9d1d9" font-size="13" text-anchor="middle" font-family="inherit">Container</text>
+  <rect x="57" y="80" width="111" height="50" rx="5" fill="rgba(52,211,153,0.12)" stroke="#34d399" stroke-width="1"/>
+  <text x="112" y="111" fill="#34d399" font-size="14" text-anchor="middle" font-weight="600" font-family="inherit">Python</text>
+
+  <!-- Container 2 (Java) -->
+  <rect x="325" y="40" width="165" height="120" rx="8" fill="rgba(88,166,255,0.07)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="408" y="68" fill="#c9d1d9" font-size="13" text-anchor="middle" font-family="inherit">Container</text>
+  <rect x="352" y="80" width="111" height="50" rx="5" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1"/>
+  <text x="408" y="111" fill="#58a6ff" font-size="14" text-anchor="middle" font-weight="600" font-family="inherit">Java</text>
+
+  <!-- localhost 양방향 화살표 -->
+  <line x1="203" y1="100" x2="317" y2="100" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#kp1-gold)" marker-start="url(#kp1-gold-r)"/>
+  <text x="260" y="93" fill="#fbbf24" font-size="12" text-anchor="middle" font-style="italic" font-family="inherit">localhost</text>
+
+  <!-- 화살표: Container1 → Disk -->
+  <line x1="112" y1="160" x2="212" y2="242" stroke="#c9d1d9" stroke-width="1.5" marker-end="url(#kp1-gray)"/>
+  <!-- 화살표: Container2 → Disk -->
+  <line x1="408" y1="160" x2="308" y2="242" stroke="#c9d1d9" stroke-width="1.5" marker-end="url(#kp1-gray)"/>
+
+  <!-- Disk (실린더) -->
+  <ellipse cx="260" cy="292" rx="62" ry="19" fill="#0d1f35" stroke="#58a6ff" stroke-width="1.5"/>
+  <rect x="198" y="252" width="124" height="40" fill="#0d1f35" stroke="none"/>
+  <line x1="198" y1="252" x2="198" y2="292" stroke="#58a6ff" stroke-width="1.5"/>
+  <line x1="322" y1="252" x2="322" y2="292" stroke="#58a6ff" stroke-width="1.5"/>
+  <ellipse cx="260" cy="252" rx="62" ry="19" fill="#1a3050" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="260" y="277" fill="#58a6ff" font-size="14" text-anchor="middle" font-weight="600" font-family="inherit">Disk</text>
+</svg>
+<p style="font-size:13px;color:#6e7681;margin-top:8px;">같은 Pod 안의 컨테이너들은 localhost와 Disk를 공유한다</p>
 </div>
 {{< /rawhtml >}}
 
