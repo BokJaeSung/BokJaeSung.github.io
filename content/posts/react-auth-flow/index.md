@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "React.02 Authentication Flow"
 date: 2026-03-31T13:00:00+09:00
 tags: ['react', 'auth', 'context', 'axios', 'frontend', 'javascript']
