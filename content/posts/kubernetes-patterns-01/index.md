@@ -130,7 +130,7 @@ Kubernetes = 여러 건물에 걸쳐 팀이 협업하는 것 🏢🏢🏢
 
 {{< rawhtml >}}
 <div style="margin:2rem auto;width:100%;text-align:center;">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660" style="width:100%;font-family:inherit;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 685" style="width:100%;font-family:inherit;">
   <defs>
     <marker id="k1-a" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
       <polygon points="0,0 8,3.5 0,7" fill="#8b949e"/>
@@ -138,92 +138,111 @@ Kubernetes = 여러 건물에 걸쳐 팀이 협업하는 것 🏢🏢🏢
   </defs>
 
   <!-- Deployment → ReplicaSet → Pod -->
-  <line x1="310" y1="78" x2="270" y2="137" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
-  <line x1="275" y1="183" x2="458" y2="259" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="310" y1="86" x2="270" y2="140" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="270" y1="196" x2="458" y2="262" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
   <!-- CronJob → Job → Pod -->
-  <line x1="640" y1="78" x2="640" y2="137" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
-  <line x1="625" y1="183" x2="502" y2="259" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="640" y1="86" x2="640" y2="140" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="628" y1="196" x2="500" y2="262" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
   <!-- DaemonSet → Pod -->
-  <line x1="130" y1="163" x2="435" y2="261" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="130" y1="171" x2="432" y2="264" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
   <!-- StatefulSet → Pod -->
-  <line x1="480" y1="183" x2="480" y2="259" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="480" y1="196" x2="480" y2="262" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
   <!-- Replication Controller → Pod -->
-  <line x1="786" y1="162" x2="522" y2="261" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="783" y1="170" x2="520" y2="264" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
   <!-- Service → Pod (HPA 위로 곡선) -->
-  <path d="M140,280 Q260,220 420,285" stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#k1-a)"/>
+  <path d="M140,290 Q260,220 420,290" stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#k1-a)"/>
   <!-- HPA → Pod -->
-  <line x1="351" y1="285" x2="420" y2="285" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="351" y1="295" x2="420" y2="290" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
   <!-- VPA → Pod -->
-  <line x1="619" y1="285" x2="540" y2="285" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="620" y1="295" x2="540" y2="290" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
   <!-- PDB → Pod (VPA 위로 곡선) -->
-  <path d="M802,280 Q660,220 540,285" stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#k1-a)"/>
+  <path d="M802,290 Q660,220 540,290" stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#k1-a)"/>
   <!-- Pod → Container → Volume -->
-  <line x1="480" y1="311" x2="480" y2="369" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
-  <line x1="480" y1="421" x2="480" y2="467" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="480" y1="318" x2="480" y2="368" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="480" y1="432" x2="480" y2="477" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
   <!-- Volume → 하위 5개 -->
-  <line x1="445" y1="513" x2="120" y2="587" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
-  <line x1="460" y1="513" x2="245" y2="587" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
-  <line x1="478" y1="513" x2="435" y2="583" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
-  <line x1="500" y1="513" x2="630" y2="587" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
-  <line x1="518" y1="513" x2="825" y2="583" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="440" y1="533" x2="120" y2="592" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="455" y1="533" x2="245" y2="592" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="478" y1="533" x2="435" y2="591" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="500" y1="533" x2="630" y2="592" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
+  <line x1="518" y1="533" x2="825" y2="591" stroke="#8b949e" stroke-width="1.5" marker-end="url(#k1-a)"/>
 
   <!-- ROW 1 -->
-  <rect x="245" y="32" width="130" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="310" y="55" fill="#c9d1d9" font-size="14" text-anchor="middle" dominant-baseline="central">Deployment</text>
-  <rect x="585" y="32" width="110" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="640" y="55" fill="#c9d1d9" font-size="14" text-anchor="middle" dominant-baseline="central">CronJob</text>
+  <rect x="245" y="30" width="130" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="310" y="50" fill="#c9d1d9" font-size="13" text-anchor="middle">Deployment</text>
+  <text x="310" y="68" fill="#6e7681" font-size="11" text-anchor="middle">무중단 앱 배포</text>
+  <rect x="585" y="30" width="110" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="640" y="50" fill="#c9d1d9" font-size="13" text-anchor="middle">CronJob</text>
+  <text x="640" y="68" fill="#6e7681" font-size="11" text-anchor="middle">주기적 작업 실행</text>
 
   <!-- ROW 2 -->
-  <rect x="10" y="137" width="120" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="70" y="160" fill="#c9d1d9" font-size="13" text-anchor="middle" dominant-baseline="central">DaemonSet</text>
-  <rect x="205" y="137" width="120" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="265" y="160" fill="#c9d1d9" font-size="13" text-anchor="middle" dominant-baseline="central">ReplicaSet</text>
-  <rect x="420" y="137" width="120" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="480" y="160" fill="#c9d1d9" font-size="13" text-anchor="middle" dominant-baseline="central">StatefulSet</text>
-  <rect x="595" y="137" width="90" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="640" y="160" fill="#c9d1d9" font-size="13" text-anchor="middle" dominant-baseline="central">Job</text>
-  <rect x="786" y="133" width="145" height="54" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="858" y="152" fill="#c9d1d9" font-size="12" text-anchor="middle">Replication</text>
-  <text x="858" y="170" fill="#c9d1d9" font-size="12" text-anchor="middle">Controller</text>
+  <rect x="10" y="140" width="120" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="70" y="160" fill="#c9d1d9" font-size="13" text-anchor="middle">DaemonSet</text>
+  <text x="70" y="178" fill="#6e7681" font-size="11" text-anchor="middle">모든 노드에 1개씩</text>
+  <rect x="205" y="140" width="120" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="265" y="160" fill="#c9d1d9" font-size="13" text-anchor="middle">ReplicaSet</text>
+  <text x="265" y="178" fill="#6e7681" font-size="11" text-anchor="middle">Pod 복제본 유지</text>
+  <rect x="420" y="140" width="120" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="480" y="160" fill="#c9d1d9" font-size="13" text-anchor="middle">StatefulSet</text>
+  <text x="480" y="178" fill="#6e7681" font-size="11" text-anchor="middle">상태 있는 앱</text>
+  <rect x="595" y="140" width="90" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="640" y="160" fill="#c9d1d9" font-size="13" text-anchor="middle">Job</text>
+  <text x="640" y="178" fill="#6e7681" font-size="11" text-anchor="middle">일회성 작업</text>
+  <rect x="783" y="139" width="145" height="66" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="855" y="157" fill="#c9d1d9" font-size="12" text-anchor="middle">Replication</text>
+  <text x="855" y="172" fill="#c9d1d9" font-size="12" text-anchor="middle">Controller</text>
+  <text x="855" y="191" fill="#6e7681" font-size="11" text-anchor="middle">레거시 Pod 관리</text>
 
   <!-- ROW 3 (Pod level) -->
-  <rect x="30" y="262" width="110" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="85" y="285" fill="#c9d1d9" font-size="13" text-anchor="middle" dominant-baseline="central">Service</text>
-  <rect x="206" y="258" width="145" height="54" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="278" y="277" fill="#c9d1d9" font-size="12" text-anchor="middle">Horizontal Pod</text>
-  <text x="278" y="295" fill="#c9d1d9" font-size="12" text-anchor="middle">Autoscaler</text>
+  <rect x="30" y="262" width="110" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="85" y="282" fill="#c9d1d9" font-size="13" text-anchor="middle">Service</text>
+  <text x="85" y="300" fill="#6e7681" font-size="11" text-anchor="middle">Pod 접근 창구</text>
+  <rect x="206" y="262" width="145" height="66" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="278" y="279" fill="#c9d1d9" font-size="12" text-anchor="middle">Horizontal Pod</text>
+  <text x="278" y="294" fill="#c9d1d9" font-size="12" text-anchor="middle">Autoscaler</text>
+  <text x="278" y="313" fill="#6e7681" font-size="11" text-anchor="middle">수평 자동 확장</text>
   <!-- Pod (중심 노드) -->
-  <rect x="420" y="259" width="120" height="52" rx="6" fill="rgba(88,166,255,0.22)" stroke="#58a6ff" stroke-width="2.5"/>
-  <text x="480" y="285" fill="#c9d1d9" font-size="16" text-anchor="middle" dominant-baseline="central" font-weight="700">Pod</text>
-  <rect x="620" y="258" width="145" height="54" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="692" y="277" fill="#c9d1d9" font-size="12" text-anchor="middle">Vertical Pod</text>
-  <text x="692" y="295" fill="#c9d1d9" font-size="12" text-anchor="middle">Autoscaler</text>
-  <rect x="802" y="258" width="140" height="54" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="872" y="277" fill="#c9d1d9" font-size="12" text-anchor="middle">Pod Disruption</text>
-  <text x="872" y="295" fill="#c9d1d9" font-size="12" text-anchor="middle">Budget</text>
+  <rect x="420" y="262" width="120" height="56" rx="6" fill="rgba(88,166,255,0.22)" stroke="#58a6ff" stroke-width="2.5"/>
+  <text x="480" y="282" fill="#c9d1d9" font-size="16" text-anchor="middle" font-weight="700">Pod</text>
+  <text x="480" y="300" fill="#8b949e" font-size="11" text-anchor="middle">컨테이너 묶음</text>
+  <rect x="620" y="262" width="145" height="66" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="692" y="279" fill="#c9d1d9" font-size="12" text-anchor="middle">Vertical Pod</text>
+  <text x="692" y="294" fill="#c9d1d9" font-size="12" text-anchor="middle">Autoscaler</text>
+  <text x="692" y="313" fill="#6e7681" font-size="11" text-anchor="middle">리소스 자동 조정</text>
+  <rect x="802" y="262" width="140" height="66" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="872" y="279" fill="#c9d1d9" font-size="12" text-anchor="middle">Pod Disruption</text>
+  <text x="872" y="294" fill="#c9d1d9" font-size="12" text-anchor="middle">Budget</text>
+  <text x="872" y="313" fill="#6e7681" font-size="11" text-anchor="middle">가용성 보장</text>
 
   <!-- ROW 4: Container (green) -->
-  <rect x="405" y="369" width="150" height="52" rx="6" fill="#1a4a20" stroke="#2ea043" stroke-width="2"/>
-  <text x="480" y="388" fill="#ffffff" font-size="13" text-anchor="middle">Container</text>
-  <text x="480" y="408" fill="#ffffff" font-size="13" text-anchor="middle">(your code)</text>
+  <rect x="405" y="368" width="150" height="64" rx="6" fill="#1a4a20" stroke="#2ea043" stroke-width="2"/>
+  <text x="480" y="386" fill="#ffffff" font-size="13" text-anchor="middle">Container</text>
+  <text x="480" y="402" fill="#ffffff" font-size="13" text-anchor="middle">(your code)</text>
+  <text x="480" y="420" fill="#34d399" font-size="11" text-anchor="middle">앱이 실제 실행되는 곳</text>
 
   <!-- ROW 5: Volume -->
-  <rect x="425" y="467" width="110" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="480" y="490" fill="#c9d1d9" font-size="14" text-anchor="middle" dominant-baseline="central">Volume</text>
+  <rect x="425" y="477" width="110" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="480" y="497" fill="#c9d1d9" font-size="14" text-anchor="middle">Volume</text>
+  <text x="480" y="515" fill="#6e7681" font-size="11" text-anchor="middle">데이터 저장 공간</text>
 
   <!-- ROW 6: Storage -->
-  <rect x="20" y="587" width="110" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="75" y="610" fill="#c9d1d9" font-size="13" text-anchor="middle" dominant-baseline="central">ConfigMap</text>
-  <rect x="195" y="587" width="100" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="245" y="610" fill="#c9d1d9" font-size="13" text-anchor="middle" dominant-baseline="central">Secret</text>
-  <rect x="363" y="583" width="145" height="54" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="435" y="602" fill="#c9d1d9" font-size="12" text-anchor="middle">Persistent</text>
-  <text x="435" y="620" fill="#c9d1d9" font-size="12" text-anchor="middle">VolumeClaim</text>
-  <rect x="570" y="587" width="120" height="46" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="630" y="610" fill="#c9d1d9" font-size="13" text-anchor="middle" dominant-baseline="central">Downward API</text>
-  <rect x="753" y="583" width="145" height="54" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
-  <text x="825" y="602" fill="#c9d1d9" font-size="12" text-anchor="middle">HostPath;</text>
-  <text x="825" y="620" fill="#c9d1d9" font-size="12" text-anchor="middle">EmptyDir</text>
+  <rect x="20" y="592" width="110" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="75" y="612" fill="#c9d1d9" font-size="13" text-anchor="middle">ConfigMap</text>
+  <text x="75" y="630" fill="#6e7681" font-size="11" text-anchor="middle">설정 데이터</text>
+  <rect x="195" y="592" width="100" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="245" y="612" fill="#c9d1d9" font-size="13" text-anchor="middle">Secret</text>
+  <text x="245" y="630" fill="#6e7681" font-size="11" text-anchor="middle">민감 데이터</text>
+  <rect x="363" y="591" width="145" height="66" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="435" y="609" fill="#c9d1d9" font-size="12" text-anchor="middle">Persistent</text>
+  <text x="435" y="624" fill="#c9d1d9" font-size="12" text-anchor="middle">VolumeClaim</text>
+  <text x="435" y="643" fill="#6e7681" font-size="11" text-anchor="middle">영구 스토리지 요청</text>
+  <rect x="570" y="592" width="120" height="56" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="630" y="612" fill="#c9d1d9" font-size="13" text-anchor="middle">Downward API</text>
+  <text x="630" y="630" fill="#6e7681" font-size="11" text-anchor="middle">Pod 메타데이터</text>
+  <rect x="753" y="591" width="145" height="66" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="825" y="609" fill="#c9d1d9" font-size="12" text-anchor="middle">HostPath;</text>
+  <text x="825" y="624" fill="#c9d1d9" font-size="12" text-anchor="middle">EmptyDir</text>
+  <text x="825" y="643" fill="#6e7681" font-size="11" text-anchor="middle">노드/임시 스토리지</text>
 </svg>
 <p style="font-size:13px;color:#6e7681;margin-top:8px;">Kubernetes Distributed Primitives — Container를 중심으로 Pod, Volume, 각종 컨트롤러가 연결된 전체 구조</p>
 </div>
@@ -308,12 +327,14 @@ Pod 안에 컨테이너가 여러 개라면, 스케줄러는 **모든 컨테이�
   <text x="112" y="68" fill="#c9d1d9" font-size="13" text-anchor="middle" font-family="inherit">Container</text>
   <rect x="57" y="80" width="111" height="50" rx="5" fill="rgba(52,211,153,0.12)" stroke="#34d399" stroke-width="1"/>
   <text x="112" y="111" fill="#34d399" font-size="14" text-anchor="middle" font-weight="600" font-family="inherit">Python</text>
+  <text x="112" y="148" fill="#6e7681" font-size="10" text-anchor="middle" font-family="inherit">앱 실행 컨테이너</text>
 
   <!-- Container 2 (Java) -->
   <rect x="325" y="40" width="165" height="120" rx="8" fill="rgba(88,166,255,0.07)" stroke="#58a6ff" stroke-width="1.5"/>
   <text x="408" y="68" fill="#c9d1d9" font-size="13" text-anchor="middle" font-family="inherit">Container</text>
   <rect x="352" y="80" width="111" height="50" rx="5" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1"/>
   <text x="408" y="111" fill="#58a6ff" font-size="14" text-anchor="middle" font-weight="600" font-family="inherit">Java</text>
+  <text x="408" y="148" fill="#6e7681" font-size="10" text-anchor="middle" font-family="inherit">앱 실행 컨테이너</text>
 
   <!-- localhost 양방향 화살표 -->
   <line x1="203" y1="100" x2="317" y2="100" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#kp1-gold)" marker-start="url(#kp1-gold-r)"/>
@@ -331,6 +352,7 @@ Pod 안에 컨테이너가 여러 개라면, 스케줄러는 **모든 컨테이�
   <line x1="322" y1="252" x2="322" y2="292" stroke="#58a6ff" stroke-width="1.5"/>
   <ellipse cx="260" cy="252" rx="62" ry="19" fill="#1a3050" stroke="#58a6ff" stroke-width="1.5"/>
   <text x="260" y="277" fill="#58a6ff" font-size="14" text-anchor="middle" font-weight="600" font-family="inherit">Disk</text>
+  <text x="260" y="326" fill="#6e7681" font-size="10" text-anchor="middle" font-family="inherit">공유 파일시스템</text>
 </svg>
 <p style="font-size:13px;color:#6e7681;margin-top:8px;">같은 Pod 안의 컨테이너들은 localhost와 Disk를 공유한다</p>
 </div>
