@@ -1,10 +1,10 @@
 ---
-title: "Kubernetes.01 클라우드 네이티브로 가는 길 — 핵심 개념 정리"
+title: "K8sPatterns.01 Introduction"
 date: 2026-06-22T09:00:00+09:00
 tags: ["kubernetes", "cloud-native", "microservices", "container", "pod"]
 cover:
   image: 'images/cover.jpg'
-  alt: 'Kubernetes.01 클라우드 네이티브로 가는 길 — 핵심 개념 정리'
+  alt: 'K8sPatterns.01 Introduction'
   relative: true
 summary: "A beginner-friendly summary of Chapter 1 from Kubernetes Patterns — covering containers, pods, services, labels, annotations, and namespaces."
 ---
