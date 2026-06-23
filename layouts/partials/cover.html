@@ -17,7 +17,10 @@
         {{- $processableFormats = $processableFormats | append "webp" -}}
     {{- end -}}
 
-    {{- $imgdl := cond (.Params.cover.relative | default false) (path.Join (.RelPermalink) (.Params.cover.image) | absURL) ((.Params.cover.image) | absURL) }}
+    {{- $imgdl := (.Params.cover.image) | absURL }}
+    {{- if .Params.cover.relative }}
+        {{- $imgdl = path.Join .RelPermalink .Params.cover.image | absURL }}
+    {{- end }}
     {{- if $cover -}}
         {{- $imgdl = $cover.Permalink }}
     {{- end -}}
