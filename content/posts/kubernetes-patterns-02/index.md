@@ -1,7 +1,7 @@
 ---
 series: ["K8sPatterns"]
 title: "K8sPatterns.02 Predictable Demands"
-date: 2026-06-24T09:00:00+09:00
+date: 2026-06-23T10:00:00+09:00
 tags: ["kubernetes", "cloud-native", "resources", "qos", "scheduling", "pod"]
 cover:
   image: 'images/cover.jpg'
