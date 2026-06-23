@@ -19,6 +19,7 @@ theme = 'PaperMod'
   author = 'AA'
   defaultTheme = 'auto'
   ShowReadingTime = true
+  ShowSeriesNav = true
   ShowPostNavLinks = true
 
 [params.cover]
