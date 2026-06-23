@@ -9,3 +9,5 @@ cover:
   relative: true
 summary: "Chapter 2 of Kubernetes Patterns — how to declare container resource needs so the scheduler can make optimal placement decisions."
 ---
+
+*작성 중입니다.*
