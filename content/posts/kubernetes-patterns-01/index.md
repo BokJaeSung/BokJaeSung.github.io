@@ -1,4 +1,5 @@
 ---
+series: ["K8sPatterns"]
 title: "K8sPatterns.01 Introduction"
 date: 2026-06-22T09:00:00+09:00
 tags: ["kubernetes", "cloud-native", "microservices", "container", "pod"]

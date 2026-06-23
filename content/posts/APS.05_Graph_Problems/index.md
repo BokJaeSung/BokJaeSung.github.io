@@ -1,4 +1,5 @@
 ---
+series: ["APS"]
 title: "APS.05 RMQ, Segment Tree, Sparse Table"
 date: 2026-04-07T09:00:00+09:00
 tags: ["알고리즘", "세그먼트트리", "RMQ", "SparseTable", "LCA"]

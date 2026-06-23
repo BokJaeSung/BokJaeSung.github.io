@@ -3,6 +3,11 @@ languageCode = 'ko-kr'
 title = 'History'
 theme = 'PaperMod'
 
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+  series = "series"
+
 [markup.goldmark.renderer]
   unsafe = true
 
@@ -49,3 +54,7 @@ theme = 'PaperMod'
     name = 'Tags'
     url = '/tags/'
     weight = 20
+  [[menu.main]]
+    name = 'Series'
+    url = '/series/'
+    weight = 30

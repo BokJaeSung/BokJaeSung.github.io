@@ -1,4 +1,5 @@
 ---
+series: ["APS"]
 title: "APS.03 Geometric Problems"
 date: 2026-03-18T09:00:00+09:00
 tags: ["알고리즘", "기하학", "CCW", "외적", "선분교차", "볼록껍질"]

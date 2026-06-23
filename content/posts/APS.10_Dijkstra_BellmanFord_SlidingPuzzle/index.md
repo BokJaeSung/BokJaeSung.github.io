@@ -1,4 +1,5 @@
 ---
+series: ["APS"]
 title: "APS.10 Dijkstra, Bellman-Ford & Sliding Puzzle"
 date: 2026-05-06T09:00:00+09:00
 tags: ["알고리즘", "그래프", "최단경로", "dijkstra", "bellman-ford", "bfs", "sliding puzzle"]

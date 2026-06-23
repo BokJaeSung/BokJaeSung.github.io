@@ -1,4 +1,5 @@
 ---
+series: ["APS"]
 title: "APS.06 Tarjan's SCC Algorithm"
 date: 2026-04-14T09:00:00+09:00
 tags: ["알고리즘", "그래프", "SCC", "Tarjan", "DFS", "강한연결요소"]

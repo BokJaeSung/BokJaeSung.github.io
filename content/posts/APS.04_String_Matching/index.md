@@ -1,4 +1,5 @@
 ---
+series: ["APS"]
 title: "APS.04 String Matching"
 date: 2026-03-25T09:00:00+09:00
 tags: ["알고리즘", "문자열", "KMP", "Rabin-Karp", "해시", "접두사함수"]
