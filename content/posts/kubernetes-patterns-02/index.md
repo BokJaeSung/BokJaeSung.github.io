@@ -260,6 +260,92 @@ containers:
 
 이러한 이유로 `hostPort`는 안티패턴으로 간주되며, 포트 관리는 Service(NodePort, LoadBalancer)를 통해 하는 것이 권장된다.
 
+{{< rawhtml >}}
+<div style="margin:1.5rem 0;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 870 430" style="width:100%;font-family:system-ui,sans-serif;">
+  <defs>
+    <marker id="hp-arr" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#aaa"/>
+    </marker>
+    <marker id="hp-arr-g" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#4a9d6f"/>
+    </marker>
+    <filter id="hp-sh" x="-10%" y="-10%" width="120%" height="135%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- ===== ARROWS (맨 앞 = 카드 아래) ===== -->
+  <line x1="220" y1="114" x2="220" y2="142" stroke="#bbb" stroke-width="1.5" marker-end="url(#hp-arr)"/>
+  <line x1="220" y1="166" x2="220" y2="178" stroke="#bbb" stroke-width="1.5" marker-end="url(#hp-arr)"/>
+  <text x="228" y="176" fill="#bbb" font-size="10" font-family="inherit">:80</text>
+  <line x1="640" y1="114" x2="640" y2="142" stroke="#bbb" stroke-width="1.5" marker-end="url(#hp-arr)"/>
+  <line x1="600" y1="192" x2="575" y2="262" stroke="#4a9d6f" stroke-width="1.5" marker-end="url(#hp-arr-g)"/>
+  <line x1="640" y1="192" x2="615" y2="320" stroke="#4a9d6f" stroke-width="1.5" marker-end="url(#hp-arr-g)"/>
+  <line x1="680" y1="192" x2="655" y2="378" stroke="#4a9d6f" stroke-width="1.5" marker-end="url(#hp-arr-g)"/>
+
+  <!-- Divider -->
+  <line x1="435" y1="8" x2="435" y2="422" stroke="#e8e8e8" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+  <!-- ===== LEFT: hostPort ===== -->
+  <rect x="130" y="10" width="180" height="26" rx="7" fill="#fff0f0" stroke="#ffcccc" stroke-width="1"/>
+  <text x="220" y="28" fill="#c0392b" font-size="13" font-weight="700" text-anchor="middle" font-family="inherit">hostPort</text>
+  <rect x="90" y="44" width="260" height="22" rx="6" fill="#fff5f5" stroke="#ffcccc" stroke-width="1"/>
+  <text x="220" y="59" fill="#c0392b" font-size="11" text-anchor="middle" font-family="inherit">⚠  노드당 Pod 1개 — 스케일아웃 불가</text>
+
+  <rect x="120" y="78" width="200" height="36" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+  <text x="220" y="101" fill="#1e1e1e" font-size="13" font-weight="600" text-anchor="middle" font-family="inherit">External Traffic  :80</text>
+
+  <!-- Node 1 (active) -->
+  <rect x="38" y="144" width="364" height="114" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+  <text x="56" y="163" fill="#aaa" font-size="11" font-family="inherit">Node  192.168.1.1</text>
+  <rect x="120" y="180" width="200" height="36" rx="8" fill="#f0f7ff" stroke="#ccdff5" stroke-width="1"/>
+  <text x="220" y="203" fill="#1e5fa8" font-size="13" font-weight="600" text-anchor="middle" font-family="inherit">Pod A  :8080</text>
+  <text x="56" y="244" fill="#27ae60" font-size="11" font-family="inherit">✓  직접 접근 가능</text>
+
+  <!-- Node 2 (empty) -->
+  <rect x="38" y="274" width="364" height="44" rx="10" fill="#f9f9f9" stroke="#ebebeb" stroke-width="1"/>
+  <text x="56" y="293" fill="#ccc" font-size="11" font-family="inherit">Node  192.168.1.2</text>
+  <text x="56" y="310" fill="#ccc" font-size="11" font-family="inherit">✕  Pod 없음 — 이 노드 IP로는 접근 불가</text>
+
+  <!-- Node 3 (empty) -->
+  <rect x="38" y="330" width="364" height="44" rx="10" fill="#f9f9f9" stroke="#ebebeb" stroke-width="1"/>
+  <text x="56" y="349" fill="#ccc" font-size="11" font-family="inherit">Node  192.168.1.3</text>
+  <text x="56" y="366" fill="#ccc" font-size="11" font-family="inherit">✕  Pod 없음 — 이 노드 IP로는 접근 불가</text>
+
+  <!-- ===== RIGHT: Service ===== -->
+  <rect x="550" y="10" width="180" height="26" rx="7" fill="#f0fff4" stroke="#c0e8cc" stroke-width="1"/>
+  <text x="640" y="28" fill="#218c4a" font-size="13" font-weight="700" text-anchor="middle" font-family="inherit">Service</text>
+  <rect x="468" y="44" width="344" height="22" rx="6" fill="#f0fff4" stroke="#c0e8cc" stroke-width="1"/>
+  <text x="640" y="59" fill="#218c4a" font-size="11" text-anchor="middle" font-family="inherit">✓  자동 로드밸런싱 · 어느 노드든 접근 가능</text>
+
+  <rect x="540" y="78" width="200" height="36" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+  <text x="640" y="101" fill="#1e1e1e" font-size="13" font-weight="600" text-anchor="middle" font-family="inherit">External Traffic</text>
+
+  <!-- Service ClusterIP -->
+  <rect x="480" y="144" width="320" height="48" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+  <text x="640" y="166" fill="#1e1e1e" font-size="13" font-weight="700" text-anchor="middle" font-family="inherit">Service (ClusterIP)</text>
+  <text x="640" y="183" fill="#999" font-size="11" text-anchor="middle" font-family="inherit">kube-proxy가 Pod로 분산</text>
+
+  <!-- Pod A (Node 1) -->
+  <rect x="450" y="264" width="280" height="44" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+  <text x="466" y="283" fill="#aaa" font-size="11" font-family="inherit">Node  192.168.1.1</text>
+  <text x="466" y="300" fill="#1e1e1e" font-size="12" font-weight="600" font-family="inherit">Pod A  :8080</text>
+
+  <!-- Pod B (Node 2) -->
+  <rect x="450" y="322" width="280" height="44" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+  <text x="466" y="341" fill="#aaa" font-size="11" font-family="inherit">Node  192.168.1.2</text>
+  <text x="466" y="358" fill="#1e1e1e" font-size="12" font-weight="600" font-family="inherit">Pod B  :8080</text>
+
+  <!-- Pod C (Node 3) -->
+  <rect x="450" y="380" width="280" height="44" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+  <text x="466" y="399" fill="#aaa" font-size="11" font-family="inherit">Node  192.168.1.3</text>
+  <text x="466" y="416" fill="#1e1e1e" font-size="12" font-weight="600" font-family="inherit">Pod C  :8080</text>
+
+</svg>
+</div>
+{{< /rawhtml >}}
+
 ---
 
 ### 1.3 ConfigMap & Secret
