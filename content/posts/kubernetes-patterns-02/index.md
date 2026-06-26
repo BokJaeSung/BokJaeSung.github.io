@@ -75,67 +75,92 @@ summary: "How to declare resource requirements and runtime dependencies so Kuber
     <span id="k2-lbl" style="font-size:13px;color:#999;margin-left:4px;"></span>
   </div>
   <div id="k2-card" style="width:65%;margin:0 auto;min-width:260px;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 548" style="width:100%;font-family:inherit;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 516" style="width:100%;font-family:inherit;">
     <defs>
       <marker id="k2-arr" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
         <polygon points="0,0 8,3.5 0,7" fill="#999"/>
       </marker>
-      <filter id="k2-sh" x="-10%" y="-10%" width="120%" height="135%">
-        <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.08"/>
-      </filter>
+      <clipPath id="k2-api-clip">
+        <rect x="55" y="108" width="390" height="134" rx="10"/>
+      </clipPath>
+      <clipPath id="k2-sc-clip">
+        <rect x="55" y="270" width="390" height="130" rx="10"/>
+      </clipPath>
     </defs>
 
     <!-- 애플리케이션 -->
     <g id="k2-app" class="k2-g">
-      <rect x="160" y="20" width="180" height="44" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" filter="url(#k2-sh)"/>
+      <rect x="160" y="20" width="180" height="44" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
       <text x="250" y="47" fill="#1e1e1e" font-size="15" text-anchor="middle" font-weight="600" font-family="inherit">애플리케이션</text>
     </g>
 
     <!-- Arrow 1 -->
     <g id="k2-a1" class="k2-g">
-      <line x1="250" y1="64" x2="250" y2="104" stroke="#bbb" stroke-width="1.5" marker-end="url(#k2-arr)"/>
-      <text x="258" y="89" fill="#aaa" font-size="12" font-family="inherit">선언 (yaml)</text>
+      <line x1="250" y1="64" x2="250" y2="106" stroke="#bbb" stroke-width="1.5" marker-end="url(#k2-arr)"/>
+      <text x="258" y="89" fill="#aaa" font-size="12" font-family="inherit">kubectl apply</text>
     </g>
 
-    <!-- Section 1 card: y=108, h=92 -->
-    <g id="k2-s1" class="k2-g">
-      <rect id="k2-s1f" x="60" y="108" width="380" height="92" rx="10" fill="#fff" stroke="#e8e8e8" stroke-width="1" filter="url(#k2-sh)"/>
-      <text x="82" y="132" fill="#1e1e1e" font-size="13" font-weight="600" font-family="inherit">Runtime Dependencies</text>
-      <text x="96" y="152" fill="#666" font-size="12" font-family="inherit">·  Volume (PV, emptyDir)</text>
-      <text x="96" y="169" fill="#666" font-size="12" font-family="inherit">·  hostPort</text>
-      <text x="96" y="186" fill="#666" font-size="12" font-family="inherit">·  ConfigMap / Secret</text>
+    <!-- API Server 외곽 -->
+    <g id="k2-api-hdr" class="k2-g">
+      <rect id="k2-api-border" x="55" y="108" width="390" height="134" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+      <text x="75" y="128" fill="#aaa" font-size="11" font-family="inherit">API Server</text>
     </g>
 
-    <!-- Section 2 card: y=212, h=92 -->
-    <g id="k2-s2" class="k2-g">
-      <rect id="k2-s2f" x="60" y="212" width="380" height="92" rx="10" fill="#fff" stroke="#e8e8e8" stroke-width="1" filter="url(#k2-sh)"/>
-      <text x="82" y="236" fill="#1e1e1e" font-size="13" font-weight="600" font-family="inherit">Resource Profiles</text>
-      <text x="96" y="256" fill="#666" font-size="12" font-family="inherit">·  CPU / Memory</text>
-      <text x="96" y="273" fill="#666" font-size="12" font-family="inherit">·  requests / limits</text>
-      <text x="96" y="290" fill="#666" font-size="12" font-family="inherit">·  QoS</text>
+    <!-- LimitRange -->
+    <g id="k2-lr" class="k2-g">
+      <rect id="k2-lrf" x="55" y="133" width="390" height="52" fill="#fff" stroke="none" clip-path="url(#k2-api-clip)"/>
+      <text x="75" y="152" fill="#1e1e1e" font-size="13" font-weight="600" font-family="inherit">LimitRange</text>
+      <text x="90" y="168" fill="#666" font-size="12" font-family="inherit">기본값 주입 / 범위 초과 시 즉시 거절</text>
     </g>
+    <line x1="55" y1="185" x2="445" y2="185" stroke="#e8e8e8" stroke-width="1"/>
 
-    <!-- Section 3 card: y=316, h=92 -->
-    <g id="k2-s3" class="k2-g">
-      <rect id="k2-s3f" x="60" y="316" width="380" height="92" rx="10" fill="#fff" stroke="#e8e8e8" stroke-width="1" filter="url(#k2-sh)"/>
-      <text x="82" y="340" fill="#1e1e1e" font-size="13" font-weight="600" font-family="inherit">Priority &amp; Quota</text>
-      <text x="96" y="360" fill="#666" font-size="12" font-family="inherit">·  PriorityClass</text>
-      <text x="96" y="377" fill="#666" font-size="12" font-family="inherit">·  ResourceQuota</text>
-      <text x="96" y="394" fill="#666" font-size="12" font-family="inherit">·  LimitRange</text>
+    <!-- ResourceQuota -->
+    <g id="k2-rq" class="k2-g">
+      <rect id="k2-rqf" x="55" y="185" width="390" height="57" fill="#fff" stroke="none" clip-path="url(#k2-api-clip)"/>
+      <text x="75" y="204" fill="#1e1e1e" font-size="13" font-weight="600" font-family="inherit">ResourceQuota</text>
+      <text x="90" y="220" fill="#666" font-size="12" font-family="inherit">네임스페이스 총량 초과 시 즉시 거절</text>
+      <text x="90" y="236" fill="#aaa" font-size="11" font-family="inherit">→ Scheduler까지 가지도 못함</text>
     </g>
 
     <!-- Arrow 2 -->
     <g id="k2-a2" class="k2-g">
-      <line x1="250" y1="408" x2="250" y2="432" stroke="#bbb" stroke-width="1.5" marker-end="url(#k2-arr)"/>
-      <text x="258" y="425" fill="#aaa" font-size="12" font-family="inherit">판단</text>
+      <line x1="250" y1="242" x2="250" y2="268" stroke="#bbb" stroke-width="1.5" marker-end="url(#k2-arr)"/>
+      <text x="258" y="260" fill="#aaa" font-size="12" font-family="inherit">통과</text>
     </g>
 
-    <!-- Kubernetes Scheduler -->
-    <g id="k2-sc" class="k2-g">
-      <rect x="60" y="434" width="380" height="84" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" filter="url(#k2-sh)"/>
-      <text x="250" y="460" fill="#1e1e1e" font-size="15" text-anchor="middle" font-weight="700" font-family="inherit">Kubernetes Scheduler</text>
-      <text x="82" y="480" fill="#666" font-size="12" font-family="inherit">→  어느 노드에 배치할지 결정</text>
-      <text x="82" y="498" fill="#666" font-size="12" font-family="inherit">→  리소스 부족 시 누굴 죽일지 결정</text>
+    <!-- Scheduler 외곽 -->
+    <g id="k2-sc-hdr" class="k2-g">
+      <rect id="k2-sc-border" x="55" y="270" width="390" height="130" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+      <text x="75" y="290" fill="#aaa" font-size="11" font-family="inherit">Scheduler</text>
+    </g>
+
+    <!-- Runtime Dependencies -->
+    <g id="k2-rd" class="k2-g">
+      <rect id="k2-rdf" x="55" y="295" width="390" height="50" fill="#fff" stroke="none" clip-path="url(#k2-sc-clip)"/>
+      <text x="75" y="314" fill="#1e1e1e" font-size="13" font-weight="600" font-family="inherit">Runtime Dependencies</text>
+      <text x="90" y="330" fill="#666" font-size="12" font-family="inherit">Volume, hostPort, ConfigMap/Secret → 노드 필터링</text>
+    </g>
+    <line x1="55" y1="345" x2="445" y2="345" stroke="#e8e8e8" stroke-width="1"/>
+
+    <!-- PriorityClass -->
+    <g id="k2-pc" class="k2-g">
+      <rect id="k2-pcf" x="55" y="345" width="390" height="55" fill="#fff" stroke="none" clip-path="url(#k2-sc-clip)"/>
+      <text x="75" y="365" fill="#1e1e1e" font-size="13" font-weight="600" font-family="inherit">PriorityClass</text>
+      <text x="90" y="381" fill="#666" font-size="12" font-family="inherit">우선순위 높은 Pod 먼저 배치, 자리 없으면 선점</text>
+    </g>
+
+    <!-- Arrow 3 -->
+    <g id="k2-a3" class="k2-g">
+      <line x1="250" y1="400" x2="250" y2="424" stroke="#bbb" stroke-width="1.5" marker-end="url(#k2-arr)"/>
+      <text x="258" y="417" fill="#aaa" font-size="12" font-family="inherit">배치</text>
+    </g>
+
+    <!-- Kubelet -->
+    <g id="k2-kl" class="k2-g">
+      <rect x="55" y="426" width="390" height="80" rx="10" fill="#fff" stroke="#e0e0e0" stroke-width="1" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.09))"/>
+      <text x="250" y="451" fill="#1e1e1e" font-size="14" text-anchor="middle" font-weight="700" font-family="inherit">Kubelet / Node</text>
+      <text x="75" y="470" fill="#666" font-size="12" font-family="inherit">→ QoS 기반 종료 순서 결정</text>
+      <text x="90" y="486" fill="#aaa" font-size="11" font-family="inherit">BestEffort → Burstable → Guaranteed 순으로 종료</text>
     </g>
   </svg>
   </div>
@@ -145,35 +170,45 @@ summary: "How to declare resource requirements and runtime dependencies so Kuber
 <script>
 (function(){
   const ST=[
-    {a:null, info:'YAML 선언 전. Kubernetes는 아직 아무것도 모른다. 스케줄러는 어디에도 Pod를 배치할 수 없다.'},
-    {a:'k2-app', info:'애플리케이션이 YAML을 작성한다. 컨테이너가 무엇을 필요로 하는지 선언하는 과정이다.'},
-    {a:'k2-a1', info:'<code style="background:#f0f0f0;padding:1px 6px;border-radius:4px;color:#1e1e1e;">kubectl apply</code>로 YAML이 API Server에 전달된다. 이 순간부터 Kubernetes가 처리를 시작한다.'},
-    {a:'k2-s1', info:'Runtime Dependencies 확인. Volume이 존재하는지, hostPort 충돌은 없는지, ConfigMap/Secret이 준비됐는지 검사한다. 없으면 Pod는 스케줄링되지 않는다.'},
-    {a:'k2-s2', info:'Resource Profiles 평가. requests 기준으로 충분한 CPU/메모리를 가진 노드를 탐색한다. QoS 등급(Guaranteed / Burstable / BestEffort)도 이 시점에 결정된다.'},
-    {a:'k2-s3', info:'Priority & Quota 확인. 높은 우선순위 Pod는 자리가 없으면 낮은 우선순위 Pod를 선점할 수 있다. ResourceQuota로 네임스페이스 총량도 검사한다.'},
-    {a:'k2-a2', info:'모든 조건 검토 완료. 스케줄러가 최적 노드를 선택한다.'},
-    {a:'k2-sc', info:'Pod가 선택된 노드에 배치된다. 조건을 충족하는 노드가 없으면 Pod는 Pending 상태로 대기한다.'},
+    {a:null, info:'YAML 선언 전. Kubernetes는 아직 아무것도 모른다.'},
+    {a:'k2-app', info:'애플리케이션이 YAML을 작성한다. requests/limits, PriorityClass, Volume 등을 선언하는 과정이다.'},
+    {a:'k2-a1', info:'<code style="background:#f0f0f0;padding:1px 6px;border-radius:4px;color:#1e1e1e;">kubectl apply</code>로 YAML이 API Server에 전달된다.'},
+    {a:'k2-lr', info:'LimitRange 체크 (API Server). requests/limits를 명시하지 않았으면 기본값을 자동 주입한다. 설정 범위를 벗어나면 이 시점에서 즉시 거절된다.'},
+    {a:'k2-rq', info:'ResourceQuota 체크 (API Server). 네임스페이스 총 사용량이 한도를 초과하면 즉시 거절된다. Scheduler까지 가지도 못한다.'},
+    {a:'k2-a2', info:'API Server 단계를 통과한 Pod 오브젝트가 etcd에 저장된다. Scheduler가 이를 감지하고 배치 작업을 시작한다.'},
+    {a:'k2-rd', info:'Runtime Dependencies 확인 (Scheduler). Volume 마운트 가능 여부, hostPort 충돌, ConfigMap/Secret 존재 여부를 검사한다. 조건을 만족하는 노드를 필터링한다.'},
+    {a:'k2-pc', info:'PriorityClass 적용 (Scheduler). 우선순위가 높은 Pod를 먼저 배치한다. 자리가 없으면 낮은 우선순위 Pod를 선점(Preemption)하여 자리를 만든다.'},
+    {a:'k2-a3', info:'Scheduler가 최적 노드를 선택하고 Pod를 바인딩한다.'},
+    {a:'k2-kl', info:'Kubelet이 Pod를 실행한다. 이후 노드 리소스가 부족하면 QoS 등급 기준으로 종료 순서를 결정한다: BestEffort → Burstable → Guaranteed.'},
   ];
-  const GS=['k2-app','k2-a1','k2-s1','k2-s2','k2-s3','k2-a2','k2-sc'];
-  const FILLS={
-    'k2-s1':['k2-s1f'], 'k2-s2':['k2-s2f'], 'k2-s3':['k2-s3f']
-  };
+  const GS=['k2-app','k2-a1','k2-lr','k2-rq','k2-a2','k2-rd','k2-pc','k2-a3','k2-kl'];
+  const API_STEPS=['k2-lr','k2-rq'];
+  const SC_STEPS=['k2-rd','k2-pc'];
+  const FILLS={'k2-lr':'k2-lrf','k2-rq':'k2-rqf','k2-rd':'k2-rdf','k2-pc':'k2-pcf'};
   let cur=0;
 
   function render(){
     const s=ST[cur];
     GS.forEach(id=>{
       const el=document.getElementById(id);
-      if(el) el.style.opacity = s.a===null ? '1' : (s.a===id ? '1' : '0.2');
+      if(el) el.style.opacity = s.a===null ? '1' : (s.a===id ? '1' : '0.18');
     });
-    Object.entries(FILLS).forEach(([gid,[fid]])=>{
+    const apiHdr=document.getElementById('k2-api-hdr');
+    if(apiHdr) apiHdr.style.opacity = (!s.a || API_STEPS.includes(s.a)) ? '1' : '0.18';
+    const scHdr=document.getElementById('k2-sc-hdr');
+    if(scHdr) scHdr.style.opacity = (!s.a || SC_STEPS.includes(s.a)) ? '1' : '0.18';
+    Object.entries(FILLS).forEach(([gid,fid])=>{
       const f=document.getElementById(fid);
       if(!f) return;
       const active=s.a===gid;
       f.setAttribute('fill', active ? '#f4f4f4' : '#fff');
-      f.setAttribute('stroke', active ? '#aaa' : '#e8e8e8');
-      f.setAttribute('stroke-width', active ? '1.5' : '1');
+      f.setAttribute('stroke', active ? '#aaa' : 'none');
+      f.setAttribute('stroke-width','1.5');
     });
+    const apiBorder=document.getElementById('k2-api-border');
+    if(apiBorder) apiBorder.setAttribute('stroke', API_STEPS.includes(s.a) ? '#1e1e1e' : '#e0e0e0');
+    const scBorder=document.getElementById('k2-sc-border');
+    if(scBorder) scBorder.setAttribute('stroke', SC_STEPS.includes(s.a) ? '#1e1e1e' : '#e0e0e0');
     document.getElementById('k2-info').innerHTML=s.info;
     document.getElementById('k2-lbl').textContent=`${cur} / ${ST.length-1}`;
     document.getElementById('k2-bb').disabled=cur===0;
