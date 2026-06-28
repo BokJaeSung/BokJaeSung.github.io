@@ -111,7 +111,29 @@ go 1.20
 
 `go.mod` 파일에는 모듈 이름, 최소 지원 Go 버전, 의존하는 외부 패키지 목록이 담겨 있음. Python의 `requirements.txt`, Ruby의 `Gemfile`과 같은 역할.
 
+| 항목 | 설명 |
+|------|------|
+| `module hello_world` | 이 프로젝트의 이름. `go mod init hello_world`에서 지정한 값. 외부에서 패키지로 가져다 쓸 때 이 이름으로 불러옴 |
+| `go 1.20` | 이 프로젝트가 요구하는 최소 Go 버전. "이 코드는 Go 1.20 이상에서 돌아요"라는 뜻 |
+
+외부 패키지를 설치하면 `require` 블록이 자동으로 추가됨.
+
+```
+module hello_world
+
+go 1.20
+
+require (
+    github.com/gin-gonic/gin v1.9.0  ← go get 시 자동으로 추가됨
+)
+```
+
 > `go.mod`는 직접 수정하지 말 것. `go get` 또는 `go mod tidy`로 관리.
+
+| 명령어 | 역할 | 예시 |
+|--------|------|------|
+| `go get` | 외부 패키지 추가·업데이트 | `go get github.com/some/pkg` |
+| `go mod tidy` | 실제 코드에서 안 쓰는 의존성 제거, 빠진 것 추가 | `go mod tidy` |
 
 ### hello.go 작성
 
