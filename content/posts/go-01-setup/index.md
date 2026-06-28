@@ -3,7 +3,7 @@ title: "Go.01 Setting Up Your Go Development Environment"
 date: 2026-06-28T09:00:00+09:00
 tags: ["go", "golang", "환경설정", "개발환경"]
 cover:
-  image: 'images/cover.png'
+  image: 'images/cover.jpg'
   alt: 'Go.01 Setting Up Your Go Development Environment'
   relative: true
 summary: "How to install Go, configure VS Code, and build your first Hello World program with essential tooling."
