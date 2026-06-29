@@ -158,6 +158,24 @@ spec:
 **핵심 포인트:** `initialDelaySeconds(30) > DELAY_STARTUP(20)`  
 앱이 완전히 뜨기 전에 체크하면 불필요한 재시작이 반복된다.
 
+### DELAY_STARTUP 환경변수란?
+
+`DELAY_STARTUP`은 Kubernetes 기본 기능이 아니라 `k8spatterns/random-generator` 이미지가 자체적으로 만든 환경변수다.  
+앱 내부 코드가 이 값을 읽어 `Thread.sleep(20초)` 로 시작을 의도적으로 지연시킨다.
+
+**교재 데모용 설정**으로 "느리게 시작하는 앱"을 시뮬레이션하기 위한 것이다. 실무에서는 Spring Boot, WildFly 같은 프레임워크가 원래 자체적으로 느리게 뜨기 때문에 이런 변수가 필요 없다.
+
+```
+DELAY_STARTUP: 20초        ← 앱이 뜨는 데 걸리는 시간
+initialDelaySeconds: 30초  ← Probe가 기다리는 시간
+
+30 > 20 → 앱이 완전히 뜨고 나서 체크 시작 ✅
+
+반대라면?
+initialDelaySeconds: 10 < DELAY_STARTUP: 20
+→ 앱 아직 시작 중인데 체크 → 실패 → 재시작 💥
+```
+
 ---
 
 ## 5. Readiness Probe
@@ -253,27 +271,56 @@ spec:
 
 앱이 파일을 생성/삭제하는 것만으로 트래픽을 직접 제어할 수 있다.
 
+### Probe 파라미터 기본값
+
+명시적으로 설정하지 않으면 Kubernetes가 아래 기본값을 적용한다.
+
+| 파라미터 | 기본값 | 설명 |
+|---|---|---|
+| `initialDelaySeconds` | 0초 | 시작 즉시 체크 |
+| `periodSeconds` | 10초 | 10초마다 체크 |
+| `timeoutSeconds` | 1초 | 1초 안에 응답 없으면 실패 |
+| `failureThreshold` | 3회 | 3번 연속 실패 시 조치 |
+| `successThreshold` | 1회 | 1번 성공하면 정상 판단 |
+
+Example 4-2는 파라미터를 생략했으므로 모두 기본값이 적용된다. 기본값 기준으로 타임라인을 보면:
+
+```
+0초  : 컨테이너 시작 → 즉시 첫 체크
+       파일 없음 ❌ (실패 1)
+10초 : 파일 없음 ❌ (실패 2)
+20초 : 파일 없음 ❌ (실패 3) → Readiness 실패 확정 → 트래픽 차단 🚫
+
+       앱 초기화 완료 → 파일 생성 📄
+
+30초 : 파일 있음 ✅ (성공 1) → successThreshold 달성 → 트래픽 수신 시작 ✅
+```
+
 ---
 
 ## 6. SIGTERM과 Readiness
 
-Pod 종료 시, Readiness가 아직 통과 중이어도  
-**Kubernetes가 자동으로 트래픽을 차단**한다.
+`SIGTERM`은 Kubernetes가 Pod를 종료할 때 컨테이너에게 보내는 "이제 종료해" 신호다.
+
+SIGTERM을 받는 순간 Kubernetes는 **Readiness 결과와 무관하게** 즉시 트래픽을 차단한다.  
+개발자가 따로 Readiness 실패 처리를 하지 않아도 종료 중인 Pod로 새 요청이 들어가는 일은 없다.
 
 ```
-Kubernetes가 Pod 종료 결정
+Pod 종료 결정
   │
-  ▼
-SIGTERM 신호 전송
-  │
-  └─► Readiness 통과 중이어도 자동 트래픽 차단 🚫
+  ├─► ① 트래픽 차단 🚫   ← 동시에
+  └─► ② SIGTERM 전송     ← 동시에
         │
+        새 요청은 다른 Pod로
         현재 처리 중인 요청만 마무리 (graceful shutdown)
         │
-        컨테이너 종료 완료
+        컨테이너 종료 완료 ✅
 ```
 
-개발자가 따로 처리하지 않아도, 종료 중인 Pod로 새 요청이 들어가는 일은 없다.
+### Readiness가 통과 중인데 종료되면?
+
+Readiness가 아직 통과 중(정상 상태)이어도 SIGTERM을 받는 순간 트래픽이 차단된다.  
+"Readiness 통과 중 = 트래픽 수신 중"이라는 생각과 달리, **종료 신호가 Readiness보다 우선**한다.
 
 ---
 
