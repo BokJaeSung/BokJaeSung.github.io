@@ -1,10 +1,10 @@
 ---
-title: "Go.02 사전 선언 타입: 리터럴, 불리언, 숫자 타입"
+title: "Go.02 Predeclared Types and Declarations"
 date: 2026-07-05T09:00:00+09:00
 tags: ["go", "golang", "programming language"]
 cover:
   image: 'images/cover.jpg'
-  alt: '사전 선언 타입: 리터럴, 불리언, 숫자 타입'
+  alt: 'Go.02 Predeclared Types and Declarations'
   relative: true
 summary: "Go's predeclared types explained — literals, zero values, booleans, and why Go has 12 different numeric types."
 ---
