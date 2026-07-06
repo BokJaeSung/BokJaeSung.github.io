@@ -202,6 +202,26 @@ OnFailure                          Never
 
 `suspend: true`로 설정하면 실행 중인 Pod가 모두 삭제되고, `suspend: false`로 되돌리면 재개된다.
 
+### 4.1 "etcd에 영구 기록"의 정확한 의미
+
+위 표의 "영구 기록"은 **무한정 저장된다는 뜻이 아니라, 프로세스가 재시작돼도 사라지지 않는다(durability)는 뜻**이다. 저장 용량이 무한한지(capacity)는 완전히 다른 질문이다.
+
+```
+질문 A: 재시작하면 사라지나?           → durability
+질문 B: 영원히, 무한정 쌓아도 되나?     → capacity/retention
+
+etcd는 A에는 "예, 안 사라짐"
+      B에는 "아니요, quota와 GC가 있음"
+```
+
+| 질문 | 답 | 근거 |
+|---|---|---|
+| 재시작해도 살아남나? (durability) | ✅ | 디스크(bbolt)에 저장, WAL 로그로 복구 |
+| 무한정 쌓아도 되나? (capacity) | ❌ | 기본 quota 2GB(권장 최대 8GB), 초과 시 읽기 전용 전환 |
+| 자동으로 정리되나? | ✅ | MVCC로 리비전이 계속 쌓이므로 compaction(오래된 리비전 삭제)·defrag(디스크 공간 회수)가 필요 |
+
+etcd 자체도 Raft 알고리즘으로 리더-팔로워 복제 구조를 가진 고가용성 시스템이다. 이건 Kubernetes의 Control Plane/Worker Node 구조와는 다른 층위의 이야기다 — etcd는 Control Plane 구성 요소 중 하나이고, 그 안에서 자체적으로 한 번 더 리더를 선출해 복제한다.
+
 ---
 
 ## 5. Job의 종류
@@ -295,6 +315,75 @@ spec:
 ```
 
 `NR`은 awk 내부에서 현재 처리 중인 줄 번호를 나타내는 변수로, `NR>=start && NR<end` 조건으로 해당 구간만 잘라낸다.
+
+### Work Queue Job
+
+`completions`는 아예 지정하지 않고, `parallelism`만 1보다 크게 설정하는 방식이다.
+
+```
+Single Pod Job:           completions=1,  parallelism=1
+Fixed Completion Count:   completions=N,  parallelism=M
+Indexed Job:              completions=N,  parallelism=M, completionMode=Indexed
+Work Queue Job:           completions=없음!, parallelism=N (>1)   ← 이번 것
+```
+
+**왜 `completions`를 못 정할까?** 작업이 외부 큐(Redis, RabbitMQ 등)에 쌓여 있는데, 그 큐에 몇 개가 들어있는지 Kubernetes는 알 방법이 없다. 그래서 숫자로 된 목표치 대신, **"큐가 비면 끝"이라는 신호를 Pod가 직접 판단해서 알려주는 방식**을 쓴다.
+
+```
+완료 조건
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. 최소 1개 Pod가 "큐 비었음"을 확인하고 성공 종료
+2. 나머지 실행 중인 Pod들도 모두 종료
+   │
+   ▼
+Job 완료
+```
+
+### 실행 흐름
+
+```
+parallelism: 3
+
+Pod1  Pod2  Pod3   ← 동시에 3개 실행, 각자 큐에서 작업을 꺼내옴
+ │     │     │
+작업1  작업4  작업7
+작업2  작업5  작업8
+작업3  작업6  큐 비어있음 확인 → exit 0 (성공)
+ │     │
+계속   계속
+처리   처리
+ │     │
+큐 비었음  큐 비었음
+exit 0    exit 0
+          │
+          ▼
+     Job 완료 (모든 Pod 종료)
+```
+
+가장 먼저 큐가 빈 걸 발견한 Pod가 성공 종료로 완료 신호를 보내고, Job 컨트롤러는 나머지 Pod들도 다 끝날 때까지 기다린다.
+
+### Indexed Job과의 조율 방식 차이
+
+Indexed Job은 담당 구역이 인덱스로 미리 정해져 있어 Pod끼리 조율이 필요 없지만, Work Queue Job은 담당 구역이 없으므로 **"누가 뭘 처리할지"를 Pod들이 큐를 보면서 실시간으로 정해야 한다.** 이 조율은 외부 큐 시스템이 "이 작업은 이미 누가 가져갔다"를 관리해주기 때문에 가능하다.
+
+```
+Indexed Job    = 번호대로 창구 배정 ("1~10번은 1번 창구, 11~20번은 2번 창구")
+Work Queue Job = 번호표 뽑아 아무 창구나 이용 (실시간 배정)
+```
+
+### 언제 쓰나
+
+작업 항목이 **세밀(granular)** 할 때, 즉 항목 하나하나가 너무 작아서 Pod 하나씩 배정하면 낭비인 경우에 쓴다. 예를 들어 큐에 작은 메시지 100만 개가 쌓여 있다면, Indexed Job으로 100만 개 Pod를 띄우는 대신 Work Queue Job으로 Pod 10개가 큐에서 계속 꺼내며 처리하는 쪽이 합리적이다.
+
+| | Indexed Job | Work Queue Job |
+|---|---|---|
+| `completions` | 지정함(작업 개수를 미리 앎) | 지정 안 함 |
+| 작업 분배 | 인덱스로 미리 구간을 나눔 | 공유 큐에서 실시간으로 꺼내감 |
+| Pod 간 조율 | 불필요(인덱스로 이미 분리됨) | 필요(큐 시스템이 대신 관리) |
+| 완료 조건 | 모든 인덱스 완료 | 1개 이상 성공 + 나머지 종료 |
+| 적합한 경우 | 작업량을 미리 알고, 항목이 큼직함 | 작업량 모름, 항목이 잘게 쪼개져 다수 |
+
+> Work Queue Job은 **몇 개인지 모르는 작업 큐**를 여러 Pod가 나눠 처리할 때 쓰는 방식이다. `completions`를 아예 빼는 대신, 큐가 비었는지를 Pod 스스로 판단해 Job 컨트롤러에게 완료를 알린다.
 
 ---
 
