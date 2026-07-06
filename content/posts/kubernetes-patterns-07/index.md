@@ -347,22 +347,99 @@ spec:
 
 ## 7. 작업 항목을 어떻게 Job/Pod에 매핑할까
 
-Job은 작업 항목을 어떻게 나눌지 강제하지 않는다. 개발자가 아래 두 전략 중 선택해야 한다.
+Job은 작업 항목을 어떻게 나눌지 강제하지 않는다. 개발자가 아래 두 전략 중 선택해야 하며, 핵심 차이는 **"누가 작업을 나누고 관리하는가"** 다.
 
-### 전략 1: 작업 항목 1개 = Job 1개
+### 7.1 전략 1: 작업 항목 1개 = Job 1개
+
+**Kubernetes 자체가** 각 작업을 별도의 Job으로 인식하고 관리한다. 이미지 100장을 변환한다면, 이미지 하나당 Job 하나를 만든다.
+
+```yaml
+# job-image-001.yaml (이미지 하나당 파일 하나, 총 100개 필요)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: convert-image-001
+spec:
+  template:
+    spec:
+      containers:
+      - image: image-converter
+        args: ["--file", "image-001.jpg"]
+      restartPolicy: OnFailure
+```
+
+```bash
+kubectl get jobs
+
+NAME                  COMPLETIONS   AGE
+convert-image-001     1/1           5m
+convert-image-002     0/1           5m   ← 이것만 실패!
+convert-image-003     1/1           5m
+```
+
+Kubernetes가 Job 단위로 성공/실패를 추적해주므로, **실패한 것만 콕 집어 재실행**할 수 있다.
+
+```bash
+kubectl delete job convert-image-002
+kubectl apply -f job-image-002.yaml   # 이것만 다시 실행
+```
+
+### 7.2 전략 2: 작업 항목 전체 = Job 1개
+
+**Kubernetes는 전체를 하나의 작업으로만 인식**하고, 100개를 어떻게 나눠 처리할지는 **컨테이너 내부 코드(배치 프레임워크)**가 담당한다.
+
+```yaml
+# job-image-batch.yaml (딱 1개)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: convert-all-images
+spec:
+  completions: 1
+  template:
+    spec:
+      containers:
+      - image: image-converter
+        command: ["python", "batch_processor.py"]
+      restartPolicy: OnFailure
+```
+
+```python
+# batch_processor.py — 컨테이너 안에서 실행되는 코드
+images = get_all_images()  # 100개 이미지 목록
+
+for image in images:
+    try:
+        convert(image)
+        mark_as_done(image)   # 진행상황을 DB 등에 자체 기록
+    except Exception as e:
+        log_error(image, e)   # 실패해도 앱이 알아서 처리하고
+        continue               # 다음 이미지로 계속 진행
+```
+
+```bash
+kubectl get jobs
+
+NAME                  COMPLETIONS   AGE
+convert-all-images    1/1           5m
+```
+
+Kubernetes 입장에서는 "성공했다"만 보인다. **100개 중 몇 개가 실패했는지는 Kubernetes가 모르며**, 실패 내역은 컨테이너 로그나 앱이 남긴 기록(DB 등)을 직접 확인해야 알 수 있다.
+
+### 7.3 두 전략 비교
 
 ```
-장점: 각 작업을 독립적으로 추적/재실행 가능
-단점: Job 오브젝트 수 증가, 관리 오버헤드 큼
-적합: 복잡하고 개별 추적이 중요한 작업 (금융 거래 등)
-```
+전략 1                              전략 2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Kubernetes가 100개를 각각 봄         Kubernetes는 1개만 봄
 
-### 전략 2: 작업 항목 전체 = Job 1개
+Job1 ──► Pod1 (image-001)           Job1 ──► Pod1
+Job2 ──► Pod2 (image-002)                      │
+Job3 ──► Pod3 (image-003)                      ▼
+...                                     for image in 100개:
+Job100 ──► Pod100                          알아서 처리 (컨테이너 내부 코드)
 
-```
-장점: Job 오브젝트 1개, 리소스 절약
-단점: 개별 작업 추적은 앱 내부 배치 프레임워크가 담당해야 함
-적합: 단순하고 대량인 작업 (로그 처리, 대량 메일 발송 등)
+추적 기준: "몇 번 Job이 실패했나"      추적 기준: "컨테이너가 exit code 0으로 끝났나"
 ```
 
 | | Job per 작업 | Job for 전체 |
@@ -371,6 +448,14 @@ Job은 작업 항목을 어떻게 나눌지 강제하지 않는다. 개발자가
 | 개별 추적 | ✅ | ❌ |
 | 관리 주체 | Kubernetes | 앱 내부 (Spring Batch, JBeret 등) |
 | 적합한 경우 | 복잡/중요 | 단순/대량 |
+
+### 7.4 선택 기준
+
+**전략 1**: 작업 하나가 실패했을 때 그것만 정확히 찾아 재실행해야 하거나, 작업마다 우선순위·스케줄이 다른 경우에 적합하다. 예: 사용자별 결제 처리 — 각각 독립적으로 성공/실패를 추적해야 하는 경우.
+
+**전략 2**: 작업 개수가 수천~수만 개라 Job을 그만큼 만들면 API 서버에 부담이 되거나, 실패 처리를 앱이 이미 잘 하고 있는 경우(재시도 로직, 실패 큐 등)에 적합하다. 예: 로그 파일 100만 줄 처리 — Job 100만 개보다 앱 내부에서 나눠 처리하는 편이 효율적이다.
+
+> 전략 1은 **Kubernetes에게 각 작업을 낱개로 보여주고 관리를 맡기는** 방식이고, 전략 2는 **Kubernetes에게는 1개로 뭉뚱그려 보여주고, 나누는 일은 컨테이너 안의 앱 코드가 직접 하는** 방식이다.
 
 ---
 
