@@ -141,6 +141,32 @@ completions: 10 인 Job에 사이드카(로그 수집기)가 붙어 있다면
 
 사이드카가 메인보다 오래 살아있으면 Pod 자체가 끝나지 않는 문제가 있었는데, Kubernetes 1.29부터는 `initContainers`에 `restartPolicy: Always`를 지정해 **네이티브 사이드카**로 선언할 수 있다. 이렇게 하면 메인 컨테이너가 완료될 때 사이드카도 함께 자동 종료된다.
 
+**주의: 이 `restartPolicy: Always`는 Pod 레벨 필드가 아니라 `initContainers[].restartPolicy`, 즉 컨테이너 레벨 필드다.** Job의 Pod 레벨 `restartPolicy`(위 94번 라인)는 여전히 `OnFailure`/`Never`만 허용되며 `Always`를 쓸 수 없다 — 이 둘은 이름은 같지만 서로 다른 필드라 충돌 없이 공존한다.
+
+```yaml
+spec:
+  restartPolicy: OnFailure        # Pod 레벨 — Job이라 Always 불가
+  initContainers:
+    - name: sidecar-logger
+      image: fluentd
+      restartPolicy: Always       # 컨테이너 레벨 — 네이티브 사이드카 지정용, 별개 필드
+  containers:
+    - name: main-job
+```
+
+컨테이너 레벨 `restartPolicy: Always`의 의미는 두 가지다.
+
+1. **죽으면 재시작한다** — 사이드카 프로세스가 크래시해도 kubelet이 그 컨테이너만 독립적으로 재시작한다. Pod의 재시작 정책과 무관하게 동작한다.
+2. **완료 대기 대상에서 제외된다** — 일반 init container는 종료 코드 0으로 **끝나야** 다음 컨테이너로 진행되지만, `restartPolicy: Always`가 붙은 init container는 (끝나는 대신) **Ready 상태**가 되는 순간 다음 컨테이너로 진행하도록 kubelet이 다르게 취급한다. envoy, fluentd처럼 원래 끝나지 않는 프로세스를 init container 자리에 넣을 수 있는 이유가 이것이다. 그리고 메인 컨테이너가 모두 종료되면 kubelet이 이 사이드카에 SIGTERM을 보내 정리한다.
+
+```
+일반 init container              restartPolicy: Always init container
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+종료(exit code 0) 대기 후          Ready 상태가 되면 (안 끝나도) 진행
+  다음 컨테이너로 진행
+                                  main 종료 시 kubelet이 SIGTERM으로 정리
+```
+
 ### 완료된 Pod는 왜 바로 삭제하지 않을까?
 
 ```
