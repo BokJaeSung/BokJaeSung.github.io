@@ -102,23 +102,25 @@ fix: APS.05 다크테마 색상 수정
 ## APS 시리즈 포스트 스타일 레퍼런스 (APS.06 기준)
 
 ### 목차
-- rawhtml `<details>` 태그로 접기/펼치기 구현 (기본: 닫힌 상태)
-- 스타일: 배경 투명, 테두리 `#30363d`, 폰트 `inherit`
-- 메인 항목 색상: `#c9d1d9`, 서브 항목 색상: `#6e7681`
-- summary 텍스트: `목차 — Table of Contents`
-- 섹션 번호는 `0.`부터 시작 가능 (인터랙티브 데모가 맨 앞)
+- 문서 최상단(frontmatter 바로 다음, 도입 문단보다 위)에 배치
+- 소제목 `## 0. Contents`를 목차 박스 바로 위에 명시
+- 접기/펼치기 없이 항상 펼쳐진 상태 (`<details>` 사용 안 함)
+- 스타일: 배경 투명, 테두리는 `var(--primary,#888)` 1.5px + 은은한 `box-shadow`로 눈에 띄게
+- 메인 항목: `var(--primary,inherit)` 색상 + `font-weight:600`, 글자 크기 16px
+- 서브 항목(예: `3.1`, `5.1`): `var(--secondary,inherit)` 색상, 들여쓰기, 글자 크기 15px
+- 라벨 텍스트("목차 — Table of Contents" 등)는 넣지 않음 — `## 0. Contents` 제목이 그 역할을 대신함
+- 섹션 번호는 `0.`부터 시작 가능 (Contents 자신이 0번)
 
 ```html
 {{< rawhtml >}}
-<details style="background:transparent;border:1px solid #30363d;border-radius:8px;padding:10px 16px;margin:1.2rem 0;font-family:inherit;">
-<summary style="cursor:pointer;font-weight:600;font-size:14px;color:#8b949e;user-select:none;font-family:inherit;">목차 — Table of Contents</summary>
-<div style="margin-top:10px;font-size:14px;line-height:2;font-family:inherit;">
-  <div><a href="#0-..." style="color:#c9d1d9;text-decoration:none;">0. ...</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#..." style="color:#6e7681;text-decoration:none;">서브항목</a></div>
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#1-..." style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. ...</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#11-..." style="color:var(--secondary,inherit);text-decoration:none;">1.1 서브항목</a></div>
   </div>
 </div>
-</details>
+</div>
 {{< /rawhtml >}}
 ```
 
