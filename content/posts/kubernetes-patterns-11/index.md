@@ -483,17 +483,19 @@ StatefulSet (Stateful)
 
 Kubernetes는 이러한 구성 요소들을 제공하지만, **이들 사이의 직접적인 관계를 강제하지는 않는다.** 이것들을 애플리케이션의 특성에 맞게 조합하는 것은 개발자의 책임이다.
 
-Kubernetes 기본 요소만으로 부족할 때는 **Knative**, **KEDA** 같은 프레임워크와 결합할 수 있다.
+Kubernetes 기본 요소만으로 부족할 때는 **Knative Serving**, **KEDA** 같은 프레임워크와 결합할 수 있다.
 
 | 프레임워크 | 역할 | 특징 |
 |---|---|---|
-| **Knative** | 서버리스 플랫폼 | 트래픽 없으면 Pod를 0으로 축소 |
+| **Knative Serving** | 서버리스 워크로드 실행 | 트래픽 없으면 Pod를 0으로 축소 |
 | **KEDA** | 이벤트 기반 자동확장 | 메시지 큐 길이 등 외부 지표로 확장 |
 
+Knative는 Serving(요청 기반 자동확장), Eventing(이벤트 라우팅) 등을 포함하는 서버리스 프로젝트이며, 스케일-투-제로는 그중 Knative Serving의 역할이다.
+
 ```
-기본 Kubernetes     → CPU/메모리 기준으로만 자동확장 (HPA)
-KEDA 추가 시        → 메시지 큐 길이, DB 쿼리 수 등으로도 자동확장
-Knative 추가 시     → 트래픽 0 → Pod 0개로 축소 (완전한 서버리스)
+기본 Kubernetes          → CPU/메모리 기준으로만 자동확장 (HPA)
+KEDA 추가 시             → 메시지 큐 길이, DB 쿼리 수 등으로도 자동확장
+Knative Serving 추가 시  → 트래픽 0 → Pod 0개로 축소 (완전한 서버리스)
 ```
 
 이러한 프레임워크들은 29장 "탄력적 확장(Elastic Scale)"에서 다룬다.

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.framework.id": "hugo",
+  "frontMatter.preview.host": "http://localhost:1313",
+  "frontMatter.content.publicFolder": "static",
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "posts",
+      "path": "[[workspace]]/content/posts"
+    }
+  ],
+  "frontMatter.taxonomy.contentTypes": [
+    {
+      "name": "default",
+      "pageBundle": true,
+      "fields": [
+        { "title": "Title", "name": "title", "type": "string" },
+        { "title": "Date", "name": "date", "type": "datetime" },
+        { "title": "Tags", "name": "tags", "type": "tags" },
+        { "title": "Cover Image", "name": "cover.image", "type": "image" },
+        { "title": "Cover Alt", "name": "cover.alt", "type": "string" },
+        { "title": "Cover Relative", "name": "cover.relative", "type": "boolean", "default": true },
+        { "title": "Summary", "name": "summary", "type": "string" },
+        { "title": "Content", "name": "body", "type": "body" }
+      ]
+    }
+  ],
+  "frontMatter.customScripts": [
+    {
+      "title": "Hugo: Start Server",
+      "script": "hugo server -D",
+      "type": "server",
+      "backgroundTask": true
+    }
+  ]
+}
