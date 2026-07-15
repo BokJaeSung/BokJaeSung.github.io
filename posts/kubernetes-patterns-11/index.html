@@ -1,0 +1,262 @@
+<!doctype html><html lang=en dir=auto data-theme=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>K8sPatterns.11 Stateless Service | History</title><meta name=keywords content="kubernetes,cloud-native,devops,stateless"><meta name=description content="동일한 일시적 복제본으로 구성된 무상태 애플리케이션을 Kubernetes에서 운영하는 방법 — ReplicaSet, Service, PVC까지."><meta name=author content="AA"><link rel=canonical href=https://BokJaeSung.github.io/posts/kubernetes-patterns-11/><link crossorigin=anonymous href=/assets/css/stylesheet.e15b7358074d07b01e9edbd7b58e31757202d9d5b3dd052083e452bd4da24b23.css integrity="sha256-4VtzWAdNB7AentvXtY4xdXIC2dWz3QUgg+RSvU2iSyM=" rel="preload stylesheet" as=style><link rel=icon href=https://BokJaeSung.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://BokJaeSung.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://BokJaeSung.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://BokJaeSung.github.io/apple-touch-icon.png><link rel=mask-icon href=https://BokJaeSung.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://BokJaeSung.github.io/posts/kubernetes-patterns-11/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51);color-scheme:dark}.list{background:var(--theme)}.toc{background:var(--entry)}}@media(prefers-color-scheme:light){.list::-webkit-scrollbar-thumb{border-color:var(--code-bg)}}</style></noscript><script>localStorage.getItem("pref-theme")==="dark"?document.querySelector("html").dataset.theme="dark":localStorage.getItem("pref-theme")==="light"?document.querySelector("html").dataset.theme="light":window.matchMedia("(prefers-color-scheme: dark)").matches?document.querySelector("html").dataset.theme="dark":document.querySelector("html").dataset.theme="light"</script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}]})'></script><meta property="og:url" content="https://BokJaeSung.github.io/posts/kubernetes-patterns-11/"><meta property="og:site_name" content="History"><meta property="og:title" content="K8sPatterns.11 Stateless Service"><meta property="og:description" content="동일한 일시적 복제본으로 구성된 무상태 애플리케이션을 Kubernetes에서 운영하는 방법 — ReplicaSet, Service, PVC까지."><meta property="og:locale" content="ko_kr"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-07-15T09:00:00+09:00"><meta property="article:modified_time" content="2026-07-15T09:00:00+09:00"><meta property="article:tag" content="Kubernetes"><meta property="article:tag" content="Cloud-Native"><meta property="article:tag" content="Devops"><meta property="article:tag" content="Stateless"><meta property="og:image" content="https://BokJaeSung.github.io/posts/kubernetes-patterns-11/images/cover.jpg"><meta property="og:see_also" content="https://BokJaeSung.github.io/posts/kubernetes-patterns-10/"><meta property="og:see_also" content="https://BokJaeSung.github.io/posts/kubernetes-patterns-09/"><meta property="og:see_also" content="https://BokJaeSung.github.io/posts/kubernetes-patterns-08/"><meta property="og:see_also" content="https://BokJaeSung.github.io/posts/kubernetes-patterns-07/"><meta property="og:see_also" content="https://BokJaeSung.github.io/posts/kubernetes-patterns-06/"><meta property="og:see_also" content="https://BokJaeSung.github.io/posts/kubernetes-patterns-05/"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://BokJaeSung.github.io/posts/kubernetes-patterns-11/images/cover.jpg"><meta name=twitter:title content="K8sPatterns.11 Stateless Service"><meta name=twitter:description content="동일한 일시적 복제본으로 구성된 무상태 애플리케이션을 Kubernetes에서 운영하는 방법 — ReplicaSet, Service, PVC까지."><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://BokJaeSung.github.io/posts/"},{"@type":"ListItem","position":2,"name":"K8sPatterns.11 Stateless Service","item":"https://BokJaeSung.github.io/posts/kubernetes-patterns-11/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"K8sPatterns.11 Stateless Service","name":"K8sPatterns.11 Stateless Service","description":"동일한 일시적 복제본으로 구성된 무상태 애플리케이션을 Kubernetes에서 운영하는 방법 — ReplicaSet, Service, PVC까지.","keywords":["kubernetes","cloud-native","devops","stateless"],"articleBody":"1. Overview Stateless Service 패턴의 핵심 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 무상태 서비스 = 동일하고 교체 가능한 인스턴스들의 집합 │ ┌───────────────────┼───────────────────┐ ▼ ▼ ▼ Pod를 유지 트래픽 분산 저장소 관리 (ReplicaSet) (Service) (PVC) Stateless Service 패턴은 동일한 일시적(ephemeral) 복제본들로 구성된 애플리케이션을 만들고 운영하는 방법을 설명한다. 빠른 확장과 높은 가용성이 필요한 동적 클라우드 환경에 가장 적합한 패턴이다.\n2. Problem 마이크로서비스 아키텍처에서 서비스를 일시적(ephemeral) 으로 만들려면, 서비스가 부작용 없이 생성·확장·삭제될 수 있어야 한다. 이 특성은 서비스가 무상태(Stateless) 일 때 훨씬 쉽게 달성된다.\nStateful (상태 있음) Stateless (상태 없음) ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 단골 카페 자판기 → 사장님이 내 취향을 기억 → 누가 눌렀는지 모르고 → 사장님이 바뀌면 다시 알려야 함 버튼만 보고 음료를 줌 → 고장나도 옆 걸로 바꾸면 됨 무상태 서비스는 내부적으로 어떤 상태도 유지하지 않는다. 과거 요청에 대한 저장된 지식이나 참조가 없기 때문에, 각 요청은 마치 처음부터 새로 시작하는 것처럼 처리된다.\n무상태 판별 사고 실험 서비스 인스턴스들이 서로 다른 노드에 배포되고, 로드 밸런서가 sticky session 없이 요청을 무작위로 분배한다고 가정해보자.\n로드밸런서 (랜덤 분배, sticky session 없음) ↓ ┌──────────┼──────────┐ [서버A] [서버B] [서버C] 다른 노드 다른 노드 다른 노드 → 어느 서버가 요청을 받아도 정상 동작한다면 = Stateless ✅ → 특정 서버만 요청을 받아야 한다면 = Stateful ❌ 이 설정에서도 서비스가 제 역할을 다할 수 있다면, 그것은 무상태 서비스다.\n3. Solution Kubernetes에는 “애플리케이션(Application)“이나 “컨테이너(Container)“를 최상위 개체로 갖는 개념이 없다. 대신 애플리케이션은 여러 요소들의 집합으로 구성된다.\n하나의 애플리케이션 │ ├── Deployment / ReplicaSet → Pod 생성 및 유지 ├── ConfigMap / Secret → 설정 및 민감 정보 ├── Service → 네트워크 진입점 └── PersistentVolumeClaim → 영구 저장소 무상태 Pod를 관리하는 컨트롤러는 ReplicaSet이지만, 이것은 Deployment가 내부적으로 사용하는 하위 레벨 구조다. Deployment가 사용자가 직접 다루는 권장 추상화다.\n사용자가 직접 다루는 것 ↓ [ Deployment ] ← 업데이트/롤백 관리 (권장) ↓ 내부적으로 생성·관리 [ ReplicaSet ] ← 복제본 수 유지 (하위 레벨) ↓ 실제로 생성 [ Pod Pod Pod ] ← 실제 컨테이너 실행 ReplicaSet을 직접 써야 하는 경우는 Deployment의 업데이트 전략이 맞지 않거나, 커스텀 메커니즘이 필요할 때로 한정된다.\n4. Instances: ReplicaSet ReplicaSet의 주요 목적은 언제든지 지정된 수의 동일한 Pod 복제본이 실행되도록 보장하는 것이다.\nReplicaSet의 3가지 핵심 구성요소 구성요소 역할 비유 replicas 유지할 Pod 수 지정 “직원은 항상 3명이어야 해” selector 관리할 Pod를 식별 “이름표에 ‘my-app’ 붙은 직원만 관리” template 새 Pod 생성 설계도 “새 직원 채용 공고문” Example 11-1. ReplicaSet 명세 apiVersion: apps/v1 # ReplicaSet은 apps API 그룹 소속 (core v1이 아님) kind: ReplicaSet metadata: name: rg # ReplicaSet 자체의 이름 — Pod 이름은 이 뒤에 랜덤 접미사가 붙어 생성됨(rg-xxxxx) labels: app: random-generator # ReplicaSet 리소스 자체에 붙는 레이블(관리용). selector와는 별개 spec: replicas: 3 # ① 유지할 Pod 복제본의 목표 수 — 컨트롤러가 이 값을 계속 감시 selector: matchLabels: app: random-generator # ② 관리할 Pod를 찾는 레이블 조건 — template.metadata.labels와 반드시 일치해야 함 template: # ③ 새 Pod를 만들 때 사용할 템플릿 (이하는 일반 Pod spec과 동일) metadata: labels: app: random-generator # selector가 찾는 바로 그 레이블 — 여기서 Pod가 실제로 부여받음 spec: containers: - name: random-generator # 컨테이너 이름 (Pod 안에서 로그/exec 시 식별자로 사용) image: k8spatterns/random-generator:1.0 # 3개 Pod 모두 동일한 이미지로 복제됨 자동 복구 동작 목표: Pod 3개 유지 정상 상태: [Pod1 ✅] [Pod2 ✅] [Pod3 ✅] Pod 하나가 죽으면: [Pod1 ✅] [Pod2 ✅] [Pod3 💥] ↓ ReplicaSet이 감지! [Pod1 ✅] [Pod2 ✅] [Pod3 💥] [Pod4 🆕 생성 중...] ↓ 자동 복구 완료 [Pod1 ✅] [Pod2 ✅] [Pod4 ✅] selector와 template label이 일치해야 하는 이유 selector: matchLabels: app: random-generator ← \"이 레이블을 가진 Pod를 관리하겠다\" template: metadata: labels: app: random-generator ← \"새로 만드는 Pod에 이 레이블을 붙인다\" ↑ 이 둘이 반드시 같아야 함! ↑ 다르면 ReplicaSet이 자신이 만든 Pod를 관리 대상으로 인식 못함 ❌ ReplicaSet의 범위: 클러스터 전체가 아닌 네임스페이스 ReplicaSet은 클러스터 전체가 아니라 특정 네임스페이스 안에서만 동작한다. 단, Pod들이 실행되면서 클러스터 전체 노드의 CPU/메모리 자원을 소비한다.\n클러스터 전체 ├── namespace: default ← ReplicaSet \"rg\" 여기 있음 │ └── [Pod1] [Pod2] [Pod3] │ ├── namespace: production ← 여기엔 영향 없음 └── namespace: staging ← 여기도 영향 없음 5. Networking: Service Pod의 근본적인 문제 ReplicaSet이 생성한 Pod는 일시적(ephemeral) 이며 언제든지 사라질 수 있다.\n기존 Pod 새 Pod 이름: pod-abc → 이름: pod-xyz (바뀜) IP: 10.0.0.1 → IP: 10.0.0.5 (바뀜!) hostname: pod-abc → hostname: pod-xyz (바뀜) IP가 바뀌면 클라이언트가 이전 IP로 요청을 보내도 찾을 수 없다. Stateless라면 어떤 Pod가 요청을 받아도 동일하게 처리할 수 있으므로, 문제는 “찾아오는 방법\"에 있다.\nKubernetes Service가 해결하는 것 Pod IP는 계속 바뀜 Service IP는 고정 ↓ 클라이언트 → [Service: 10.96.0.1 고정] → [Pod1: 10.0.0.1] → [Pod2: 10.0.0.2] → [Pod3: 10.0.0.3] Pod가 죽고 새로 생겨도 클라이언트는 항상 10.96.0.1로만 보내면 됨! Service가 필요한 경우 vs 불필요한 경우 Service 불필요 ✅ Service 필요 ✅ 앱이 먼저 외부로 연결을 시작할 때 다른 서비스가 내 Pod로 요청을 보낼 때 [Pod] ──→ [메시지 브로커/DB] [다른 서비스] ──→ [내 Pod] \"내가 먼저 연결할게\" \"너한테 요청 보낼게\" → 내 IP가 바뀌어도 상관없음 → 내 Pod IP가 바뀌면 상대가 못 찾음 ❌ → Service로 고정 IP 제공해야 함 ✅ Example 11-2. 무상태 서비스 노출하기 apiVersion: v1 # Service는 core v1 API 그룹 소속 kind: Service metadata: name: random-generator # ① Pod에 접근할 때 사용하는 서비스 이름 — 클러스터 내부 DNS도 이 이름으로 생성됨 # (예: random-generator.default.svc.cluster.local) spec: # type을 생략하면 기본값은 ClusterIP — 클러스터 내부에서만 접근 가능(외부 노출은 NodePort/LoadBalancer 필요) selector: app: random-generator # ② ReplicaSet의 Pod 레이블과 매칭되는 셀렉터 # 이 레이블을 가진 Pod들이 자동으로 이 Service의 엔드포인트가 됨 ports: - port: 80 # ③ Service가 클러스터 내부에 노출하는 포트 (클라이언트가 호출하는 포트) targetPort: 8080 # ④ Pod 내부 컨테이너가 실제로 listening하는 포트 (컨테이너 spec의 포트와 일치해야 함) protocol: TCP # ⑤ 기본값이 TCP라 생략 가능하지만 명시적으로 적어두면 의도가 분명해짐 포트 개념을 건물로 비유하면 다음과 같다.\n클라이언트가 보내는 곳 실제 Pod 안에서 받는 곳 ↓ ↓ port: 80 → targetPort: 8080 \"안내데스크(80번 창구)로 오세요 → 실제 담당자는 8080호 사무실에 있어요\" clusterIP: 클러스터 내부 전용 고정 IP Service가 생성되면 clusterIP가 자동으로 할당된다. 이 IP는 Kubernetes 클러스터 내부에서만 접근 가능하며, Service가 삭제될 때까지 절대 바뀌지 않는다.\n클러스터 내부 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [프론트엔드 Pod] label: app=frontend ↓ clusterIP로 접근 (10.96.100.5:80) [Service: random-generator] ↓ 로드밸런싱 [Pod1] [Pod2] [Pod3] label: app=random-generator ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 외부 인터넷 → ❌ 접근 불가 내부 Pod → ✅ 접근 가능 clusterIP는 서로 다른 서비스끼리 통신하는 대표 전화번호 같은 개념이다. 라벨만으로 직접 찾으려 하면 로드밸런싱이 없고, 죽은 Pod의 IP를 추적하기 어렵다.\nService의 3가지 핵심 기능 기능 설명 고정 IP (clusterIP) Pod가 바뀌어도 Service IP는 그대로 로드 밸런싱 요청을 여러 Pod에 자동으로 분산 헬스 체크 readiness probe 통과한 정상 Pod에만 요청 전달 Deployment/ReplicaSet과 Service는 서로 모른다 Deployment/ReplicaSet Service ↓ ↓ \"Pod 3개만 유지하면 됨\" \"app=random-generator \"Service가 있는지 없는지 Pod로 트래픽 보내면 됨\" 전혀 관심 없음\" \"Deployment가 있는지 없는지 전혀 관심 없음\" 이 둘은 label/selector라는 공통 언어를 통해서만 간접적으로 연결된다.\nDeployment → Pod 생성 (label: app=random-generator 부착) ↑ Service → selector로 해당 label을 가진 Pod를 찾아 연결 6. Storage: PersistentVolumeClaim PVC란? PV (PersistentVolume) = 실제 저장 공간 (창고) PVC (PersistentVolumeClaim) = 창고 사용 신청서 개발자가 직접 창고를 만드는 게 아니라 \"이런 창고가 필요해요\" 라고 신청서를 내면 Kubernetes가 알아서 맞는 창고를 연결해줌 Example 11-3. PersistentVolume 요청(claim) apiVersion: v1 # PVC도 core v1 API 그룹 소속 kind: PersistentVolumeClaim metadata: name: random-generator-log # ① Pod 템플릿에서 참조할 claim 이름 — volumes.persistentVolumeClaim.claimName에 그대로 사용됨 spec: storageClassName: \"manual\" # 어떤 StorageClass(=어떤 종류의 스토리지 프로비저너)를 쓸지 지정 # \"manual\"은 관리자가 PV를 미리 만들어둔 정적 프로비저닝을 의미 # 클라우드 환경이면 보통 \"standard\", \"gp3\" 같은 동적 프로비저닝용 클래스를 씀 accessModes: - ReadWriteOnce # ② 단일 노드에서만 읽기/쓰기 가능 (노드 단위 제한, Pod 단위 아님 — 5장 참고) resources: requests: storage: 1Gi # ③ 1GiB 저장 공간 요청 — 실제 PV의 용량이 이보다 크거나 같아야 바인딩됨 # 이 PVC는 template.spec.volumes에서 이름으로 참조되고, # containers[].volumeMounts에서 컨테이너 내부 경로에 마운트된다. accessModes 4가지 PVC의 핵심 필드인 accessModes는 저장소가 노드에 어떻게 마운트되고 Pod에 의해 어떻게 사용되는지를 제어한다.\nReadWriteOnce (RWO) — 노드 단위 [Node A] → Pod1 ✅읽기/쓰기, Pod2 ✅읽기/쓰기 [Node B] → Pod3 ❌접근불가 ReadOnlyMany (ROX) — 여러 노드, 읽기만 [Node A] → Pod1 ✅읽기만 [Node B] → Pod2 ✅읽기만 [Node C] → Pod3 ✅읽기만 ReadWriteMany (RWX) — 여러 노드, 읽기/쓰기 [Node A] → Pod1 ✅읽기/쓰기 [Node B] → Pod2 ✅읽기/쓰기 [Node C] → Pod3 ✅읽기/쓰기 ReadWriteOncePod (RWOP) — Pod 단위 (가장 엄격) [Node A] → Pod1 ✅읽기/쓰기 Pod2 ❌접근불가 ← 같은 노드여도 다른 Pod는 NO [Node B] → Pod3 ❌접근불가 RWO vs RWOP: 미묘하지만 중요한 차이 RWO는 노드 단위 제한이라 같은 노드의 여러 Pod가 동시에 쓸 수 있다. 오직 RWOP만이 단 하나의 Pod만 볼륨에 접근함을 보장한다.\nReadWriteOnce (노드 단위) Node A ├── Pod1 ✅ 쓰기 가능 └── Pod2 ✅ 쓰기 가능 ← 같은 노드면 여러 Pod도 OK ReadWriteOncePod (Pod 단위) Node A ├── Pod1 ✅ 쓰기 가능 └── Pod2 ❌ 접근 불가 ← 같은 노드여도 다른 Pod는 NO RWOP 사용 시 주의점이 있다.\nreplicas: 3 으로 늘리려 했더니... Pod1 ✅ 실행 중 (PVC 점유 중) Pod2 ❌ 시작 실패! \"PVC already in use\" Pod3 ❌ 시작 실패! \"PVC already in use\" → 사실상 싱글톤(1개)으로 고정됨 → Stateless의 장점인 스케일 아웃이 불가능해짐! 또한 현재 RWOP는 선점(preemption)을 지원하지 않는다. 우선순위 낮은 Pod가 PVC를 점유 중이어도 높은 Pod에게 양보하지 않는다.\n상황 추천 모드 일반적인 단일 서버 디스크 RWO 여러 Pod가 같은 파일 읽기 (설정파일 등) ROX 여러 Pod가 공유 파일 읽기/쓰기 (NFS 등) RWX 반드시 하나의 Pod만 써야 하는 중요 데이터 RWOP (주의!) ReplicaSet vs StatefulSet의 저장소 차이 ReplicaSet (Stateless) 모든 Pod가 하나의 PVC/PV 공유 [Pod1] ┐ [Pod2] ├──→ [PVC: random-generator-log] ──→ [PV: 실제 저장소] [Pod3] ┘ \"우리 셋 다 같은 창고 씀\" StatefulSet (Stateful) 각 Pod마다 전용 PVC/PV 보유 [Pod1] ──→ [PVC-1] ──→ [PV-1: 저장소] [Pod2] ──→ [PVC-2] ──→ [PV-2: 저장소] [Pod3] ──→ [PVC-3] ──→ [PV-3: 저장소] \"우리 셋 다 각자 창고 있음\" 이것이 Kubernetes에서 무상태와 상태 저장 워크로드를 처리하는 방식의 가장 큰 차이점 중 하나다.\n7. 전체 구조 한눈에 보기 클러스터 내부 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [Deployment] ↓ 관리 [ReplicaSet] ↓ 생성 · 유지 [Pod1] [Pod2] [Pod3] label: app=random-generator liveness probe로 컨테이너 상태 감시 ↑ readiness probe 통과한 Pod에만 연결 [Service: clusterIP 고정] selector: app=random-generator [PVC: random-generator-log] 모든 Pod가 공유하는 영구 저장소 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 외부 인터넷 → ❌ 접근 불가 클러스터 내부 다른 Pod → ✅ clusterIP로 접근 가능 각 추상화가 해결하는 문제를 정리하면 다음과 같다.\n추상화 해결하는 문제 핵심 동작 Pod 컨테이너가 죽으면? liveness probe → 재시작 ReplicaSet Pod 수가 부족하면? 자동으로 새 Pod 생성 Deployment 버전 업데이트/실패하면? 롤링업데이트/롤백 Service 어떤 Pod가 정상인지? readiness probe → 정상만 연결 PVC 데이터를 영구 보관하려면? 저장소 요청 및 마운트 8. Discussion 복잡한 분산 시스템은 일반적으로 여러 서비스들로 구성된다.\n복잡한 분산 시스템 │ ├── Stateless 서비스 (이번 챕터) │ 예) API 서버, 웹 서버 │ 특징: 복제 쉬움, 빠른 확장 │ ├── Stateful 서비스 (다음 챕터) │ 예) DB, 메시지 브로커 │ 특징: 각자 고유 데이터 보유 │ └── 단기 작업 (Job/CronJob) 예) 배치 처리, 데이터 변환 특징: 실행 후 종료 무상태 서비스의 4가지 특성은 아래와 같다.\n1. 동일함 (Identical) Pod1 = Pod2 = Pod3 2. 교체 가능함 (Swappable) Pod1이 Pod2로 교체되어도 문제 없음 3. 일시적임 (Ephemeral) 언제든 사라져도 괜찮음 4. 대체 가능함 (Replaceable) 죽으면 새걸로 바로 대체 Kubernetes는 이러한 구성 요소들을 제공하지만, 이들 사이의 직접적인 관계를 강제하지는 않는다. 이것들을 애플리케이션의 특성에 맞게 조합하는 것은 개발자의 책임이다.\nKubernetes 기본 요소만으로 부족할 때는 Knative, KEDA 같은 프레임워크와 결합할 수 있다.\n프레임워크 역할 특징 Knative 서버리스 플랫폼 트래픽 없으면 Pod를 0으로 축소 KEDA 이벤트 기반 자동확장 메시지 큐 길이 등 외부 지표로 확장 기본 Kubernetes → CPU/메모리 기준으로만 자동확장 (HPA) KEDA 추가 시 → 메시지 큐 길이, DB 쿼리 수 등으로도 자동확장 Knative 추가 시 → 트래픽 0 → Pod 0개로 축소 (완전한 서버리스) 이러한 프레임워크들은 29장 “탄력적 확장(Elastic Scale)“에서 다룬다.\nStateless Service는 동일하고 교체 가능한 인스턴스로 구성되며, Deployment + ReplicaSet + Service + PVC의 조합으로 생성·유지·확장·업데이트·복구 전 과정을 자동화할 수 있다. 각 구성 요소는 서로를 직접 알지 못하고 label이라는 공통 언어로만 연결된다.\n","wordCount":"1902","inLanguage":"en","image":"https://BokJaeSung.github.io/posts/kubernetes-patterns-11/images/cover.jpg","datePublished":"2026-07-15T09:00:00+09:00","dateModified":"2026-07-15T09:00:00+09:00","author":{"@type":"Person","name":"AA"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://BokJaeSung.github.io/posts/kubernetes-patterns-11/"},"publisher":{"@type":"Organization","name":"History","logo":{"@type":"ImageObject","url":"https://BokJaeSung.github.io/favicon.ico"}}}</script></head><body id=top><header class=header><nav class=nav><div class=logo><a href=https://BokJaeSung.github.io/ accesskey=h title="History (Alt + H)">History</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://BokJaeSung.github.io/posts/ title=Posts><span>Posts</span></a></li><li><a href=https://BokJaeSung.github.io/tags/ title=Tags><span>Tags</span></a></li><li><a href=https://BokJaeSung.github.io/series/ title=Series><span>Series</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">K8sPatterns.11 Stateless Service</h1><div class=post-meta><span title='2026-07-15 09:00:00 +0900 +0900'>2026년 7월 15일</span>&nbsp;·&nbsp;<span>9 min</span>&nbsp;·&nbsp;<span>AA</span></div></header><figure class=entry-cover><img loading=eager src=https://BokJaeSung.github.io/posts/kubernetes-patterns-11/images/cover.jpg alt="K8sPatterns.11 Stateless Service"></figure><div class=post-content><h2 id=1-overview>1. Overview<a hidden class=anchor aria-hidden=true href=#1-overview>#</a></h2><pre tabindex=0><code>Stateless Service 패턴의 핵심
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+무상태 서비스 = 동일하고 교체 가능한 인스턴스들의 집합
+                                  │
+              ┌───────────────────┼───────────────────┐
+              ▼                   ▼                   ▼
+        Pod를 유지           트래픽 분산          저장소 관리
+       (ReplicaSet)          (Service)             (PVC)
+</code></pre><p>Stateless Service 패턴은 <strong>동일한 일시적(ephemeral) 복제본들</strong>로 구성된 애플리케이션을 만들고 운영하는 방법을 설명한다. 빠른 확장과 높은 가용성이 필요한 동적 클라우드 환경에 가장 적합한 패턴이다.</p><hr><h2 id=2-problem>2. Problem<a hidden class=anchor aria-hidden=true href=#2-problem>#</a></h2><p>마이크로서비스 아키텍처에서 서비스를 <strong>일시적(ephemeral)</strong> 으로 만들려면, 서비스가 부작용 없이 생성·확장·삭제될 수 있어야 한다. 이 특성은 서비스가 <strong>무상태(Stateless)</strong> 일 때 훨씬 쉽게 달성된다.</p><pre tabindex=0><code>Stateful (상태 있음)                Stateless (상태 없음)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+단골 카페                            자판기
+  → 사장님이 내 취향을 기억             → 누가 눌렀는지 모르고
+  → 사장님이 바뀌면 다시 알려야 함        버튼만 보고 음료를 줌
+                                      → 고장나도 옆 걸로 바꾸면 됨
+</code></pre><p>무상태 서비스는 내부적으로 어떤 상태도 유지하지 않는다. 과거 요청에 대한 저장된 지식이나 참조가 없기 때문에, 각 요청은 마치 처음부터 새로 시작하는 것처럼 처리된다.</p><h3 id=무상태-판별-사고-실험>무상태 판별 사고 실험<a hidden class=anchor aria-hidden=true href=#무상태-판별-사고-실험>#</a></h3><p>서비스 인스턴스들이 서로 다른 노드에 배포되고, 로드 밸런서가 <strong>sticky session 없이</strong> 요청을 무작위로 분배한다고 가정해보자.</p><pre tabindex=0><code>          로드밸런서 (랜덤 분배, sticky session 없음)
+               ↓
+    ┌──────────┼──────────┐
+ [서버A]    [서버B]    [서버C]
+ 다른 노드  다른 노드  다른 노드
+
+→ 어느 서버가 요청을 받아도 정상 동작한다면 = Stateless ✅
+→ 특정 서버만 요청을 받아야 한다면          = Stateful  ❌
+</code></pre><p>이 설정에서도 서비스가 제 역할을 다할 수 있다면, 그것은 무상태 서비스다.</p><hr><h2 id=3-solution>3. Solution<a hidden class=anchor aria-hidden=true href=#3-solution>#</a></h2><p>Kubernetes에는 &ldquo;애플리케이션(Application)&ldquo;이나 &ldquo;컨테이너(Container)&ldquo;를 최상위 개체로 갖는 개념이 없다. 대신 애플리케이션은 여러 요소들의 집합으로 구성된다.</p><pre tabindex=0><code>하나의 애플리케이션
+│
+├── Deployment / ReplicaSet   → Pod 생성 및 유지
+├── ConfigMap / Secret        → 설정 및 민감 정보
+├── Service                   → 네트워크 진입점
+└── PersistentVolumeClaim     → 영구 저장소
+</code></pre><p>무상태 Pod를 관리하는 컨트롤러는 <strong>ReplicaSet</strong>이지만, 이것은 Deployment가 내부적으로 사용하는 하위 레벨 구조다. <strong>Deployment가 사용자가 직접 다루는 권장 추상화</strong>다.</p><pre tabindex=0><code>사용자가 직접 다루는 것
+        ↓
+  [ Deployment ]        ← 업데이트/롤백 관리 (권장)
+        ↓ 내부적으로 생성·관리
+  [ ReplicaSet ]        ← 복제본 수 유지 (하위 레벨)
+        ↓ 실제로 생성
+  [ Pod Pod Pod ]       ← 실제 컨테이너 실행
+</code></pre><p>ReplicaSet을 직접 써야 하는 경우는 Deployment의 업데이트 전략이 맞지 않거나, 커스텀 메커니즘이 필요할 때로 한정된다.</p><hr><h2 id=4-instances-replicaset>4. Instances: ReplicaSet<a hidden class=anchor aria-hidden=true href=#4-instances-replicaset>#</a></h2><p>ReplicaSet의 주요 목적은 <strong>언제든지 지정된 수의 동일한 Pod 복제본이 실행되도록 보장</strong>하는 것이다.</p><h3 id=replicaset의-3가지-핵심-구성요소>ReplicaSet의 3가지 핵심 구성요소<a hidden class=anchor aria-hidden=true href=#replicaset의-3가지-핵심-구성요소>#</a></h3><table><thead><tr><th>구성요소</th><th>역할</th><th>비유</th></tr></thead><tbody><tr><td><code>replicas</code></td><td>유지할 Pod 수 지정</td><td>&ldquo;직원은 항상 3명이어야 해&rdquo;</td></tr><tr><td><code>selector</code></td><td>관리할 Pod를 식별</td><td>&ldquo;이름표에 &lsquo;my-app&rsquo; 붙은 직원만 관리&rdquo;</td></tr><tr><td><code>template</code></td><td>새 Pod 생성 설계도</td><td>&ldquo;새 직원 채용 공고문&rdquo;</td></tr></tbody></table><h3 id=example-11-1-replicaset-명세>Example 11-1. ReplicaSet 명세<a hidden class=anchor aria-hidden=true href=#example-11-1-replicaset-명세>#</a></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>apps/v1       </span> <span style=color:#75715e># ReplicaSet은 apps API 그룹 소속 (core v1이 아님)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>ReplicaSet</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>rg                </span> <span style=color:#75715e># ReplicaSet 자체의 이름 — Pod 이름은 이 뒤에 랜덤 접미사가 붙어 생성됨(rg-xxxxx)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>app</span>: <span style=color:#ae81ff>random-generator </span> <span style=color:#75715e># ReplicaSet 리소스 자체에 붙는 레이블(관리용). selector와는 별개</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>replicas</span>: <span style=color:#ae81ff>3</span>                        <span style=color:#75715e># ① 유지할 Pod 복제본의 목표 수 — 컨트롤러가 이 값을 계속 감시</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>selector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>matchLabels</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>app</span>: <span style=color:#ae81ff>random-generator         </span> <span style=color:#75715e># ② 관리할 Pod를 찾는 레이블 조건 — template.metadata.labels와 반드시 일치해야 함</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>template</span>:                          <span style=color:#75715e># ③ 새 Pod를 만들 때 사용할 템플릿 (이하는 일반 Pod spec과 동일)</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>app</span>: <span style=color:#ae81ff>random-generator       </span> <span style=color:#75715e># selector가 찾는 바로 그 레이블 — 여기서 Pod가 실제로 부여받음</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>containers</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>random-generator      </span> <span style=color:#75715e># 컨테이너 이름 (Pod 안에서 로그/exec 시 식별자로 사용)</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>image</span>: <span style=color:#ae81ff>k8spatterns/random-generator:1.0  </span> <span style=color:#75715e># 3개 Pod 모두 동일한 이미지로 복제됨</span>
+</span></span></code></pre></div><h3 id=자동-복구-동작>자동 복구 동작<a hidden class=anchor aria-hidden=true href=#자동-복구-동작>#</a></h3><pre tabindex=0><code>목표: Pod 3개 유지
+
+정상 상태:
+[Pod1 ✅] [Pod2 ✅] [Pod3 ✅]
+
+Pod 하나가 죽으면:
+[Pod1 ✅] [Pod2 ✅] [Pod3 💥]
+                              ↓ ReplicaSet이 감지!
+[Pod1 ✅] [Pod2 ✅] [Pod3 💥] [Pod4 🆕 생성 중...]
+                              ↓ 자동 복구 완료
+[Pod1 ✅] [Pod2 ✅] [Pod4 ✅]
+</code></pre><h3 id=selector와-template-label이-일치해야-하는-이유>selector와 template label이 일치해야 하는 이유<a hidden class=anchor aria-hidden=true href=#selector와-template-label이-일치해야-하는-이유>#</a></h3><pre tabindex=0><code>selector:
+  matchLabels:
+    app: random-generator   ← &#34;이 레이블을 가진 Pod를 관리하겠다&#34;
+
+template:
+  metadata:
+    labels:
+      app: random-generator ← &#34;새로 만드는 Pod에 이 레이블을 붙인다&#34;
+
+         ↑ 이 둘이 반드시 같아야 함! ↑
+         다르면 ReplicaSet이 자신이 만든
+         Pod를 관리 대상으로 인식 못함 ❌
+</code></pre><h3 id=replicaset의-범위-클러스터-전체가-아닌-네임스페이스>ReplicaSet의 범위: 클러스터 전체가 아닌 네임스페이스<a hidden class=anchor aria-hidden=true href=#replicaset의-범위-클러스터-전체가-아닌-네임스페이스>#</a></h3><p>ReplicaSet은 <strong>클러스터 전체</strong>가 아니라 <strong>특정 네임스페이스 안에서만</strong> 동작한다. 단, Pod들이 실행되면서 클러스터 전체 노드의 CPU/메모리 자원을 소비한다.</p><pre tabindex=0><code>클러스터 전체
+├── namespace: default        ← ReplicaSet &#34;rg&#34; 여기 있음
+│     └── [Pod1] [Pod2] [Pod3]
+│
+├── namespace: production     ← 여기엔 영향 없음
+└── namespace: staging        ← 여기도 영향 없음
+</code></pre><hr><h2 id=5-networking-service>5. Networking: Service<a hidden class=anchor aria-hidden=true href=#5-networking-service>#</a></h2><h3 id=pod의-근본적인-문제>Pod의 근본적인 문제<a hidden class=anchor aria-hidden=true href=#pod의-근본적인-문제>#</a></h3><p>ReplicaSet이 생성한 Pod는 <strong>일시적(ephemeral)</strong> 이며 언제든지 사라질 수 있다.</p><pre tabindex=0><code>기존 Pod                   새 Pod
+이름: pod-abc        →     이름: pod-xyz  (바뀜)
+IP:   10.0.0.1       →     IP:   10.0.0.5  (바뀜!)
+hostname: pod-abc    →     hostname: pod-xyz (바뀜)
+</code></pre><p>IP가 바뀌면 클라이언트가 이전 IP로 요청을 보내도 찾을 수 없다. Stateless라면 어떤 Pod가 요청을 받아도 동일하게 처리할 수 있으므로, 문제는 &ldquo;찾아오는 방법"에 있다.</p><h3 id=kubernetes-service가-해결하는-것>Kubernetes Service가 해결하는 것<a hidden class=anchor aria-hidden=true href=#kubernetes-service가-해결하는-것>#</a></h3><pre tabindex=0><code>Pod IP는 계속 바뀜          Service IP는 고정
+                                  ↓
+클라이언트 → [Service: 10.96.0.1 고정] → [Pod1: 10.0.0.1]
+                                       → [Pod2: 10.0.0.2]
+                                       → [Pod3: 10.0.0.3]
+
+Pod가 죽고 새로 생겨도
+클라이언트는 항상 10.96.0.1로만 보내면 됨!
+</code></pre><h3 id=service가-필요한-경우-vs-불필요한-경우>Service가 필요한 경우 vs 불필요한 경우<a hidden class=anchor aria-hidden=true href=#service가-필요한-경우-vs-불필요한-경우>#</a></h3><pre tabindex=0><code>Service 불필요 ✅                    Service 필요 ✅
+앱이 먼저 외부로 연결을 시작할 때      다른 서비스가 내 Pod로 요청을 보낼 때
+
+[Pod] ──→ [메시지 브로커/DB]          [다른 서비스] ──→ [내 Pod]
+&#34;내가 먼저 연결할게&#34;                   &#34;너한테 요청 보낼게&#34;
+→ 내 IP가 바뀌어도 상관없음             → 내 Pod IP가 바뀌면 상대가 못 찾음 ❌
+                                       → Service로 고정 IP 제공해야 함 ✅
+</code></pre><h3 id=example-11-2-무상태-서비스-노출하기>Example 11-2. 무상태 서비스 노출하기<a hidden class=anchor aria-hidden=true href=#example-11-2-무상태-서비스-노출하기>#</a></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>v1             </span> <span style=color:#75715e># Service는 core v1 API 그룹 소속</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Service</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>random-generator         </span> <span style=color:#75715e># ① Pod에 접근할 때 사용하는 서비스 이름 — 클러스터 내부 DNS도 이 이름으로 생성됨</span>
+</span></span><span style=display:flex><span>                                   <span style=color:#75715e>#    (예: random-generator.default.svc.cluster.local)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#75715e># type을 생략하면 기본값은 ClusterIP — 클러스터 내부에서만 접근 가능(외부 노출은 NodePort/LoadBalancer 필요)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>selector</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>app</span>: <span style=color:#ae81ff>random-generator        </span> <span style=color:#75715e># ② ReplicaSet의 Pod 레이블과 매칭되는 셀렉터</span>
+</span></span><span style=display:flex><span>                                   <span style=color:#75715e>#    이 레이블을 가진 Pod들이 자동으로 이 Service의 엔드포인트가 됨</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>ports</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#f92672>port</span>: <span style=color:#ae81ff>80</span>                      <span style=color:#75715e># ③ Service가 클러스터 내부에 노출하는 포트 (클라이언트가 호출하는 포트)</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>targetPort</span>: <span style=color:#ae81ff>8080</span>              <span style=color:#75715e># ④ Pod 내부 컨테이너가 실제로 listening하는 포트 (컨테이너 spec의 포트와 일치해야 함)</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>protocol</span>: <span style=color:#ae81ff>TCP                </span> <span style=color:#75715e># ⑤ 기본값이 TCP라 생략 가능하지만 명시적으로 적어두면 의도가 분명해짐</span>
+</span></span></code></pre></div><p>포트 개념을 건물로 비유하면 다음과 같다.</p><pre tabindex=0><code>클라이언트가 보내는 곳       실제 Pod 안에서 받는 곳
+      ↓                              ↓
+   port: 80           →        targetPort: 8080
+
+&#34;안내데스크(80번 창구)로 오세요 → 실제 담당자는 8080호 사무실에 있어요&#34;
+</code></pre><h3 id=clusterip-클러스터-내부-전용-고정-ip>clusterIP: 클러스터 내부 전용 고정 IP<a hidden class=anchor aria-hidden=true href=#clusterip-클러스터-내부-전용-고정-ip>#</a></h3><p>Service가 생성되면 <strong>clusterIP</strong>가 자동으로 할당된다. 이 IP는 Kubernetes 클러스터 내부에서만 접근 가능하며, Service가 삭제될 때까지 절대 바뀌지 않는다.</p><pre tabindex=0><code>클러스터 내부
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[프론트엔드 Pod]  label: app=frontend
+     ↓ clusterIP로 접근 (10.96.100.5:80)
+[Service: random-generator]
+     ↓ 로드밸런싱
+[Pod1] [Pod2] [Pod3]  label: app=random-generator
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+외부 인터넷 → ❌ 접근 불가
+내부 Pod    → ✅ 접근 가능
+</code></pre><p>clusterIP는 <strong>서로 다른 서비스끼리 통신하는 대표 전화번호</strong> 같은 개념이다. 라벨만으로 직접 찾으려 하면 로드밸런싱이 없고, 죽은 Pod의 IP를 추적하기 어렵다.</p><h3 id=service의-3가지-핵심-기능>Service의 3가지 핵심 기능<a hidden class=anchor aria-hidden=true href=#service의-3가지-핵심-기능>#</a></h3><table><thead><tr><th>기능</th><th>설명</th></tr></thead><tbody><tr><td><strong>고정 IP (clusterIP)</strong></td><td>Pod가 바뀌어도 Service IP는 그대로</td></tr><tr><td><strong>로드 밸런싱</strong></td><td>요청을 여러 Pod에 자동으로 분산</td></tr><tr><td><strong>헬스 체크</strong></td><td>readiness probe 통과한 정상 Pod에만 요청 전달</td></tr></tbody></table><h3 id=deploymentreplicaset과-service는-서로-모른다>Deployment/ReplicaSet과 Service는 서로 모른다<a hidden class=anchor aria-hidden=true href=#deploymentreplicaset과-service는-서로-모른다>#</a></h3><pre tabindex=0><code>Deployment/ReplicaSet          Service
+        ↓                          ↓
+&#34;Pod 3개만 유지하면 됨&#34;      &#34;app=random-generator
+&#34;Service가 있는지 없는지       Pod로 트래픽 보내면 됨&#34;
+ 전혀 관심 없음&#34;             &#34;Deployment가 있는지 없는지
+                               전혀 관심 없음&#34;
+</code></pre><p>이 둘은 <strong>label/selector라는 공통 언어</strong>를 통해서만 간접적으로 연결된다.</p><pre tabindex=0><code>Deployment → Pod 생성 (label: app=random-generator 부착)
+                              ↑
+Service → selector로 해당 label을 가진 Pod를 찾아 연결
+</code></pre><hr><h2 id=6-storage-persistentvolumeclaim>6. Storage: PersistentVolumeClaim<a hidden class=anchor aria-hidden=true href=#6-storage-persistentvolumeclaim>#</a></h2><h3 id=pvc란>PVC란?<a hidden class=anchor aria-hidden=true href=#pvc란>#</a></h3><pre tabindex=0><code>PV  (PersistentVolume)      = 실제 저장 공간 (창고)
+PVC (PersistentVolumeClaim) = 창고 사용 신청서
+
+개발자가 직접 창고를 만드는 게 아니라
+&#34;이런 창고가 필요해요&#34; 라고 신청서를 내면
+Kubernetes가 알아서 맞는 창고를 연결해줌
+</code></pre><h3 id=example-11-3-persistentvolume-요청claim>Example 11-3. PersistentVolume 요청(claim)<a hidden class=anchor aria-hidden=true href=#example-11-3-persistentvolume-요청claim>#</a></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>v1                </span> <span style=color:#75715e># PVC도 core v1 API 그룹 소속</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>PersistentVolumeClaim</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>random-generator-log  </span> <span style=color:#75715e># ① Pod 템플릿에서 참조할 claim 이름 — volumes.persistentVolumeClaim.claimName에 그대로 사용됨</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>storageClassName</span>: <span style=color:#e6db74>&#34;manual&#34;</span>   <span style=color:#75715e># 어떤 StorageClass(=어떤 종류의 스토리지 프로비저너)를 쓸지 지정</span>
+</span></span><span style=display:flex><span>                                <span style=color:#75715e># &#34;manual&#34;은 관리자가 PV를 미리 만들어둔 정적 프로비저닝을 의미</span>
+</span></span><span style=display:flex><span>                                <span style=color:#75715e># 클라우드 환경이면 보통 &#34;standard&#34;, &#34;gp3&#34; 같은 동적 프로비저닝용 클래스를 씀</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>accessModes</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#ae81ff>ReadWriteOnce              </span> <span style=color:#75715e># ② 단일 노드에서만 읽기/쓰기 가능 (노드 단위 제한, Pod 단위 아님 — 5장 참고)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>resources</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>requests</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>storage</span>: <span style=color:#ae81ff>1Gi             </span> <span style=color:#75715e># ③ 1GiB 저장 공간 요청 — 실제 PV의 용량이 이보다 크거나 같아야 바인딩됨</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 이 PVC는 template.spec.volumes에서 이름으로 참조되고,</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># containers[].volumeMounts에서 컨테이너 내부 경로에 마운트된다.</span>
+</span></span></code></pre></div><h3 id=accessmodes-4가지>accessModes 4가지<a hidden class=anchor aria-hidden=true href=#accessmodes-4가지>#</a></h3><p>PVC의 핵심 필드인 <code>accessModes</code>는 저장소가 노드에 어떻게 마운트되고 Pod에 의해 어떻게 사용되는지를 제어한다.</p><pre tabindex=0><code>ReadWriteOnce (RWO) — 노드 단위
+  [Node A] → Pod1 ✅읽기/쓰기, Pod2 ✅읽기/쓰기
+  [Node B] → Pod3 ❌접근불가
+
+ReadOnlyMany (ROX) — 여러 노드, 읽기만
+  [Node A] → Pod1 ✅읽기만
+  [Node B] → Pod2 ✅읽기만
+  [Node C] → Pod3 ✅읽기만
+
+ReadWriteMany (RWX) — 여러 노드, 읽기/쓰기
+  [Node A] → Pod1 ✅읽기/쓰기
+  [Node B] → Pod2 ✅읽기/쓰기
+  [Node C] → Pod3 ✅읽기/쓰기
+
+ReadWriteOncePod (RWOP) — Pod 단위 (가장 엄격)
+  [Node A] → Pod1 ✅읽기/쓰기
+             Pod2 ❌접근불가  ← 같은 노드여도 다른 Pod는 NO
+  [Node B] → Pod3 ❌접근불가
+</code></pre><h3 id=rwo-vs-rwop-미묘하지만-중요한-차이>RWO vs RWOP: 미묘하지만 중요한 차이<a hidden class=anchor aria-hidden=true href=#rwo-vs-rwop-미묘하지만-중요한-차이>#</a></h3><p>RWO는 노드 단위 제한이라 같은 노드의 여러 Pod가 동시에 쓸 수 있다. <strong>오직 RWOP만이 단 하나의 Pod만 볼륨에 접근함을 보장</strong>한다.</p><pre tabindex=0><code>ReadWriteOnce (노드 단위)
+  Node A
+  ├── Pod1 ✅ 쓰기 가능
+  └── Pod2 ✅ 쓰기 가능  ← 같은 노드면 여러 Pod도 OK
+
+ReadWriteOncePod (Pod 단위)
+  Node A
+  ├── Pod1 ✅ 쓰기 가능
+  └── Pod2 ❌ 접근 불가  ← 같은 노드여도 다른 Pod는 NO
+</code></pre><p>RWOP 사용 시 주의점이 있다.</p><pre tabindex=0><code>replicas: 3 으로 늘리려 했더니...
+
+Pod1 ✅ 실행 중 (PVC 점유 중)
+Pod2 ❌ 시작 실패! &#34;PVC already in use&#34;
+Pod3 ❌ 시작 실패! &#34;PVC already in use&#34;
+
+→ 사실상 싱글톤(1개)으로 고정됨
+→ Stateless의 장점인 스케일 아웃이 불가능해짐!
+</code></pre><p>또한 현재 RWOP는 <strong>선점(preemption)을 지원하지 않는다.</strong> 우선순위 낮은 Pod가 PVC를 점유 중이어도 높은 Pod에게 양보하지 않는다.</p><table><thead><tr><th>상황</th><th>추천 모드</th></tr></thead><tbody><tr><td>일반적인 단일 서버 디스크</td><td>RWO</td></tr><tr><td>여러 Pod가 같은 파일 읽기 (설정파일 등)</td><td>ROX</td></tr><tr><td>여러 Pod가 공유 파일 읽기/쓰기 (NFS 등)</td><td>RWX</td></tr><tr><td>반드시 하나의 Pod만 써야 하는 중요 데이터</td><td>RWOP (주의!)</td></tr></tbody></table><h3 id=replicaset-vs-statefulset의-저장소-차이>ReplicaSet vs StatefulSet의 저장소 차이<a hidden class=anchor aria-hidden=true href=#replicaset-vs-statefulset의-저장소-차이>#</a></h3><pre tabindex=0><code>ReplicaSet (Stateless)
+모든 Pod가 하나의 PVC/PV 공유
+
+[Pod1] ┐
+[Pod2] ├──→ [PVC: random-generator-log] ──→ [PV: 실제 저장소]
+[Pod3] ┘
+&#34;우리 셋 다 같은 창고 씀&#34;
+
+
+StatefulSet (Stateful)
+각 Pod마다 전용 PVC/PV 보유
+
+[Pod1] ──→ [PVC-1] ──→ [PV-1: 저장소]
+[Pod2] ──→ [PVC-2] ──→ [PV-2: 저장소]
+[Pod3] ──→ [PVC-3] ──→ [PV-3: 저장소]
+&#34;우리 셋 다 각자 창고 있음&#34;
+</code></pre><p>이것이 Kubernetes에서 <strong>무상태와 상태 저장 워크로드를 처리하는 방식의 가장 큰 차이점</strong> 중 하나다.</p><hr><h2 id=7-전체-구조-한눈에-보기>7. 전체 구조 한눈에 보기<a hidden class=anchor aria-hidden=true href=#7-전체-구조-한눈에-보기>#</a></h2><pre tabindex=0><code>클러스터 내부
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Deployment]
+     ↓ 관리
+[ReplicaSet]
+     ↓ 생성 · 유지
+[Pod1] [Pod2] [Pod3]
+  label: app=random-generator
+  liveness probe로 컨테이너 상태 감시
+     ↑ readiness probe 통과한 Pod에만 연결
+[Service: clusterIP 고정]
+  selector: app=random-generator
+
+[PVC: random-generator-log]
+  모든 Pod가 공유하는 영구 저장소
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+외부 인터넷 → ❌ 접근 불가
+클러스터 내부 다른 Pod → ✅ clusterIP로 접근 가능
+</code></pre><p>각 추상화가 해결하는 문제를 정리하면 다음과 같다.</p><table><thead><tr><th>추상화</th><th>해결하는 문제</th><th>핵심 동작</th></tr></thead><tbody><tr><td><strong>Pod</strong></td><td>컨테이너가 죽으면?</td><td>liveness probe → 재시작</td></tr><tr><td><strong>ReplicaSet</strong></td><td>Pod 수가 부족하면?</td><td>자동으로 새 Pod 생성</td></tr><tr><td><strong>Deployment</strong></td><td>버전 업데이트/실패하면?</td><td>롤링업데이트/롤백</td></tr><tr><td><strong>Service</strong></td><td>어떤 Pod가 정상인지?</td><td>readiness probe → 정상만 연결</td></tr><tr><td><strong>PVC</strong></td><td>데이터를 영구 보관하려면?</td><td>저장소 요청 및 마운트</td></tr></tbody></table><hr><h2 id=8-discussion>8. Discussion<a hidden class=anchor aria-hidden=true href=#8-discussion>#</a></h2><p>복잡한 분산 시스템은 일반적으로 여러 서비스들로 구성된다.</p><pre tabindex=0><code>복잡한 분산 시스템
+│
+├── Stateless 서비스 (이번 챕터)
+│     예) API 서버, 웹 서버
+│     특징: 복제 쉬움, 빠른 확장
+│
+├── Stateful 서비스 (다음 챕터)
+│     예) DB, 메시지 브로커
+│     특징: 각자 고유 데이터 보유
+│
+└── 단기 작업 (Job/CronJob)
+      예) 배치 처리, 데이터 변환
+      특징: 실행 후 종료
+</code></pre><p>무상태 서비스의 4가지 특성은 아래와 같다.</p><pre tabindex=0><code>1. 동일함 (Identical)    Pod1 = Pod2 = Pod3
+2. 교체 가능함 (Swappable) Pod1이 Pod2로 교체되어도 문제 없음
+3. 일시적임 (Ephemeral)   언제든 사라져도 괜찮음
+4. 대체 가능함 (Replaceable) 죽으면 새걸로 바로 대체
+</code></pre><p>Kubernetes는 이러한 구성 요소들을 제공하지만, <strong>이들 사이의 직접적인 관계를 강제하지는 않는다.</strong> 이것들을 애플리케이션의 특성에 맞게 조합하는 것은 개발자의 책임이다.</p><p>Kubernetes 기본 요소만으로 부족할 때는 <strong>Knative</strong>, <strong>KEDA</strong> 같은 프레임워크와 결합할 수 있다.</p><table><thead><tr><th>프레임워크</th><th>역할</th><th>특징</th></tr></thead><tbody><tr><td><strong>Knative</strong></td><td>서버리스 플랫폼</td><td>트래픽 없으면 Pod를 0으로 축소</td></tr><tr><td><strong>KEDA</strong></td><td>이벤트 기반 자동확장</td><td>메시지 큐 길이 등 외부 지표로 확장</td></tr></tbody></table><pre tabindex=0><code>기본 Kubernetes     → CPU/메모리 기준으로만 자동확장 (HPA)
+KEDA 추가 시        → 메시지 큐 길이, DB 쿼리 수 등으로도 자동확장
+Knative 추가 시     → 트래픽 0 → Pod 0개로 축소 (완전한 서버리스)
+</code></pre><p>이러한 프레임워크들은 29장 &ldquo;탄력적 확장(Elastic Scale)&ldquo;에서 다룬다.</p><blockquote><p>Stateless Service는 <strong>동일하고 교체 가능한 인스턴스</strong>로 구성되며, Deployment + ReplicaSet + Service + PVC의 조합으로 생성·유지·확장·업데이트·복구 전 과정을 자동화할 수 있다. 각 구성 요소는 서로를 직접 알지 못하고 <strong>label이라는 공통 언어</strong>로만 연결된다.</p></blockquote></div><footer class=post-footer><ul class=post-tags><li><a href=https://BokJaeSung.github.io/tags/kubernetes/>Kubernetes</a></li><li><a href=https://BokJaeSung.github.io/tags/cloud-native/>Cloud-Native</a></li><li><a href=https://BokJaeSung.github.io/tags/devops/>Devops</a></li><li><a href=https://BokJaeSung.github.io/tags/stateless/>Stateless</a></li></ul><nav class=paginav><a class=next href=https://BokJaeSung.github.io/posts/k8s-operating-cluster/><span class=title>Next »</span><br><span>Operating a Kubernetes Cluster: rollout, delete, apply</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2026 <a href=https://BokJaeSung.github.io/>History</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");if(menu){const e=localStorage.getItem("menu-scroll-position");e&&(menu.scrollLeft=parseInt(e,10)),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}}document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{const e=document.querySelector("html");e.dataset.theme==="dark"?(e.dataset.theme="light",localStorage.setItem("pref-theme","light")):(e.dataset.theme="dark",localStorage.setItem("pref-theme","dark"))})</script></body></html>
