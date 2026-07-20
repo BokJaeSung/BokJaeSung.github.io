@@ -1,4 +1,4 @@
----
+# ---
 series: ["K8sPatterns"]
 title: "K8sPatterns.11 Stateless Service"
 date: 2026-07-15T09:00:00+09:00

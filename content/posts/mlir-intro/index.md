@@ -1,5 +1,5 @@
 ---
-title: 'MLIR: 왜 LLVM만으로는 부족한가'
+title: 'Beyond LLVM: Why MLIR'
 date: 2026-03-05T10:00:00+09:00
 tags: ['mlir', 'compiler', 'llvm', 'ml-compiler']
 cover:

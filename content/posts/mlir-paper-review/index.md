@@ -1,5 +1,5 @@
 ---
-title: '[논문 리뷰] MLIR: A Compiler Infrastructure for the End of Moore''s Law'
+title: '[Paper Review] MLIR: A Compiler Infrastructure for the End of Moore''s Law'
 date: 2026-03-05T14:00:00+09:00
 tags: ['mlir', 'compiler', 'llvm', 'paper-review', 'ml-compiler']
 cover:
