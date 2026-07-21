@@ -17,28 +17,29 @@ summary: "A beginner-friendly summary of Chapter 1 from Kubernetes Patterns — 
 
 ---
 
+## 0. Contents
+
 {{< rawhtml >}}
-<details style="background:transparent;border:1px solid #30363d;border-radius:8px;padding:10px 16px;margin:1.2rem 0;font-family:inherit;">
-<summary style="cursor:pointer;font-weight:600;font-size:14px;color:#8b949e;user-select:none;font-family:inherit;">목차 — Table of Contents</summary>
-<div style="margin-top:10px;font-size:14px;line-height:2;font-family:inherit;">
-  <div><a href="#1-왜-마이크로서비스인가" style="color:#c9d1d9;text-decoration:none;">1. 왜 마이크로서비스인가?</a></div>
-  <div><a href="#2-좋은-앱을-만드는-4가지-설계-원칙" style="color:#c9d1d9;text-decoration:none;">2. 좋은 앱을 만드는 4가지 설계 원칙</a></div>
-  <div><a href="#3-distributed-primitives--kubernetes의-기본-단위" style="color:#c9d1d9;text-decoration:none;">3. Distributed Primitives — Kubernetes의 기본 단위</a></div>
-  <div><a href="#4-container" style="color:#c9d1d9;text-decoration:none;">4. Container</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#좋은-컨테이너-이미지의-8가지-조건" style="color:#6e7681;text-decoration:none;">좋은 컨테이너 이미지의 8가지 조건</a></div>
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#1-왜-마이크로서비스인가" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. 왜 마이크로서비스인가?</a></div>
+  <div><a href="#2-좋은-앱을-만드는-4가지-설계-원칙" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. 좋은 앱을 만드는 4가지 설계 원칙</a></div>
+  <div><a href="#3-distributed-primitives--kubernetes의-기본-단위" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Distributed Primitives — Kubernetes의 기본 단위</a></div>
+  <div><a href="#4-container" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Container</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#좋은-컨테이너-이미지의-8가지-조건" style="color:var(--secondary,inherit);text-decoration:none;">4.1 좋은 컨테이너 이미지의 8가지 조건</a></div>
   </div>
-  <div><a href="#5-pod" style="color:#c9d1d9;text-decoration:none;">5. Pod</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#pod의-3가지-핵심-특징" style="color:#6e7681;text-decoration:none;">Pod의 3가지 핵심 특징</a></div>
+  <div><a href="#5-pod" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Pod</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#pod의-3가지-핵심-특징" style="color:var(--secondary,inherit);text-decoration:none;">5.1 Pod의 3가지 핵심 특징</a></div>
   </div>
-  <div><a href="#6-service" style="color:#c9d1d9;text-decoration:none;">6. Service</a></div>
-  <div><a href="#7-label" style="color:#c9d1d9;text-decoration:none;">7. Label</a></div>
-  <div><a href="#8-annotation" style="color:#c9d1d9;text-decoration:none;">8. Annotation</a></div>
-  <div><a href="#9-namespace" style="color:#c9d1d9;text-decoration:none;">9. Namespace</a></div>
-  <div><a href="#10-전체-흐름-정리" style="color:#c9d1d9;text-decoration:none;">10. 전체 흐름 정리</a></div>
+  <div><a href="#6-service" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Service</a></div>
+  <div><a href="#7-label" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Label</a></div>
+  <div><a href="#8-annotation" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Annotation</a></div>
+  <div><a href="#9-namespace" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Namespace</a></div>
+  <div><a href="#10-전체-흐름-정리" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">10. 전체 흐름 정리</a></div>
 </div>
-</details>
+</div>
 {{< /rawhtml >}}
 
 ---

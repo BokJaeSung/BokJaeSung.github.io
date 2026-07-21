@@ -10,6 +10,27 @@ cover:
 summary: "How the Kubernetes scheduler assigns Pods to nodes using predicates, priorities, node affinity, pod affinity, taints and tolerations for optimal placement."
 ---
 
+## 0. Contents
+
+{{< rawhtml >}}
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
+  <div><a href="#2-why-automated-placement" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Why Automated Placement?</a></div>
+  <div><a href="#3-available-node-resources" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Available Node Resources</a></div>
+  <div><a href="#4-container-resource-demands" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Container Resource Demands</a></div>
+  <div><a href="#5-placement-policies" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Placement Policies</a></div>
+  <div><a href="#6-node-selector" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Node Selector</a></div>
+  <div><a href="#7-node-affinity" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Node Affinity</a></div>
+  <div><a href="#8-pod-affinity-and-antiaffinity" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Pod Affinity and Antiaffinity</a></div>
+  <div><a href="#9-taints-and-tolerations" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Taints and Tolerations</a></div>
+  <div><a href="#10-stranded-resources-and-descheduler" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">10. Stranded Resources and Descheduler</a></div>
+  <div><a href="#11-배치-방법-종합-비교" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">11. 배치 방법 종합 비교</a></div>
+  <div><a href="#12-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">12. Discussion</a></div>
+</div>
+</div>
+{{< /rawhtml >}}
+
 ## 1. Overview
 
 ```

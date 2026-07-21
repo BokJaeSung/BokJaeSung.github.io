@@ -10,6 +10,26 @@ cover:
 summary: "How Kubernetes communicates lifecycle events to containers via SIGTERM, SIGKILL, postStart, preStop hooks, and init containers for graceful startup and shutdown."
 ---
 
+## 0. Contents
+
+{{< rawhtml >}}
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
+  <div><a href="#2-why-managed-lifecycle" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Why Managed Lifecycle?</a></div>
+  <div><a href="#3-sigterm-signal" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. SIGTERM Signal</a></div>
+  <div><a href="#4-sigkill-signal" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. SIGKILL Signal</a></div>
+  <div><a href="#5-poststart-hook" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. PostStart Hook</a></div>
+  <div><a href="#6-prestop-hook" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. PreStop Hook</a></div>
+  <div><a href="#7-전체-컨테이너-수명주기" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. 전체 컨테이너 수명주기</a></div>
+  <div><a href="#8-other-lifecycle-controls" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Other Lifecycle Controls</a></div>
+  <div><a href="#9-entrypoint-rewriting" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Entrypoint Rewriting</a></div>
+  <div><a href="#10-무엇을-써야-하나" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">10. 무엇을 써야 하나?</a></div>
+  <div><a href="#11-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">11. Discussion</a></div>
+</div>
+</div>
+{{< /rawhtml >}}
+
 ## 1. Overview
 
 ```

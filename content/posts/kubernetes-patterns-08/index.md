@@ -10,6 +10,23 @@ cover:
 summary: "Batch Job 패턴에 시간 차원을 더한 CronJob — schedule, concurrencyPolicy, startingDeadlineSeconds까지."
 ---
 
+## 0. Contents
+
+{{< rawhtml >}}
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
+  <div><a href="#2-problem" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Problem</a></div>
+  <div><a href="#3-solution-cronjob" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Solution: CronJob</a></div>
+  <div><a href="#4-cronjob-전용-필드" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. CronJob 전용 필드</a></div>
+  <div><a href="#5-실전-예제-매일-새벽-db-백업" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. 실전 예제: 매일 새벽 DB 백업</a></div>
+  <div><a href="#6-실패-처리-누가-뭘-담당하나" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. 실패 처리: 누가 뭘 담당하나</a></div>
+  <div><a href="#7-job-vs-cronjob-선택-기준" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Job vs CronJob 선택 기준</a></div>
+  <div><a href="#8-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Discussion</a></div>
+</div>
+</div>
+{{< /rawhtml >}}
+
 ## 1. Overview
 
 ```

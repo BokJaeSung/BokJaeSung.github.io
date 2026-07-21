@@ -10,6 +10,27 @@ cover:
 summary: "A deep dive into Kubernetes Health Probe pattern: Process Health Check, Liveness Probe, and Readiness Probe for building self-healing cloud-native applications."
 ---
 
+## 0. Contents
+
+{{< rawhtml >}}
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
+  <div><a href="#2-why-health-probe" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Why Health Probe?</a></div>
+  <div><a href="#3-process-health-check" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Process Health Check</a></div>
+  <div><a href="#4-liveness-probe" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Liveness Probe</a></div>
+  <div><a href="#5-readiness-probe" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Readiness Probe</a></div>
+  <div><a href="#6-sigterm과-readiness" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. SIGTERM과 Readiness</a></div>
+  <div><a href="#7-전체-비교-정리" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. 전체 비교 정리</a></div>
+  <div><a href="#8-deployment에서-실제-사용" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Deployment에서 실제 사용</a></div>
+  <div><a href="#9-custom-pod-readiness-gates" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Custom Pod Readiness Gates</a></div>
+  <div><a href="#10-startup-probe" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">10. Startup Probe</a></div>
+  <div><a href="#11-example-4-4-jakarta-ee--wildfly" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">11. Example 4-4 (Jakarta EE / WildFly)</a></div>
+  <div><a href="#12-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">12. Discussion</a></div>
+</div>
+</div>
+{{< /rawhtml >}}
+
 ## 1. Overview
 
 ```

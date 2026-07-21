@@ -12,44 +12,45 @@ summary: "How to declare resource requirements and runtime dependencies so Kuber
 
 컨테이너화된 애플리케이션이 클라우드 네이티브 환경에서 제대로 동작하려면, 자신이 무엇을 필요로 하는지 명확하게 선언해야 한다. Kubernetes는 그 선언을 기반으로 어디에 배치할지, 언제 죽일지, 얼마나 허용할지를 결정한다. 이 챕터는 그 선언 방법 전반을 다룬다.
 
+## 0. Contents
+
 {{< rawhtml >}}
-<details style="background:transparent;border:1px solid #30363d;border-radius:8px;padding:10px 16px;margin:1.2rem 0;font-family:inherit;">
-<summary style="cursor:pointer;font-weight:600;font-size:14px;color:#8b949e;user-select:none;font-family:inherit;">목차 — Table of Contents</summary>
-<div style="margin-top:10px;font-size:14px;line-height:2;font-family:inherit;">
-  <div><a href="#0-overview" style="color:#c9d1d9;text-decoration:none;">0. Overview</a></div>
-  <div><a href="#1-runtime-dependencies" style="color:#c9d1d9;text-decoration:none;">1. Runtime Dependencies</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#11-volume" style="color:#6e7681;text-decoration:none;">1.1 Volume</a></div>
-    <div><a href="#12-hostport" style="color:#6e7681;text-decoration:none;">1.2 hostPort</a></div>
-    <div><a href="#13-configmap--secret" style="color:#6e7681;text-decoration:none;">1.3 ConfigMap & Secret</a></div>
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#0-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">0. Overview</a></div>
+  <div><a href="#1-runtime-dependencies" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Runtime Dependencies</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#11-volume" style="color:var(--secondary,inherit);text-decoration:none;">1.1 Volume</a></div>
+    <div><a href="#12-hostport" style="color:var(--secondary,inherit);text-decoration:none;">1.2 hostPort</a></div>
+    <div><a href="#13-configmap--secret" style="color:var(--secondary,inherit);text-decoration:none;">1.3 ConfigMap & Secret</a></div>
   </div>
-  <div><a href="#2-resource-profiles" style="color:#c9d1d9;text-decoration:none;">2. Resource Profiles</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#21-compressible-vs-incompressible" style="color:#6e7681;text-decoration:none;">2.1 Compressible vs Incompressible</a></div>
-    <div><a href="#22-requests--limits" style="color:#6e7681;text-decoration:none;">2.2 Requests & Limits</a></div>
-    <div><a href="#23-quality-of-service" style="color:#6e7681;text-decoration:none;">2.3 Quality of Service</a></div>
-    <div><a href="#24-best-practices" style="color:#6e7681;text-decoration:none;">2.4 Best Practices</a></div>
+  <div><a href="#2-resource-profiles" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Resource Profiles</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#21-compressible-vs-incompressible" style="color:var(--secondary,inherit);text-decoration:none;">2.1 Compressible vs Incompressible</a></div>
+    <div><a href="#22-requests--limits" style="color:var(--secondary,inherit);text-decoration:none;">2.2 Requests & Limits</a></div>
+    <div><a href="#23-quality-of-service" style="color:var(--secondary,inherit);text-decoration:none;">2.3 Quality of Service</a></div>
+    <div><a href="#24-best-practices" style="color:var(--secondary,inherit);text-decoration:none;">2.4 Best Practices</a></div>
   </div>
-  <div><a href="#3-pod-priority--preemption" style="color:#c9d1d9;text-decoration:none;">3. Pod Priority & Preemption</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#31-priorityclass" style="color:#6e7681;text-decoration:none;">3.1 PriorityClass</a></div>
-    <div><a href="#32-preemptionpolicy-never" style="color:#6e7681;text-decoration:none;">3.2 preemptionPolicy: Never</a></div>
-    <div><a href="#33-주의사항" style="color:#6e7681;text-decoration:none;">3.3 주의사항</a></div>
+  <div><a href="#3-pod-priority--preemption" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Pod Priority & Preemption</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#31-priorityclass" style="color:var(--secondary,inherit);text-decoration:none;">3.1 PriorityClass</a></div>
+    <div><a href="#32-preemptionpolicy-never" style="color:var(--secondary,inherit);text-decoration:none;">3.2 preemptionPolicy: Never</a></div>
+    <div><a href="#33-주의사항" style="color:var(--secondary,inherit);text-decoration:none;">3.3 주의사항</a></div>
   </div>
-  <div><a href="#4-project-resources" style="color:#c9d1d9;text-decoration:none;">4. Project Resources</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#41-resourcequota" style="color:#6e7681;text-decoration:none;">4.1 ResourceQuota</a></div>
-    <div><a href="#42-limitrange" style="color:#6e7681;text-decoration:none;">4.2 LimitRange</a></div>
+  <div><a href="#4-project-resources" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Project Resources</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#41-resourcequota" style="color:var(--secondary,inherit);text-decoration:none;">4.1 ResourceQuota</a></div>
+    <div><a href="#42-limitrange" style="color:var(--secondary,inherit);text-decoration:none;">4.2 LimitRange</a></div>
   </div>
-  <div><a href="#5-capacity-planning" style="color:#c9d1d9;text-decoration:none;">5. Capacity Planning</a></div>
-  <div><a href="#6-q--a" style="color:#c9d1d9;text-decoration:none;">6. Q & A</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#q1-cpu-limits는-왜-쓰지-않는가" style="color:#6e7681;text-decoration:none;">Q1. CPU limits는 왜 쓰지 않는가?</a></div>
-    <div><a href="#q2-메모리는-왜-requests--limits인가" style="color:#6e7681;text-decoration:none;">Q2. 메모리는 왜 requests = limits인가?</a></div>
-    <div><a href="#q3-qos와-우선순위의-차이" style="color:#6e7681;text-decoration:none;">Q3. QoS와 우선순위의 차이</a></div>
+  <div><a href="#5-capacity-planning" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Capacity Planning</a></div>
+  <div><a href="#6-q--a" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Q & A</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#q1-cpu-limits는-왜-쓰지-않는가" style="color:var(--secondary,inherit);text-decoration:none;">Q1. CPU limits는 왜 쓰지 않는가?</a></div>
+    <div><a href="#q2-메모리는-왜-requests--limits인가" style="color:var(--secondary,inherit);text-decoration:none;">Q2. 메모리는 왜 requests = limits인가?</a></div>
+    <div><a href="#q3-qos와-우선순위의-차이" style="color:var(--secondary,inherit);text-decoration:none;">Q3. QoS와 우선순위의 차이</a></div>
   </div>
 </div>
-</details>
+</div>
 {{< /rawhtml >}}
 
 ---

@@ -12,44 +12,45 @@ summary: "How Kubernetes Deployment resource automates application upgrades and 
 
 컨테이너화된 애플리케이션을 운영하다 보면 새 버전 배포가 반복적으로 발생한다. Kubernetes는 Deployment 리소스를 통해 이 과정을 선언적으로, 자동으로 처리한다. 이 챕터는 Deployment의 동작 원리와 네 가지 배포/릴리즈 전략을 다룬다.
 
+## 0. Contents
+
 {{< rawhtml >}}
-<details style="background:transparent;border:1px solid #30363d;border-radius:8px;padding:10px 16px;margin:1.2rem 0;font-family:inherit;">
-<summary style="cursor:pointer;font-weight:600;font-size:14px;color:#8b949e;user-select:none;font-family:inherit;">목차 — Table of Contents</summary>
-<div style="margin-top:10px;font-size:14px;line-height:2;font-family:inherit;">
-  <div><a href="#0-overview" style="color:#c9d1d9;text-decoration:none;">0. Overview</a></div>
-  <div><a href="#1-problem--solution" style="color:#c9d1d9;text-decoration:none;">1. Problem & Solution</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#11-problem" style="color:#6e7681;text-decoration:none;">1.1 Problem</a></div>
-    <div><a href="#12-solution" style="color:#6e7681;text-decoration:none;">1.2 Solution</a></div>
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#0-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">0. Overview</a></div>
+  <div><a href="#1-problem--solution" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Problem & Solution</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#11-problem" style="color:var(--secondary,inherit);text-decoration:none;">1.1 Problem</a></div>
+    <div><a href="#12-solution" style="color:var(--secondary,inherit);text-decoration:none;">1.2 Solution</a></div>
   </div>
-  <div><a href="#2-how-deployment-works" style="color:#c9d1d9;text-decoration:none;">2. How Deployment Works</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#21-deployment--replicaset--pod" style="color:#6e7681;text-decoration:none;">2.1 Deployment → ReplicaSet → Pod</a></div>
-    <div><a href="#22-prerequisites-for-deployment" style="color:#6e7681;text-decoration:none;">2.2 Prerequisites for Deployment</a></div>
-    <div><a href="#23-kubectl-rollout" style="color:#6e7681;text-decoration:none;">2.3 kubectl rollout</a></div>
+  <div><a href="#2-how-deployment-works" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. How Deployment Works</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#21-deployment--replicaset--pod" style="color:var(--secondary,inherit);text-decoration:none;">2.1 Deployment → ReplicaSet → Pod</a></div>
+    <div><a href="#22-prerequisites-for-deployment" style="color:var(--secondary,inherit);text-decoration:none;">2.2 Prerequisites for Deployment</a></div>
+    <div><a href="#23-kubectl-rollout" style="color:var(--secondary,inherit);text-decoration:none;">2.3 kubectl rollout</a></div>
   </div>
-  <div><a href="#3-rolling-deployment" style="color:#c9d1d9;text-decoration:none;">3. Rolling Deployment</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#31-example-yaml" style="color:#6e7681;text-decoration:none;">3.1 Example YAML</a></div>
-    <div><a href="#32-maxsurge--maxunavailable" style="color:#6e7681;text-decoration:none;">3.2 maxSurge & maxUnavailable</a></div>
-    <div><a href="#33-minreadyseconds" style="color:#6e7681;text-decoration:none;">3.3 minReadySeconds</a></div>
-    <div><a href="#34-rolling-update-step-by-step" style="color:#6e7681;text-decoration:none;">3.4 Rolling Update Step-by-Step</a></div>
-    <div><a href="#35-how-to-trigger-an-update" style="color:#6e7681;text-decoration:none;">3.5 How to Trigger an Update</a></div>
-    <div><a href="#36-benefits-of-deployment" style="color:#6e7681;text-decoration:none;">3.6 Benefits of Deployment</a></div>
+  <div><a href="#3-rolling-deployment" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Rolling Deployment</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#31-example-yaml" style="color:var(--secondary,inherit);text-decoration:none;">3.1 Example YAML</a></div>
+    <div><a href="#32-maxsurge--maxunavailable" style="color:var(--secondary,inherit);text-decoration:none;">3.2 maxSurge & maxUnavailable</a></div>
+    <div><a href="#33-minreadyseconds" style="color:var(--secondary,inherit);text-decoration:none;">3.3 minReadySeconds</a></div>
+    <div><a href="#34-rolling-update-step-by-step" style="color:var(--secondary,inherit);text-decoration:none;">3.4 Rolling Update Step-by-Step</a></div>
+    <div><a href="#35-how-to-trigger-an-update" style="color:var(--secondary,inherit);text-decoration:none;">3.5 How to Trigger an Update</a></div>
+    <div><a href="#36-benefits-of-deployment" style="color:var(--secondary,inherit);text-decoration:none;">3.6 Benefits of Deployment</a></div>
   </div>
-  <div><a href="#4-fixed-deployment-recreate" style="color:#c9d1d9;text-decoration:none;">4. Fixed Deployment (Recreate)</a></div>
-  <div><a href="#5-blue-green-release" style="color:#c9d1d9;text-decoration:none;">5. Blue-Green Release</a></div>
-  <div><a href="#6-canary-release" style="color:#c9d1d9;text-decoration:none;">6. Canary Release</a></div>
-  <div><a href="#7-strategy-comparison" style="color:#c9d1d9;text-decoration:none;">7. Strategy Comparison</a></div>
-  <div><a href="#8-higher-level-deployments" style="color:#c9d1d9;text-decoration:none;">8. Higher-Level Deployments</a></div>
-  <div><a href="#9-q--a" style="color:#c9d1d9;text-decoration:none;">9. Q & A</a></div>
-  <div style="padding-left:16px;font-size:13px;">
-    <div><a href="#q1-deployment와-pod를-직접-만드는-것의-차이" style="color:#6e7681;text-decoration:none;">Q1. Deployment와 Pod를 직접 만드는 것의 차이</a></div>
-    <div><a href="#q2-rolling-update-중-두-버전이-공존하면-문제가-없나" style="color:#6e7681;text-decoration:none;">Q2. Rolling Update 중 두 버전이 공존하면 문제가 없나</a></div>
-    <div><a href="#q3-blue-green과-canary의-선택-기준" style="color:#6e7681;text-decoration:none;">Q3. Blue-Green과 Canary의 선택 기준</a></div>
+  <div><a href="#4-fixed-deployment-recreate" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Fixed Deployment (Recreate)</a></div>
+  <div><a href="#5-blue-green-release" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Blue-Green Release</a></div>
+  <div><a href="#6-canary-release" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Canary Release</a></div>
+  <div><a href="#7-strategy-comparison" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Strategy Comparison</a></div>
+  <div><a href="#8-higher-level-deployments" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Higher-Level Deployments</a></div>
+  <div><a href="#9-q--a" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Q & A</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#q1-deployment와-pod를-직접-만드는-것의-차이" style="color:var(--secondary,inherit);text-decoration:none;">Q1. Deployment와 Pod를 직접 만드는 것의 차이</a></div>
+    <div><a href="#q2-rolling-update-중-두-버전이-공존하면-문제가-없나" style="color:var(--secondary,inherit);text-decoration:none;">Q2. Rolling Update 중 두 버전이 공존하면 문제가 없나</a></div>
+    <div><a href="#q3-blue-green과-canary의-선택-기준" style="color:var(--secondary,inherit);text-decoration:none;">Q3. Blue-Green과 Canary의 선택 기준</a></div>
   </div>
 </div>
-</details>
+</div>
 {{< /rawhtml >}}
 
 ---

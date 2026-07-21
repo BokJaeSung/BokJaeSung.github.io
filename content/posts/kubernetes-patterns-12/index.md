@@ -10,6 +10,47 @@ cover:
 summary: "고유하고 교체 불가능한 인스턴스로 구성된 스테이트풀 애플리케이션을 Kubernetes에서 운영하는 방법 — StatefulSet, Headless Service, PVC까지."
 ---
 
+## 0. Contents
+
+{{< rawhtml >}}
+<div style="background:transparent;border:1.5px solid var(--primary,#888);border-radius:8px;padding:16px 20px;margin:1.2rem 0;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+<div style="font-size:16px;line-height:2.1;font-family:inherit;">
+  <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
+  <div><a href="#2-problem" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Problem</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#무상태-vs-스테이트풀-근본적인-차이" style="color:var(--secondary,inherit);text-decoration:none;">2.1 무상태 vs 스테이트풀: 근본적인 차이</a></div>
+    <div><a href="#replicaset으로-스테이트풀-앱을-다루면-생기는-문제" style="color:var(--secondary,inherit);text-decoration:none;">2.2 ReplicaSet으로 스테이트풀 앱을 다루면 생기는 문제</a></div>
+  </div>
+  <div><a href="#3-solution-statefulset" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Solution: StatefulSet</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-12-1-statefulset-정의" style="color:var(--secondary,inherit);text-decoration:none;">3.1 Example 12-1. StatefulSet 정의</a></div>
+  </div>
+  <div><a href="#4-storage" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Storage</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#volumeclaimtemplates-pod처럼-pvc도-찍어낸다" style="color:var(--secondary,inherit);text-decoration:none;">4.1 volumeClaimTemplates: Pod처럼 PVC도 찍어낸다</a></div>
+    <div><a href="#스케일링의-비대칭-동작-중요" style="color:var(--secondary,inherit);text-decoration:none;">4.2 스케일링의 비대칭 동작</a></div>
+  </div>
+  <div><a href="#5-networking" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Networking</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#headless-service-직통번호-발급소" style="color:var(--secondary,inherit);text-decoration:none;">5.1 Headless Service: 직통번호 발급소</a></div>
+    <div><a href="#dns-주소-체계-a-레코드와-srv-레코드" style="color:var(--secondary,inherit);text-decoration:none;">5.2 DNS 주소 체계: A 레코드와 SRV 레코드</a></div>
+  </div>
+  <div><a href="#6-ordinality-순서성" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Ordinality (순서성)</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#스케일-업-순차-시작-0--n-1" style="color:var(--secondary,inherit);text-decoration:none;">6.1 스케일 업: 순차 시작 (0 → n-1)</a></div>
+    <div><a href="#스케일-다운-역순-종료-n-1--0" style="color:var(--secondary,inherit);text-decoration:none;">6.2 스케일 다운: 역순 종료 (n-1 → 0)</a></div>
+  </div>
+  <div><a href="#7-other-features" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Other Features</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#partitioned-updates-파티셔닝-업데이트" style="color:var(--secondary,inherit);text-decoration:none;">7.1 Partitioned Updates (파티셔닝 업데이트)</a></div>
+    <div><a href="#at-most-one-guarantee" style="color:var(--secondary,inherit);text-decoration:none;">7.2 At-Most-One Guarantee</a></div>
+  </div>
+  <div><a href="#8-전체-구조-한눈에-보기" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. 전체 구조 한눈에 보기</a></div>
+  <div><a href="#9-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Discussion</a></div>
+</div>
+</div>
+{{< /rawhtml >}}
+
 ## 1. Overview
 
 ```
