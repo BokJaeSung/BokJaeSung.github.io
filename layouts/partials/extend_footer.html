@@ -1,0 +1,112 @@
+{{- $seriesTerms := site.Taxonomies.series }}
+{{- if $seriesTerms }}
+<div id="series-overlay" class="series-overlay" aria-hidden="true">
+  <div class="series-overlay-backdrop"></div>
+  <div class="series-overlay-panel-bg"></div>
+  <div class="series-overlay-panel">
+    <button class="series-overlay-close" aria-label="Close">&times;</button>
+    <h2 class="series-overlay-title">Series</h2>
+
+    <div class="series-folders" data-view="folders">
+      {{- range $seriesTerms.Alphabetical }}
+      {{- $seriesPages := sort .Pages "Params.date" "asc" }}
+      {{- $cover := "" }}
+      {{- with (index $seriesPages 0) }}
+        {{- with .Resources.GetMatch "**cover*" }}
+          {{- $cover = .RelPermalink }}
+        {{- end }}
+      {{- end }}
+      <div class="series-folder" data-series="{{ .Page.Title | urlize }}"
+        {{- if $cover }} style="background-image:url('{{ $cover }}');" {{- end }}>
+        <div class="series-folder-overlay">
+          <span class="series-folder-title">{{ .Page.Title }}</span>
+          <span class="series-folder-count">{{ len $seriesPages }} posts</span>
+        </div>
+      </div>
+      {{- end }}
+    </div>
+
+    {{- range $seriesTerms.Alphabetical }}
+    {{- $seriesSlug := .Page.Title | urlize }}
+    {{- $seriesPages := sort .Pages "Params.date" "asc" }}
+    <div class="series-posts" data-view="posts" data-series="{{ $seriesSlug }}" hidden>
+      <button class="series-posts-back">&larr; Series</button>
+      <h3 class="series-posts-title">{{ .Page.Title }}</h3>
+      <div class="series-posts-grid">
+        {{- range $seriesPages }}
+        <a class="series-post-card" href="{{ .Permalink }}">
+          {{- with .Resources.GetMatch "**cover*" }}
+            {{- with .Fill "200x150 webp q75" }}
+            <div class="series-post-cover" style="background-image:url('{{ .RelPermalink }}');"></div>
+            {{- end }}
+          {{- end }}
+          <span class="series-post-title">{{ .Title }}</span>
+        </a>
+        {{- end }}
+      </div>
+    </div>
+    {{- end }}
+  </div>
+</div>
+
+<script>
+(function () {
+  var overlay = document.getElementById('series-overlay');
+  if (!overlay) return;
+
+  var panel = overlay.querySelector('.series-overlay-panel');
+  var folderView = overlay.querySelector('.series-folders');
+  var postViews = overlay.querySelectorAll('.series-posts');
+
+  function openOverlay() {
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeOverlay() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    showFolders();
+  }
+
+  function showFolders() {
+    folderView.hidden = false;
+    postViews.forEach(function (v) { v.hidden = true; });
+  }
+
+  function showSeries(slug) {
+    folderView.hidden = true;
+    postViews.forEach(function (v) {
+      v.hidden = v.getAttribute('data-series') !== slug;
+    });
+  }
+
+  document.querySelectorAll('a[href$="/series/"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      showFolders();
+      openOverlay();
+    });
+  });
+
+  overlay.querySelector('.series-overlay-close').addEventListener('click', closeOverlay);
+  overlay.querySelector('.series-overlay-backdrop').addEventListener('click', closeOverlay);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeOverlay();
+  });
+
+  folderView.querySelectorAll('.series-folder').forEach(function (folder) {
+    folder.addEventListener('click', function () {
+      showSeries(folder.getAttribute('data-series'));
+    });
+  });
+
+  overlay.querySelectorAll('.series-posts-back').forEach(function (btn) {
+    btn.addEventListener('click', showFolders);
+  });
+})();
+</script>
+{{- end }}

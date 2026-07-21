@@ -1,4 +1,5 @@
 ---
+series: ["K8sPatterns"]
 title: "K8sPatterns.02 Predictable Demands"
 date: 2026-06-24T09:00:00+09:00
 tags: ["kubernetes", "cloud-native", "container"]
