@@ -17,14 +17,29 @@ summary: "A deep dive into Kubernetes Health Probe pattern: Process Health Check
 <div style="font-size:16px;line-height:2.1;font-family:inherit;">
   <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
   <div><a href="#2-why-health-probe" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Why Health Probe?</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#프로세스-상태-체크만으로-부족한-이유" style="color:var(--secondary,inherit);text-decoration:none;">2.1 프로세스 상태 체크만으로 부족한 이유</a></div>
+  </div>
   <div><a href="#3-process-health-check" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Process Health Check</a></div>
   <div><a href="#4-liveness-probe" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Liveness Probe</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-4-1" style="color:var(--secondary,inherit);text-decoration:none;">4.1 Example 4-1</a></div>
+  </div>
   <div><a href="#5-readiness-probe" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Readiness Probe</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-4-2-파일-기반-readiness-probe" style="color:var(--secondary,inherit);text-decoration:none;">5.1 Example 4-2 (파일 기반 Readiness Probe)</a></div>
+  </div>
   <div><a href="#6-sigterm과-readiness" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. SIGTERM과 Readiness</a></div>
   <div><a href="#7-전체-비교-정리" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. 전체 비교 정리</a></div>
   <div><a href="#8-deployment에서-실제-사용" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Deployment에서 실제 사용</a></div>
   <div><a href="#9-custom-pod-readiness-gates" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Custom Pod Readiness Gates</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#readiness-gates" style="color:var(--secondary,inherit);text-decoration:none;">9.1 Readiness Gates</a></div>
+  </div>
   <div><a href="#10-startup-probe" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">10. Startup Probe</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#startup-probe-동작" style="color:var(--secondary,inherit);text-decoration:none;">10.1 Startup Probe 동작</a></div>
+  </div>
   <div><a href="#11-example-4-4-jakarta-ee--wildfly" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">11. Example 4-4 (Jakarta EE / WildFly)</a></div>
   <div><a href="#12-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">12. Discussion</a></div>
 </div>

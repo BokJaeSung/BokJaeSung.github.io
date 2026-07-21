@@ -17,13 +17,28 @@ summary: "How Kubernetes communicates lifecycle events to containers via SIGTERM
 <div style="font-size:16px;line-height:2.1;font-family:inherit;">
   <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
   <div><a href="#2-why-managed-lifecycle" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Why Managed Lifecycle?</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#4장과의-차이" style="color:var(--secondary,inherit);text-decoration:none;">2.1 4장과의 차이</a></div>
+  </div>
   <div><a href="#3-sigterm-signal" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. SIGTERM Signal</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#sigterm-받은-후-해야-할-일" style="color:var(--secondary,inherit);text-decoration:none;">3.1 SIGTERM 받은 후 해야 할 일</a></div>
+  </div>
   <div><a href="#4-sigkill-signal" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. SIGKILL Signal</a></div>
   <div><a href="#5-poststart-hook" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. PostStart Hook</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-5-1" style="color:var(--secondary,inherit);text-decoration:none;">5.1 Example 5-1</a></div>
+  </div>
   <div><a href="#6-prestop-hook" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. PreStop Hook</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-5-2" style="color:var(--secondary,inherit);text-decoration:none;">6.1 Example 5-2</a></div>
+  </div>
   <div><a href="#7-전체-컨테이너-수명주기" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. 전체 컨테이너 수명주기</a></div>
   <div><a href="#8-other-lifecycle-controls" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Other Lifecycle Controls</a></div>
   <div><a href="#9-entrypoint-rewriting" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Entrypoint Rewriting</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-5-4-래퍼-적용" style="color:var(--secondary,inherit);text-decoration:none;">9.1 Example 5-4 (래퍼 적용)</a></div>
+  </div>
   <div><a href="#10-무엇을-써야-하나" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">10. 무엇을 써야 하나?</a></div>
   <div><a href="#11-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">11. Discussion</a></div>
 </div>

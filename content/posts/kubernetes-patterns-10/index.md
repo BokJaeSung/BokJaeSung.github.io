@@ -18,9 +18,22 @@ summary: "분산 환경에서 단 하나의 인스턴스만 활성화되도록 �
   <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
   <div><a href="#2-problem" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Problem</a></div>
   <div><a href="#3-solution" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Solution</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#31-active-active-vs-active-passive" style="color:var(--secondary,inherit);text-decoration:none;">3.1 Active-Active vs Active-Passive</a></div>
+  </div>
   <div><a href="#4-out-of-application-locking" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Out-of-Application Locking</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#42-replicaset-방식의-한계" style="color:var(--secondary,inherit);text-decoration:none;">4.1 ReplicaSet 방식의 한계</a></div>
+    <div><a href="#43-statefulset" style="color:var(--secondary,inherit);text-decoration:none;">4.2 StatefulSet</a></div>
+  </div>
   <div><a href="#5-in-application-locking" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. In-Application Locking</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#51-apache-zookeeper-ephemeral-node" style="color:var(--secondary,inherit);text-decoration:none;">5.1 Apache ZooKeeper: Ephemeral Node</a></div>
+  </div>
   <div><a href="#6-poddisruptionbudget" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. PodDisruptionBudget</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#방식별-최종-선택-기준" style="color:var(--secondary,inherit);text-decoration:none;">6.1 방식별 최종 선택 기준</a></div>
+  </div>
   <div><a href="#7-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Discussion</a></div>
 </div>
 </div>

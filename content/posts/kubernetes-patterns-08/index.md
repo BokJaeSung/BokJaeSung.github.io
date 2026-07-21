@@ -17,10 +17,22 @@ summary: "Batch Job 패턴에 시간 차원을 더한 CronJob — schedule, conc
 <div style="font-size:16px;line-height:2.1;font-family:inherit;">
   <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
   <div><a href="#2-problem" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Problem</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#기존-방식들과-각각의-문제점" style="color:var(--secondary,inherit);text-decoration:none;">2.1 기존 방식들과 각각의 문제점</a></div>
+  </div>
   <div><a href="#3-solution-cronjob" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Solution: CronJob</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-8-1-cronjob-명세" style="color:var(--secondary,inherit);text-decoration:none;">3.1 Example 8-1. CronJob 명세</a></div>
+  </div>
   <div><a href="#4-cronjob-전용-필드" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. CronJob 전용 필드</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#전체-필드-정리" style="color:var(--secondary,inherit);text-decoration:none;">4.1 전체 필드 정리</a></div>
+  </div>
   <div><a href="#5-실전-예제-매일-새벽-db-백업" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. 실전 예제: 매일 새벽 DB 백업</a></div>
   <div><a href="#6-실패-처리-누가-뭘-담당하나" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. 실패 처리: 누가 뭘 담당하나</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#반드시-고려해야-할-예외-상황들" style="color:var(--secondary,inherit);text-decoration:none;">6.1 반드시 고려해야 할 예외 상황들</a></div>
+  </div>
   <div><a href="#7-job-vs-cronjob-선택-기준" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Job vs CronJob 선택 기준</a></div>
   <div><a href="#8-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Discussion</a></div>
 </div>

@@ -18,13 +18,34 @@ summary: "How the Kubernetes scheduler assigns Pods to nodes using predicates, p
   <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
   <div><a href="#2-why-automated-placement" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Why Automated Placement?</a></div>
   <div><a href="#3-available-node-resources" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Available Node Resources</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#노드-가용-용량-공식-example-6-1" style="color:var(--secondary,inherit);text-decoration:none;">3.1 노드 가용 용량 공식 (Example 6-1)</a></div>
+  </div>
   <div><a href="#4-container-resource-demands" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Container Resource Demands</a></div>
   <div><a href="#5-placement-policies" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Placement Policies</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#전체-흐름" style="color:var(--secondary,inherit);text-decoration:none;">5.1 전체 흐름</a></div>
+  </div>
   <div><a href="#6-node-selector" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Node Selector</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-6-3" style="color:var(--secondary,inherit);text-decoration:none;">6.1 Example 6-3</a></div>
+  </div>
   <div><a href="#7-node-affinity" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Node Affinity</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-6-4" style="color:var(--secondary,inherit);text-decoration:none;">7.1 Example 6-4</a></div>
+  </div>
   <div><a href="#8-pod-affinity-and-antiaffinity" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Pod Affinity and Antiaffinity</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-6-5" style="color:var(--secondary,inherit);text-decoration:none;">8.1 Example 6-5</a></div>
+  </div>
   <div><a href="#9-taints-and-tolerations" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">9. Taints and Tolerations</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#example-6-6-tainted-node" style="color:var(--secondary,inherit);text-decoration:none;">9.1 Example 6-6 (Tainted Node)</a></div>
+  </div>
   <div><a href="#10-stranded-resources-and-descheduler" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">10. Stranded Resources and Descheduler</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#descheduler" style="color:var(--secondary,inherit);text-decoration:none;">10.1 Descheduler</a></div>
+  </div>
   <div><a href="#11-배치-방법-종합-비교" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">11. 배치 방법 종합 비교</a></div>
   <div><a href="#12-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">12. Discussion</a></div>
 </div>

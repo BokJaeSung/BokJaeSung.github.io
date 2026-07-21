@@ -17,10 +17,22 @@ summary: "DaemonSet ensures one Pod per node for infra daemons — nodeSelector,
 <div style="font-size:16px;line-height:2.1;font-family:inherit;">
   <div><a href="#1-overview" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">1. Overview</a></div>
   <div><a href="#2-daemon-이란" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Daemon 이란</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#21-os-수준의-데몬" style="color:var(--secondary,inherit);text-decoration:none;">2.1 OS 수준의 데몬</a></div>
+    <div><a href="#22-애플리케이션-수준의-데몬-jvm" style="color:var(--secondary,inherit);text-decoration:none;">2.2 애플리케이션 수준의 데몬 (JVM)</a></div>
+  </div>
   <div><a href="#3-problem" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Problem</a></div>
   <div><a href="#4-solution-daemonset" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Solution: DaemonSet</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#41-replicaset-vs-daemonset" style="color:var(--secondary,inherit);text-decoration:none;">4.1 ReplicaSet vs DaemonSet</a></div>
+    <div><a href="#42-example-9-1-daemonset-resource" style="color:var(--secondary,inherit);text-decoration:none;">4.2 Example 9-1. DaemonSet Resource</a></div>
+  </div>
   <div><a href="#5-daemonset의-주요-특징" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. DaemonSet의 주요 특징</a></div>
   <div><a href="#6-scheduling-evolution" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Scheduling Evolution</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#61-구버전-nodename-방식" style="color:var(--secondary,inherit);text-decoration:none;">6.1 구버전: nodeName 방식</a></div>
+    <div><a href="#62-신버전-nodeaffinity-방식-v117" style="color:var(--secondary,inherit);text-decoration:none;">6.2 신버전: nodeAffinity 방식 (v1.17+)</a></div>
+  </div>
   <div><a href="#7-static-pods" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Static Pods</a></div>
   <div><a href="#8-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. Discussion</a></div>
 </div>
