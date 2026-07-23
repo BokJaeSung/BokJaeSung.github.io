@@ -276,7 +276,75 @@ random-generator . default . svc . cluster.local
 | ③ `svc` | Service 리소스 표시 |
 | ④ `cluster.local` | 클러스터 고유 suffix |
 
-같은 네임스페이스에서는 Service 이름만 써도 되고, 다른 네임스페이스에서는 `random-generator.default` 형식으로 쓰면 된다.
+같은 네임스페이스에서는 Service 이름만 써도 되고, 다른 네임스페이스에서는 `random-generator.default` 형식으로 쓰면 된다. 어떻게 이게 가능한지, Pod 내부를 들여다보면 그 답이 있다.
+
+**/etc/resolv.conf: Pod가 DNS를 찾아가는 설정 파일**
+
+Pod 내부에는 리눅스 표준 DNS 설정 파일인 `/etc/resolv.conf`가 있다. `random-generator`처럼 짧은 이름만 입력해도 CoreDNS까지 도달할 수 있는 이유가 이 파일 안에 있다.
+
+```
+# Pod 내부 /etc/resolv.conf 예시
+nameserver 10.96.0.10
+search default.svc.cluster.local svc.cluster.local cluster.local
+options ndots:5
+```
+
+| 줄 | 의미 |
+|---|---|
+| `nameserver` | 질의를 보낼 DNS 서버 IP — CoreDNS의 ClusterIP |
+| `search` | 짧은 이름 뒤에 자동으로 붙여볼 접미사 목록 |
+| `options ndots:5` | 점(`.`)이 5개 미만인 이름은 먼저 search 목록으로 시도 |
+
+이 파일은 개발자가 손으로 작성하는 게 아니다. **kubelet이 Pod를 생성할 때 자동으로 만들어 주입**한다. 앱 코드가 이 파일을 직접 읽는 것도 아니다. 리눅스의 DNS resolver(glibc, musl 등)가 이름을 조회할 때마다 OS 레벨에서 알아서 참고하는 표준 메커니즘이다. 즉 앱은 `requests.get("http://random-generator:80")`이라고만 쓰면, 그 뒤의 이름 해석은 전부 OS가 이 파일을 보고 처리해준다.
+
+**search 도메인: 짧은 이름이 FQDN으로 완성되는 과정**
+
+`search` 줄에는 접미사 후보가 순서대로 나열되어 있다. 짧은 이름을 입력하면 resolver가 이 목록을 하나씩 붙여가며 순서대로 조회를 시도한다.
+
+```
+Pod에서 "random-generator" 조회 시 시도 순서
+
+1차 시도: random-generator.default.svc.cluster.local  ← 성공 시 여기서 종료
+2차 시도: random-generator.svc.cluster.local           (1차 실패 시에만)
+3차 시도: random-generator.cluster.local                (2차 실패 시에만)
+```
+
+`random-generator.default`처럼 이미 네임스페이스를 포함한 이름을 쓰면 첫 번째 search 접미사(`default.svc.cluster.local`)만 붙어도 바로 FQDN이 완성되므로, 결과적으로 짧은 이름과 `.default`를 붙인 이름 둘 다 정상 동작한다.
+
+만약 `search` 줄이 없다면? 짧은 이름 그대로 인터넷의 공용 DNS 서버로 질의가 나가버리고, `random-generator`라는 도메인은 당연히 존재하지 않으므로 조회는 실패한다. search 도메인이야말로 "Service 이름 하나만 쓰면 되는" 경험을 가능하게 하는 핵심 장치다.
+
+**CoreDNS 자신도 하나의 Service다**
+
+`nameserver 10.96.0.10`에 박혀 있는 이 IP는 다름 아닌 **CoreDNS의 ClusterIP**다. CoreDNS는 `kube-system` 네임스페이스에 `kube-dns`라는 이름의 Service로 떠 있는, 다른 Service들과 동일한 존재다.
+
+```
+kube-system 네임스페이스
+└── Service: kube-dns
+      ClusterIP: 10.96.0.10   ← 클러스터 내 모든 Pod의 resolv.conf에 박히는 IP
+      └── CoreDNS Pod(들)
+```
+
+여기서 재밌는 순환 문제가 생긴다. "Service 이름을 DNS로 찾으려면 CoreDNS가 필요한데, CoreDNS 자체도 Service라면 그건 어떻게 찾지?"라는 닭이 먼저냐 달걀이 먼저냐 문제다. Kubernetes는 이걸 아주 실용적으로 해결한다. **CoreDNS의 ClusterIP는 DNS 조회 없이 resolv.conf에 고정 IP로 직접 박아둔다.** 즉 CoreDNS를 찾아가는 첫걸음만큼은 DNS를 쓰지 않고 우회하는 셈이다.
+
+**네임스페이스마다 resolv.conf가 조금씩 다르다**
+
+`search` 줄의 첫 번째 항목은 Pod가 속한 네임스페이스 이름을 반영해 자동으로 바뀐다.
+
+```
+default 네임스페이스 Pod
+search default.svc.cluster.local svc.cluster.local cluster.local
+
+payment 네임스페이스 Pod
+search payment.svc.cluster.local svc.cluster.local cluster.local
+                ↑
+        네임스페이스 이름만 다르고 나머지는 동일
+```
+
+이 덕분에 `payment` 네임스페이스의 Pod가 `random-generator`라는 짧은 이름을 조회하면, 자동으로 `random-generator.payment.svc.cluster.local`부터 먼저 시도한다. 즉 **짧은 이름은 항상 "내가 속한 네임스페이스" 안에서만 자동으로 해석**된다.
+
+이건 의도된 보안 설계다. 다른 네임스페이스의 Service를 짧은 이름만으로 우연히, 또는 실수로 찾아가는 사고를 막는다. 정말로 다른 네임스페이스의 Service에 접근하고 싶다면 `random-generator.default`처럼 네임스페이스를 명시적으로 적어야 한다. 짧은 이름이 조용히 다른 팀의 Service로 연결되는 일은 일어나지 않는다.
+
+**결론적으로**, 같은 네임스페이스 안에서 Service 이름만으로 접근이 가능한 이유는 우연이 아니라 ① kubelet이 자동 생성한 resolv.conf, ② 그 안의 search 도메인이 붙여주는 네임스페이스 접미사, ③ CoreDNS가 고정 IP로 항상 먼저 접근 가능하다는 세 가지 장치가 맞물린 결과다.
 
 **환경변수 방식과의 결정적 차이**
 
