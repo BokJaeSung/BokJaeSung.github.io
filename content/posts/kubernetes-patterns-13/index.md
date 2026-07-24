@@ -346,6 +346,24 @@ search payment.svc.cluster.local svc.cluster.local cluster.local
 
 **결론적으로**, 같은 네임스페이스 안에서 Service 이름만으로 접근이 가능한 이유는 우연이 아니라 ① kubelet이 자동 생성한 resolv.conf, ② 그 안의 search 도메인이 붙여주는 네임스페이스 접미사, ③ CoreDNS가 고정 IP로 항상 먼저 접근 가능하다는 세 가지 장치가 맞물린 결과다.
 
+### 레퍼런스
+
+{{< rawhtml >}}
+<div style="border-left:2px solid var(--secondary,#888);padding:2px 16px;margin:0.6rem 0 1.2rem;font-size:15px;line-height:1.75;opacity:0.92;">
+  <div>이 동작은 Kubernetes 공식 문서 <strong>"DNS for Services and Pods"</strong>의 <strong>"Namespaces of Services"</strong> 섹션에 명시되어 있다.</div>
+  <blockquote style="margin:10px 0;padding-left:12px;border-left:2px solid var(--secondary,#888);font-style:italic;">
+    "DNS queries may be expanded using the Pod's <code>/etc/resolv.conf</code>. kubelet configures this file for each Pod. For example, a query for just <code>data</code> may be expanded to <code>data.test.svc.cluster.local</code>. The values of the <code>search</code> option are used to expand queries."
+  </blockquote>
+  <div>[해석] "DNS 조회는 Pod의 <code>/etc/resolv.conf</code>를 통해 확장될 수 있다. kubelet이 각 Pod마다 이 파일을 설정해준다. 예를 들어 <code>data</code>라는 짧은 이름만으로 조회해도 <code>data.test.svc.cluster.local</code>로 자동 확장될 수 있다. <code>search</code> 옵션의 값들이 이 조회 확장에 사용된다."</div>
+  <div style="margin-top:10px;">그리고 바로 아래 예시로 제시된 <code>resolv.conf</code> 블록:</div>
+  <pre style="margin:8px 0;overflow-x:auto;"><code>nameserver 10.32.0.10
+search &lt;namespace&gt;.svc.cluster.local svc.cluster.local cluster.local
+options ndots:5</code></pre>
+  <div>이 두 부분이 "Service 이름만 써도 되는" 경험의 공식 근거다.</div>
+  <div style="margin-top:10px;">→ <a href="https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#namespaces-of-services">kubernetes.io — DNS for Services and Pods #namespaces-of-services</a></div>
+</div>
+{{< /rawhtml >}}
+
 **환경변수 방식과의 결정적 차이**
 
 ```
