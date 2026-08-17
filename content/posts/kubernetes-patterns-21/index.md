@@ -396,16 +396,48 @@ oc new-app demo -p CONFIG_IMAGE=k8spatterns/config-prod:1   # prod
 
 ### 전체 메커니즘 정리
 
-| 단계 | Docker | Kubernetes |
-|---|---|---|
-| **설정 이미지** | `FROM scratch` + `ADD` + `VOLUME /config` | `FROM busybox` + `ADD /config-src/` + `ENTRYPOINT cp ... $1` |
-| **이미지 배포** | `docker build` | `docker build` + `docker push` |
-| **볼륨 생성** | `docker create` 때 자동 (컨테이너 소유) | Pod의 `emptyDir` (Pod 소유) |
-| **볼륨에 파일 채우기** | Docker가 자동 복사 | Init 컨테이너가 `cp`로 직접 |
-| **설정 컨테이너 역할** | 파일 들고 가만히 서 있기 | 파일 옮겨놓고 퇴장 |
-| **앱에 연결** | `docker run --volumes-from` | 같은 볼륨 `volumeMounts` |
-| **환경 전환** | `--volumes-from` 대상 이름 교체 | Init의 `image` 교체 (템플릿 변수로) |
-| **앱 이미지** | 그대로 | 그대로 |
+같은 목표를 두 플랫폼이 어떻게 다르게 달성하는지 나란히 놓으면 이렇다.
+
+```
+【 Docker 】 볼륨의 주인이 컨테이너다 — 도커가 알아서 꺼내준다
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  FROM scratch                   빈 껍데기. 실행할 게 없으니 OS도 필요 없다
+  ADD app-dev.properties         설정 파일을 /config 에 그대로
+  VOLUME /config                 "이 폴더 가져다 쓸 수 있다"고 선언만
+        │
+        ▼  docker build → docker create --name config-dev
+  호스트에 볼륨 폴더 생성 + 이미지 내용 자동 복사   ← 도커가 대신 해주는 부분
+        │                                          볼륨 소유자 = config-dev 컨테이너
+        ▼  docker run --volumes-from config-dev  앱이 그 볼륨을 빌려 씀
+  앱이 /config 를 읽는다.  설정 컨테이너는 파일 들고 가만히 서 있기만
+
+
+【 Kubernetes 】 볼륨의 주인이 Pod다 — 아무도 안 꺼내주니 직접 옮긴다
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  FROM busybox                   cp 와 sh 가 필요하다. 이제 직접 일해야 하니까
+  ADD dev.properties /config-src 원본은 /config 가 아니라 src 에 (마운트 그림자 회피)
+  ENTRYPOINT cp /config-src/* $1 선언이 아니라 "명령". 도착지는 Pod 이 알려준다
+        │
+        ▼  docker build → docker push          레지스트리를 반드시 거친다
+  Pod 생성 → emptyDir 빈 폴더                   ← 볼륨 소유자 = Pod
+        │
+        ▼  Init 컨테이너가 /config 에 마운트하고 cp 실행 후 종료
+  파일은 이미 볼륨(밖)에 있으므로 배달원이 사라져도 남는다
+        │
+        ▼  앱이 같은 볼륨을 /var/config 에 마운트
+  앱이 /var/config 를 읽는다.  설정 컨테이너는 파일 옮겨놓고 퇴장
+```
+
+```
+두 경로가 끝내 같아지는 지점
+
+환경 전환 →  Docker: --volumes-from 대상 이름 교체
+             K8s   : Init 컨테이너의 image 한 줄 교체 (템플릿 변수로)
+
+앱 이미지 →  둘 다 그대로. 건드리지 않는다  ★ 이 패턴의 존재 이유
+```
 
 ### 4.1 데이터 컨테이너가 주는 것
 
