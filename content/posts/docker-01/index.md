@@ -23,9 +23,8 @@ summary: "How Docker persists data outside containers: bind mounts vs named and 
   </div>
   <div><a href="#4-comparison" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Comparison</a></div>
   <div><a href="#5-node_modules-trick" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. node_modules Trick</a></div>
-  <div><a href="#6-commands" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Commands</a></div>
-  <div><a href="#7-q--a" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. Q &amp; A</a></div>
-  <div><a href="#8-references" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">8. References</a></div>
+  <div><a href="#6-q--a" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. Q &amp; A</a></div>
+  <div><a href="#7-references" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">7. References</a></div>
 </div>
 </div>
 {{< /rawhtml >}}
@@ -90,16 +89,49 @@ Host: ./src ───────────────► Container: /app/src
        (양방향 즉시 반영)
 ```
 
-- 호스트에서 수정 → 컨테이너에 즉시 보임 (핫 리로드에 최적)
-- 컨테이너에서 수정 → 호스트에 즉시 보임
-- **덮어쓰기**: 컨테이너 경로에 원래 파일이 있어도 호스트 내용으로 가려짐. 호스트 디렉터리가 비어 있으면 컨테이너도 빈 디렉터리를 보게 됨[^docs-bind-over]
-- 호스트 경로 구조에 묶이므로 **이식성 낮음**
-- 호스트 파일시스템을 컨테이너에 노출 → 보안 부담[^docs-bind-cons]
-- 권한 문제 빈번: 호스트 경로는 있는데 컨테이너 실행 사용자(UID)가 읽기/쓰기 권한이 없는 경우[^docs-bind-cons]
-- **SELinux 환경(RHEL·Fedora·Rocky)** 에서는 레이블 때문에 Permission denied가 난다. `:z`(여러 컨테이너 공유) 또는 `:Z`(단독 사용) 옵션으로 재레이블링해야 한다[^docs-bind-selinux]
-- **파일 감시(inotify) 주의**: Docker Desktop(Mac·WSL2)에서는 호스트의 파일 변경 이벤트가 컨테이너로 전달되지 않는 경우가 있다. 핫 리로드가 안 먹으면 폴링을 켠다 (`CHOKIDAR_USEPOLLING=true`, Vite는 `server.watch.usePolling`)[^vite-poll]
+- **양방향 즉시 반영** — 호스트에서 고치면 컨테이너에, 컨테이너에서 고치면 호스트에 바로 보인다
+  - 복사가 아니다. **파일은 하나뿐이고 양쪽이 같은 실체를 볼 뿐**이다. 그래서 코드 한 줄 고칠 때마다 이미지를 다시 빌드할 필요가 없다
 
-**용도**: 개발 중 소스 코드 동기화, 설정 파일 주입(`:ro`), 로그/결과물을 호스트로 꺼내기
+- **덮어쓰기(obscure)** — 컨테이너 경로에 원래 파일이 있어도 호스트 내용에 가려진다. 호스트 디렉터리가 비어 있으면 컨테이너도 빈 디렉터리를 보게 된다[^docs-bind-over]
+  - **삭제가 아니라 "가려짐"이다.** 공식 문서도 *obscured* 라고 쓴다. 마운트를 떼면 원래 파일이 그대로 다시 보인다
+  - 두 폴더 내용이 합쳐지는 것도 아니다. `/app` 이라는 **주소가 통째로 호스트 경로로 갈아끼워지는 것**에 가깝다. USB를 `/media/usb` 에 마운트하면 그 폴더에 뭐가 있었든 USB 내용만 보이는 것과 같은, 리눅스 마운트의 기본 동작이다
+  - 영향 범위는 **마운트한 경로와 그 하위뿐**이다. `/app` 을 덮어도 `/usr/bin` 은 멀쩡하다
+  - 이미지 안에 파일이 있는데 컨테이너에서 안 보인다면 대부분 이것이다 (5절 `node_modules` 문제가 정확히 이 현상)
+
+- **이식성 낮음** — 호스트 경로 구조에 묶인다
+  - `-v /Users/aaa/proj:/app` 은 내 컴퓨터에서만 돈다. 동료 맥은 `/Users/kim/...`, 윈도우는 `C:\Users\...`, 서버엔 아예 없는 경로다. Named Volume이 `my-data:/app` 하나로 어디서나 도는 것과 대비된다
+
+- **보안 부담** — 호스트 파일시스템을 컨테이너에 노출한다[^docs-bind-cons]
+  - 컨테이너는 격리된 상자인데 bind mount는 거기에 바깥으로 통하는 구멍을 뚫는 것이다. 컨테이너 안 프로세스가 그 구멍으로 호스트 파일을 읽고 쓴다. 극단적으로 `-v /:/host` 면 호스트 전체를 만질 수 있다. **필요한 경로만, 가능하면 `:ro`** 가 원칙
+
+- **권한(UID) 문제** — 경로는 있는데 컨테이너 실행 사용자가 읽기/쓰기 권한이 없는 경우[^docs-bind-cons]
+  - 리눅스는 파일 주인을 이름이 아니라 **숫자(UID)** 로 기억한다. 호스트 파일 주인이 UID 501인데 컨테이너 프로세스가 UID 1000이면 그냥 거부된다
+  - 볼륨은 Docker가 권한을 맞춰 주지만, bind mount는 **호스트 파일의 원래 권한을 그대로 쓴다**. 컨테이너가 만든 파일이 호스트에서 `root` 소유로 남아 못 지우는 상황도 여기서 나온다
+
+- **SELinux 환경(RHEL·Fedora·Rocky)** — 레이블 때문에 Permission denied가 난다. `:z`(여러 컨테이너 공유) 또는 `:Z`(단독 사용)로 재레이블링해야 한다[^docs-bind-selinux]
+  - UID 문제와는 별개다. 파일마다 붙은 레이블이 안 맞으면 **권한이 맞아도 차단**된다. 우분투·맥에서는 만날 일이 없고, 회사 서버가 RHEL 계열이면 반드시 만난다
+
+- **파일 감시(inotify) 주의** — Docker Desktop(Mac·WSL2)에서는 호스트의 파일 변경 이벤트가 컨테이너로 전달되지 않는 경우가 있다[^vite-poll]
+  - 위의 "양방향 즉시 반영"과 모순처럼 보이지만 다른 얘기다. **파일 내용은 이미 동기화돼 있고, "바뀌었다"는 알림만 안 가는 것**이다
+  - 증상: 저장해도 핫 리로드가 안 되는데, 브라우저를 수동 새로고침하면 바뀐 내용이 나온다
+  - 해결은 알림을 포기하고 주기적으로 직접 확인(폴링)하게 만드는 것. 대가는 CPU 사용량이다
+
+    ```bash
+    CHOKIDAR_USEPOLLING=true    # webpack, CRA, Nuxt 등
+    ```
+    ```js
+    server: { watch: { usePolling: true } }   // Vite
+    ```
+
+**용도**
+
+| 용도 | 예시 | 왜 Bind Mount인가 |
+|---|---|---|
+| 소스 코드 동기화 | `./src:/app/src` | 고칠 때마다 재빌드하지 않으려고 |
+| 설정 파일 주입 | `./nginx.conf:/etc/nginx/nginx.conf:ro` | 이미지는 그대로 두고 설정만 갈아끼우려고. `:ro` 로 컨테이너가 못 고치게 막는다 |
+| 결과물 꺼내기 | `./output:/app/output` | 컨테이너가 만든 로그·리포트를 호스트에서 바로 열어보려고 |
+
+공통점은 **호스트가 그 파일을 직접 봐야 하는 경우**라는 것. 그게 아니면 Named Volume이 낫다.
 
 ---
 
@@ -134,20 +166,71 @@ volumes:
 **동작 특징**
 
 ```
-첫 마운트 (볼륨이 비어 있을 때):
-  Container /app/data (이미지 기본 파일) ──복사──► Volume
-                                                  │
-  이후부터는 Volume 내용이 /app/data 에 보임 ◄───────┘
+[1회차]  볼륨이 비어 있음
+
+   Container  /app/data                Volume  my-data
+   ┌────────────────────┐              ┌────────────────────┐
+   │ index.html         │ ── (1) ────► │ (empty)            │
+   │ 50x.html           │              │                    │
+   └────────────────────┘              └────────────────────┘
+
+   (1) copy   : 볼륨이 비었으므로 컨테이너 쪽 내용을 볼륨으로 복사
+
+   ┌────────────────────┐              ┌────────────────────┐
+   │ index.html         │ ◄──── (2) ── │ index.html         │
+   │ 50x.html           │              │ 50x.html           │
+   └────────────────────┘              └────────────────────┘
+
+   (2) mount  : 복사가 끝난 뒤 연결. 이제 /app/data 는 볼륨을 본다
+                파일은 같아 보이지만 실체는 이미지가 아니라 볼륨
+
+
+[2회차 이후]  볼륨에 내용이 있음
+
+   Container  /app/data                Volume  my-data
+   ┌────────────────────┐              ┌────────────────────┐
+   │ index.html         │ ◄──── (2) ── │ index.html         │
+   │ my-page.html       │              │ my-page.html       │  ← 1회차에 추가한 것
+   └────────────────────┘              └────────────────────┘
+
+   (1) copy   : 없음. 볼륨이 비어 있지 않으므로 건너뛴다
+   (2) mount  : 볼륨 내용이 그대로 보인다
+                → 이미지를 새 버전으로 올려도 볼륨의 옛 파일이 계속 보인다
 ```
 
-- 볼륨이 비어 있으면 **컨테이너 쪽 기존 내용을 볼륨으로 복사**해 준다. 예를 들어 `nginx` 이미지의 `/usr/share/nginx/html` 에 빈 볼륨을 걸면 이미지에 들어 있던 `index.html` 이 볼륨으로 복사된다[^docs-vol-over][^nerlich-init]
-  - 단, **DB 이미지의 초기화는 이것과 다른 메커니즘**이다. `postgres` 이미지의 데이터 디렉터리는 이미지 안에서 비어 있어 복사할 것이 없고, 실제로는 entrypoint가 데이터 디렉터리가 비었는지 보고 `initdb` 를 돌리는 것이다[^pg-init]
-- 컨테이너를 지워도 유지. `docker volume rm` 으로 직접 삭제해야 함[^docs-vol-rm]
-- 여러 컨테이너가 같은 볼륨 공유 가능
-- 볼륨 드라이버로 NFS, 클라우드 스토리지 연결 가능[^docs-vol-driver]
-- Mac/Windows에서는 Docker VM 내부에 저장되어 Bind Mount보다 I/O 빠름[^datacamp-perf]
+- **비어 있으면 채워 준다** — 볼륨이 비어 있으면 컨테이너 쪽 기존 내용을 볼륨으로 복사해 준다. `nginx` 이미지의 `/usr/share/nginx/html` 에 빈 볼륨을 걸면 이미지에 들어 있던 `index.html` 이 볼륨으로 복사된다[^docs-vol-over][^nerlich-init]
+  - 순서가 핵심이다. **복사를 먼저 하고 그 다음 연결**한다. 그래서 연결한 뒤에도 파일이 그대로 보인다. 빈 폴더를 bind mount하면 그냥 덮여서 텅 비는 것과 정반대다
+  - 겉보기엔 아무 일도 없어 보이지만 **실체가 바뀐다**. 그 파일은 이제 이미지가 아니라 볼륨에 있고, 수정하면 컨테이너를 지웠다 새로 만들어도 남는다
+  - 단, **DB 이미지의 초기화는 이것과 다른 메커니즘**이다. `postgres` 이미지의 데이터 디렉터리는 이미지 안에서 비어 있어 복사할 것이 없고, 실제로는 entrypoint가 데이터 디렉터리가 비었는지 보고 `initdb` 를 돌린다[^pg-init]
+    - 판단 주체가 Docker가 아니라 **postgres 자신**이다. 그래서 볼륨을 지우면(`docker compose down -v`) 다음 실행 때 초기화 SQL이 다시 돈다 — 개발 중 스키마를 갈아엎을 때 쓰는 방법
 
-**용도**: DB 데이터, 업로드 파일, 캐시 등 운영 환경의 영속 데이터
+- **컨테이너를 지워도 유지** — `docker volume rm` 으로 직접 삭제해야 한다[^docs-vol-rm]
+  - 컨테이너와 볼륨은 **수명이 따로**다. 컨테이너는 언제든 버리고 새로 만드는 일회용이지만 데이터는 그러면 안 되므로, 이 분리가 볼륨을 쓰는 가장 큰 이유다
+  - `postgres:15` 컨테이너를 지우고 `postgres:16` 으로 새로 만든 뒤 같은 볼륨을 연결하면, 데이터는 그대로 두고 버전만 올릴 수 있다
+  - 뒤집으면 함정이기도 하다. 컨테이너를 다 지워도 볼륨은 남아 디스크를 먹는다. `docker volume ls` 로 가끔 확인해야 한다
+
+- **여러 컨테이너가 같은 볼륨 공유 가능**
+  - 경로가 아니라 **이름표로 부르기 때문**에 가능하다. 업로드를 받는 `web` 과 후처리하는 `worker` 가 같은 `uploads` 볼륨을 물면 파일이 바로 오간다
+  - 다만 동시 쓰기 충돌은 Docker가 막아 주지 않는다. **DB 데이터 볼륨을 두 DB 컨테이너가 동시에 물면 데이터가 깨진다**
+
+- **볼륨 드라이버로 NFS, 클라우드 스토리지 연결 가능**[^docs-vol-driver]
+  - 볼륨의 실체를 호스트 디스크가 아닌 다른 것으로 바꿀 수 있다. 컨테이너는 여전히 `/app/data` 에 쓸 뿐, 아무것도 달라지지 않는다
+  - 이것도 이름표 방식이라 가능한 일이다. "호스트의 이 경로"라고 못박는 Bind Mount로는 안 된다. 서버 여러 대가 같은 데이터를 봐야 할 때 쓴다
+
+- **Mac/Windows에서는 Bind Mount보다 I/O 빠름**[^datacamp-perf]
+  - Docker는 리눅스 기술이라 Mac·Windows에서는 리눅스 VM 안에서 돈다. Bind Mount는 파일을 읽을 때마다 **VM ↔ 호스트 파일시스템 경계를 넘으며 번역**해야 하지만, 볼륨은 VM 안에 있어 그 경계를 넘지 않는다
+  - `node_modules` 처럼 파일이 수만 개인 폴더에서 차이가 크게 벌어진다. `node_modules` 에 볼륨을 거는 5절의 트릭이 **성능 면에서도 이득인 이유**다
+  - 리눅스에는 VM이 없으므로 이 차이가 없다
+
+**용도**
+
+| 용도 | 왜 Volume인가 |
+|---|---|
+| DB 데이터 | 컨테이너 버전을 올려도 데이터는 남아야 한다 |
+| 업로드 파일 | 사용자가 올린 것은 날리면 안 된다 |
+| 캐시·빌드 산출물 | 날아가도 되지만, 남아 있으면 다음 실행이 빨라진다 |
+
+공통점은 **호스트에서 직접 열어볼 일이 없다**는 것. 직접 봐야 하면 Bind Mount, 아니면 Volume — 이 기준 하나로 대부분 갈린다.
 
 ### 3.2 Anonymous Volume
 
@@ -204,12 +287,35 @@ docker volume prune -a → named 볼륨까지 포함해 미사용 전부 정리
 
 Node 프로젝트에서 프로젝트 루트 전체를 Bind Mount하면 문제가 생긴다.
 
-```
-이미지 빌드 시:   npm install → /app/node_modules 생성 ✔
+**배경 두 가지**
 
-실행 시 Bind Mount:
-  Host ./ (node_modules 없음 or 다른 OS용) ──► /app
-                                               └── node_modules  ← 호스트 것으로 덮임 ✘
+- `node_modules` 는 `npm install` 이 만들어 내는 의존성 폴더다. 파일이 수만 개라 Git에 올리지 않으므로(`.gitignore`) **호스트 프로젝트 폴더에 없는 것이 정상**이다. 게다가 일부 패키지는 설치 시점에 그 OS에 맞게 컴파일되므로, macOS에서 설치한 것을 리눅스 컨테이너에서 쓸 수 없다
+- **이미지는 빌드 시점의 스냅샷**이다. Dockerfile의 `COPY . .` 는 연결이 아니라 복사라서, 이후 호스트에서 코드를 고쳐도 이미지 안의 사본은 그대로다. 그래서 개발 중에는 매번 `docker build` 하는 대신 Bind Mount로 호스트 원본을 직접 보게 한다 — 그 편의가 아래 문제를 같이 데려온다
+
+```
+[1] 이미지 빌드 (docker build)
+
+    Image  /app
+    ┌────────────────────┐
+    │ package.json       │
+    │ index.js           │
+    │ node_modules/      │   ← npm install 로 설치됨 (리눅스용 바이너리)
+    └────────────────────┘
+
+
+[2] 실행:  -v .:/app     ← /app 이 통째로 호스트로 교체된다
+
+    Host  ./                            Container  /app
+    ┌────────────────────┐              ┌────────────────────┐
+    │ package.json       │ ───────────► │ package.json       │
+    │ index.js           │              │ index.js           │
+    │ (no node_modules)  │              │ (no node_modules)  │   ← 가려짐
+    └────────────────────┘              └────────────────────┘
+
+    호스트에 node_modules 가 없거나(설치 안 함),
+    있어도 macOS/Windows용이라 리눅스 컨테이너에서 못 쓰는 바이너리다.
+
+    결과:  Error: Cannot find module 'express'
 ```
 
 컨테이너에서 설치한 `node_modules`가 호스트의 (비어 있거나 호환 안 되는) 것으로 덮어써진다. 해결책은 **더 깊은 경로에 익명 볼륨을 하나 더 거는 것**.[^oneuptime-dev]
@@ -222,12 +328,72 @@ services:
       - /app/node_modules      # Anonymous Volume — 컨테이너 쪽 node_modules 유지
 ```
 
-```
-/app              ← Bind Mount (호스트)
-└── node_modules  ← Anonymous Volume (더 구체적인 경로가 우선)
+두 번째 줄은 **호스트와 연결하는 것이 아니다.** 콜론이 없어 호스트 쪽 경로가 아예 지정되지 않았으므로 Docker 관리 영역의 익명 볼륨이 붙는다. 목적 자체가 **그 경로만 호스트를 피하게 하는 것**이다.
+
+```yaml
+- ./node_modules:/app/node_modules   # ✘ 호스트와 연결 — 없거나 다른 OS용이라 문제 그대로
+- /app/node_modules                  # ✔ 호스트가 아닌 볼륨에 연결
 ```
 
-Docker는 더 구체적인(깊은) 경로의 마운트를 우선하므로 `/app/node_modules`는 호스트 영향을 받지 않는다.
+볼륨은 비어 있으면 컨테이너 쪽 내용을 복사해 오므로(3.1절), 이미지에 있던 **리눅스용** `node_modules` 가 볼륨으로 옮겨 담긴 뒤 유지된다.
+
+```
+[3] 해결:  /app/node_modules 자리에만 마운트를 하나 더 얹는다
+
+    적용 순서 (경로가 얕은 것부터)
+
+      1) /app                ← Bind Mount        : 호스트 ./ 로 교체
+      2) /app/node_modules   ← Anonymous Volume  : 그 위에 한 칸 더 덮음
+
+    결과
+
+    Container  /app
+    ┌───────────────────────────────┐
+    │ package.json                  │   ← 호스트 (Bind Mount)
+    │ index.js                      │   ← 호스트 (Bind Mount)
+    │ node_modules/                 │   ← 볼륨. 이미지에 있던 것이 복사돼 유지
+    │   ├ express/                  │
+    │   └ ...                       │
+    └───────────────────────────────┘
+
+    소스는 호스트와 실시간 동기화되고,
+    node_modules 만 컨테이너(리눅스)용 그대로 남는다.
+```
+
+**왜 `/app` 을 덮었는데 그 아래 `node_modules` 는 안 덮이나**
+
+마운트는 폴더를 통째로 소유하는 것이 아니라 **경로 단위 규칙**으로 등록된다. 커널은 경로를 찾을 때 **가장 길게 일치하는 마운트 지점**을 쓴다.
+
+```
+등록된 마운트
+  /app                → 호스트 폴더
+  /app/node_modules   → 볼륨
+
+/app/src/index.js          → /app 이 일치        → 호스트에서 찾음
+/app/node_modules/express  → /app/node_modules 가
+                             더 길게 일치         → 볼륨에서 찾음
+```
+
+`/app` 규칙이 무효화된 것이 아니라, **더 구체적인 경우에만 예외**가 생긴 것이다. Docker는 마운트를 걸기 전에 목적지 경로가 **짧은 것부터 정렬**하므로, compose에 순서를 거꾸로 써도 `/app` → `/app/node_modules` 순으로 처리된다.
+
+Docker만의 기능이 아니라 리눅스 마운트의 기본 동작이다. 서버에서 `/` 아래에 `/home`, `/var` 를 각각 다른 디스크로 마운트하는 것과 같다.
+
+```bash
+mount /dev/sdb1 /media/usb          # USB 전체
+mount /dev/sdc1 /media/usb/photos   # photos 자리만 다른 디스크
+```
+
+**직접 확인**
+
+```bash
+docker run --rm -v $(pwd):/app -v /app/test alpine sh -c \
+  "mkdir -p /app/test && echo hi > /app/test/a.txt && echo hi > /app/b.txt"
+
+ls b.txt      # → 있음.  /app 은 호스트에 연결돼 있으므로
+ls test/      # → 없음.  /app/test 는 볼륨에 연결돼 있으므로
+```
+
+같은 컨테이너에서 쓴 파일인데 한쪽만 호스트에 남는다. 경로에 따라 저장되는 곳이 다르다는 증거다.
 
 **함정 — Compose는 재생성 시 익명 볼륨을 재사용한다**
 
@@ -239,79 +405,32 @@ docker compose up --build -V     # -V = --renew-anon-volumes
 
 ---
 
-## 6. Commands
+## 6. Q & A
 
-```bash
-# 볼륨 관리
-docker volume ls                     # 목록
-docker volume inspect my-data        # 실제 호스트 경로(Mountpoint) 등 확인
-docker volume rm my-data             # 삭제
-docker volume prune                  # 미사용 '익명' 볼륨만 (Docker 23.0+ 기본값)
-docker volume prune -a               # named 포함, 미사용 전부
+{{< rawhtml >}}
+<details style="border:1px solid var(--primary,#888);border-radius:8px;padding:12px 16px;margin:1rem 0;">
+<summary style="cursor:pointer;font-weight:600;color:var(--primary,inherit);">질문 5개 — 클릭해서 펼치기</summary>
+{{< /rawhtml >}}
 
-# 볼륨 내용 들여다보기 (앱 컨테이너 없이)
-docker run --rm -v my-data:/d alpine ls -la /d
-docker run -it --rm -v my-data:/d alpine sh
-
-# 볼륨 백업 / 복원 (tar로 호스트에 꺼내기)
-docker run --rm -v my-data:/d -v $(pwd):/backup alpine \
-  tar czf /backup/my-data.tgz -C /d .
-docker run --rm -v my-data:/d -v $(pwd):/backup alpine \
-  tar xzf /backup/my-data.tgz -C /d
-
-# 컨테이너가 어떤 마운트를 쓰는지 확인
-docker inspect <ctr> --format '{{json .Mounts}}' | jq
-```
-
-**직접 확인해 볼 실험**
-
-```bash
-# 1) 익명 볼륨 + --rm  → 종료 후 volume ls 에 남지 않음
-docker run --rm -v /data alpine sh -c "echo hi > /data/a"
-docker volume ls
-
-# 2) 익명 볼륨, --rm 없이 → rm 해도 볼륨이 남아 있음
-docker run --name t -v /data alpine sh -c "echo hi > /data/a"
-docker rm t
-docker volume ls          # 해시 이름 볼륨 잔류 확인
-
-# 3) Named Volume 초기 복사 확인
-docker run --rm -v nginx-html:/usr/share/nginx/html nginx:alpine ls /usr/share/nginx/html
-#  → index.html 등 이미지 기본 파일이 볼륨으로 복사돼 있음
-
-# 4) Bind Mount 덮어쓰기 확인
-mkdir empty && docker run --rm -v $(pwd)/empty:/usr/share/nginx/html nginx:alpine ls /usr/share/nginx/html
-#  → 비어 있음 (이미지 파일이 가려짐)
-
-# 뒷정리
-docker volume rm nginx-html   # 실험 3: --rm 을 붙였어도 named 볼륨은 남는다
-docker volume prune           # 실험 2가 남긴 익명 볼륨 정리
-rmdir empty
-```
-
----
-
-## 7. Q & A
-
-### 7.1 `-v`와 `--mount`는 뭐가 다른가?
+### 6.1 `-v`와 `--mount`는 뭐가 다른가?
 
 기능은 같다. `-v`는 짧고 `호스트:컨테이너:옵션` 순서 규칙을 외워야 하며, 호스트 경로가 없으면 **자동 생성**해 버린다. `--mount`는 `type=bind,source=...,target=...` 으로 명시적이고, Bind Mount 시 소스 경로가 없으면 **에러**를 낸다. 실수 방지 측면에서 `--mount`가 안전하다.[^docs-bind-syntax]
 
-### 7.2 Compose에서 `./data:/x` 와 `data:/x` 차이는?
+### 6.2 Compose에서 `./data:/x` 와 `data:/x` 차이는?
 
 앞에 `./`, `/`, `~`가 붙으면 Bind Mount, 이름만 있으면 Named Volume이다.[^devto] Named Volume은 최상위 `volumes:` 키에 선언해야 하며, 실제 볼륨 이름은 `{프로젝트명}_{볼륨명}` 으로 만들어진다.[^docs-compose] 단 `name:` 을 직접 지정하거나 `external: true` 로 기존 볼륨을 참조하면 프로젝트명 접두어가 붙지 않는다.[^compose-vol-name]
 
-### 7.3 Named Volume은 이미 데이터가 있어도 복사하나?
+### 6.3 Named Volume은 이미 데이터가 있어도 복사하나?
 
 아니다. **볼륨이 비어 있을 때만** 첫 마운트 시 복사한다.[^docs-vol-over][^nerlich-init] 이미 데이터가 있는 볼륨을 새 이미지 버전에 마운트하면 이미지의 새 기본 파일은 반영되지 않는다.
 
 혼동하기 쉬운데, **DB 초기화 스크립트가 두 번째 실행부터 안 도는 것은 이 복사 규칙 때문이 아니다.** `postgres` 이미지는 "데이터 디렉터리가 비어 있을 때만" `/docker-entrypoint-initdb.d` 를 실행한다 — 원문: *"scripts in `/docker-entrypoint-initdb.d` are only run if you start the container with a data directory that is empty"*. 볼륨 복사가 아니라 **entrypoint의 판단**이다.[^pg-init]
 
-### 7.4 볼륨 데이터는 어디에 실제로 있나?
+### 6.4 볼륨 데이터는 어디에 실제로 있나?
 
 Linux는 `docker volume inspect` 의 `Mountpoint`(보통 `/var/lib/docker/volumes/<name>/_data`). Mac/Windows Docker Desktop은 Linux VM 안에 있어서 호스트에서 직접 경로로 접근할 수 없다. 내용을 보려면 유틸리티 컨테이너에 마운트해서 본다.
 
-### 7.5 운영 환경에서 Bind Mount를 쓰면 안 되나?
+### 6.5 운영 환경에서 Bind Mount를 쓰면 안 되나?
 
 금지는 아니다. 호스트가 직접 읽고 써야 하는 파일(설정 주입, 로그 수집, 결과물 export)에는 의도적으로 쓴다. 다만 DB 같은 장기 데이터는 호스트 경로 의존·권한 문제·백업 설계 때문에 Named Volume이 기본값이다.[^datacamp-faq]
 
@@ -321,9 +440,13 @@ Linux는 `docker volume inspect` 의 `Mountpoint`(보통 `/var/lib/docker/volume
 
 마운트 시 "덮느냐, 복사해 오느냐"와 삭제 시 "남느냐, 같이 지워지느냐" 두 축만 잡으면 세 방식이 구분된다.
 
+{{< rawhtml >}}
+</details>
+{{< /rawhtml >}}
+
 ---
 
-## 8. References
+## 7. References
 
 각주 번호에 마우스를 올리면 아래 내용이 그대로 뜬다. 각 항목은 **문서 → 섹션 → 내용 → 링크** 순으로 적었고, 링크는 그 섹션으로 바로 이동한다.
 
