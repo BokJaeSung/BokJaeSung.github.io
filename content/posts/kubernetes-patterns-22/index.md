@@ -196,6 +196,35 @@ COPY in /in                   # ② 개발자 PC의 in/ 폴더(템플릿)를 이
 
 이 규약 덕에 베이스는 재사용된다. WildFly든 Nginx든 **템플릿만 갈아 끼우면(COPY 한 줄)** 어떤 앱의 설정 생성기로든 변신한다.
 
+**빌드 전후로 폴더가 어떻게 바뀌는지** 눈으로 따라가 보자.
+
+```
+① 개발자 PC — 이미지 빌드하는 곳 💻
+
+📁 작업 폴더/ (docker build 실행하는 곳)
+├── Dockerfile                    ← "FROM gomplate / COPY in /in" 2줄
+└── in/                           ← 템플릿 보관 폴더 (COPY의 왼쪽 "in")
+    └── standalone.xml            ← 빈칸 뚫린 템플릿 (원본!)
+                                     ...공통 설정 수백 줄...
+                                     pattern="{{(datasource "config").logFormat}}"
+
+        │  docker build
+        ▼
+
+② init container 이미지 안 — 빌드 결과물 📦
+
+📦 k8spatterns/example-config-cm-template-init 이미지
+├── (Gomplate 실행 파일)          ← FROM 베이스에서 물려받음
+├── (엔트리포인트 스크립트)        ← FROM 베이스에서 물려받음
+├── in/                           ← COPY in /in 으로 복사됨 ✅
+│   └── standalone.xml            ← ①의 템플릿이 여기 박제
+├── params/                       ← 텅 빔! (실행 때 마운트로 채워질 자리)
+└── out/                          ← 텅 빔! (실행 때 마운트로 채워질 자리)
+```
+
+`/params`와 `/out`이 **텅 빈 채로 출하된다**는 것이 이 이미지의 핵심이다. 재료(템플릿)만 굽고 주문서와 완성품 자리는 비워두었기에, 같은 이미지가 개발에도 운영에도 쓰인다.
+
+
 ### 3.5 ConfigMap — 환경마다 같은 이름, 다른 값
 
 두 번째 재료. 환경마다 달라지는 그 값의 실물이다.
@@ -230,6 +259,26 @@ kubectl create configmap wildfly-cm \
 ```
 
 Pod는 `wildfly-cm`이라는 **이름으로만** 참조하므로, 어느 클러스터에 배포되느냐에 따라 그 장소의 값이 자동으로 쓰인다. 체인 호텔의 공통 안내문 양식과 지점별 금고 — 양식은 하나, 어느 지점에서 인쇄하느냐로 내용이 정해진다.
+
+그러면 실행 시점에 **비어 있던 두 자리가 채워진다.** Init 컨테이너 안에서 본 모습이다.
+
+```
+④ Pod 실행 중 — init container 안에서 보이는 구조 (Gomplate 작업 중) 🚀
+
+🔧 init container
+├── /in/                              [출처: 이미지 내장 (COPY)]
+│   └── standalone.xml                ← 템플릿 (빈칸 있음), 읽기용
+│
+├── /params/                          [출처: ConfigMap 볼륨 마운트] ★③이 파일로 변신!
+│   └── config.yml                    ← 내용: logFormat: "DEVELOPMENT: ..."
+│
+└── /out/                             [출처: emptyDir 마운트]
+    └── standalone.xml                ← Gomplate가 생성한 완성본 (빈칸 채워짐!)
+                                         pattern="DEVELOPMENT: %-5p %s%e%n"
+```
+
+②에서 텅 비어 있던 `/params`와 `/out`이 마운트로 채워진 것이 보인다. 이미지는 그대로인데 **바깥에서 꽂아준 것만으로** 개발용 완성본이 나왔다. 운영 클러스터라면 `/params/config.yml`의 내용만 `PRODUCTION:`으로 바뀌고 나머지는 전부 동일하다.
+
 
 ### 3.6 Deployment 명세 — 볼륨 둘, 문패 셋
 
