@@ -55,15 +55,14 @@ Process Containment 패턴의 핵심
                         │  언젠가 뚫림 (제로데이, 새 코드)
                         ▼
   2차 방어: Process Containment  ← 이 장
-  ┌─ 개발자의 도구: securityContext ──────────────────────┐
-  │  runAsNonRoot · allowPrivilegeEscalation: false       │
-  │  capabilities drop ALL · readOnlyRootFilesystem       │
-  │  seccompProfile · seLinuxOptions                      │
-  └───────────────────────────────────────────────────────┘
-  ┌─ 관리자의 도구: 정책 ─────────────────────────────────┐
-  │  PSS 3등급 (Privileged/Baseline/Restricted)           │
-  │  + PSA (warn / audit / enforce)                       │
-  └───────────────────────────────────────────────────────┘
+  ├─ 개발자의 도구: securityContext
+  │    runAsNonRoot · allowPrivilegeEscalation: false
+  │    capabilities drop ALL · readOnlyRootFilesystem
+  │    seccompProfile · seLinuxOptions
+  │
+  └─ 관리자의 도구: 정책
+       PSS 3등급 (Privileged / Baseline / Restricted)
+       + PSA (warn / audit / enforce)
                         ▼
   "What happens in a container stays in a container" 🔒
 ```
