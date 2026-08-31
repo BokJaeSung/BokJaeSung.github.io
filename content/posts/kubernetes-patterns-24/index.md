@@ -680,7 +680,7 @@ spec: {}       # selector 없음(모든 파드) + action 기본 ALLOW + rules �
 
 ## 5. Discussion
 
-### 5.1 RBAC vs — 쿠버네티스 조작 권한 vs 앱끼리 통신 권한
+### 5.1 RBAC과 헷갈리지 말 것 — 쿠버네티스 조작 권한 vs 앱끼리 통신 권한
 
 쿠버네티스에서 "authorization"이 두 군데서 나오는데 완전히 다른 것이다. 같은 클러스터의 두 상황으로 보자.
 

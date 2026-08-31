@@ -21,22 +21,23 @@ summary: "검사는 언젠가 뚫린다고 가정하고, securityContext 7종 �
     <div><a href="#21-검사는-사진일-뿐--위험-0는-없다" style="color:var(--secondary,inherit);text-decoration:none;">2.1 검사는 사진일 뿐 — 위험 0%는 없다</a></div>
     <div><a href="#22-진짜-무서운-것은-탈출--컨테이너에서-클러스터로" style="color:var(--secondary,inherit);text-decoration:none;">2.2 진짜 무서운 것은 탈출 — 컨테이너에서 클러스터로</a></div>
   </div>
-  <div><a href="#3-solution" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. Solution</a></div>
+  <div><a href="#3-securitycontext--개발자가-세우는-울타리" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">3. securityContext — 개발자가 세우는 울타리</a></div>
   <div style="padding-left:20px;font-size:15px;">
     <div><a href="#31-securitycontext--두-레벨과-우선순위" style="color:var(--secondary,inherit);text-decoration:none;">3.1 securityContext — 두 레벨과 우선순위</a></div>
-    <div><a href="#32-root-금지--runasuser-runasnonroot-그리고-init-컨테이너-트릭" style="color:var(--secondary,inherit);text-decoration:none;">3.2 root 금지 — runAsUser, runAsNonRoot, 그리고 Init 컨테이너 트릭</a></div>
+    <div><a href="#32-root-금지--runasuser-runasnonroot-그리고-init-컨테이너-트릭" style="color:var(--secondary,inherit);text-decoration:none;">3.2 root 금지 — runAsUser, runAsNonRoot, Init 컨테이너 트릭</a></div>
     <div><a href="#33-승급-차단--allowprivilegeescalation-false" style="color:var(--secondary,inherit);text-decoration:none;">3.3 승급 차단 — allowPrivilegeEscalation: false</a></div>
     <div><a href="#34-privileged라는-빨간-버튼과-capability라는-열쇠-꾸러미" style="color:var(--secondary,inherit);text-decoration:none;">3.4 privileged라는 빨간 버튼과 capability라는 열쇠 꾸러미</a></div>
     <div><a href="#35-drop-all--add--열쇠는-전부-회수-후-선별-지급" style="color:var(--secondary,inherit);text-decoration:none;">3.5 drop ALL + add — 열쇠는 전부 회수 후 선별 지급</a></div>
     <div><a href="#36-읽기-전용-파일시스템--불변-인프라의-자물쇠" style="color:var(--secondary,inherit);text-decoration:none;">3.6 읽기 전용 파일시스템 — 불변 인프라의 자물쇠</a></div>
     <div><a href="#37-seccomp과-selinux--커널-차원의-마지막-두-필터" style="color:var(--secondary,inherit);text-decoration:none;">3.7 seccomp과 SELinux — 커널 차원의 마지막 두 필터</a></div>
-    <div><a href="#38-pss와-psa--개인의-성실함에서-시스템의-강제로" style="color:var(--secondary,inherit);text-decoration:none;">3.8 PSS와 PSA — 개인의 성실함에서 시스템의 강제로</a></div>
   </div>
-  <div><a href="#4-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. Discussion</a></div>
+  <div><a href="#4-pss와-psa--개인의-성실함에서-시스템의-강제로" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. PSS와 PSA — 개인의 성실함에서 시스템의 강제로</a></div>
+  <div><a href="#5-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Discussion</a></div>
   <div style="padding-left:20px;font-size:15px;">
-    <div><a href="#41-컨테이너는-울타리다--단-제대로-설정했을-때만" style="color:var(--secondary,inherit);text-decoration:none;">4.1 컨테이너는 울타리다 — 단, 제대로 설정했을 때만</a></div>
-    <div><a href="#42-shift-left--보안을-왼쪽으로" style="color:var(--secondary,inherit);text-decoration:none;">4.2 Shift Left — 보안을 왼쪽으로</a></div>
+    <div><a href="#51-컨테이너는-울타리다--단-제대로-설정했을-때만" style="color:var(--secondary,inherit);text-decoration:none;">5.1 컨테이너는 울타리다 — 단, 제대로 설정했을 때만</a></div>
+    <div><a href="#52-shift-left--보안을-왼쪽으로" style="color:var(--secondary,inherit);text-decoration:none;">5.2 Shift Left — 보안을 왼쪽으로</a></div>
   </div>
+  <div><a href="#6-references" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">6. References</a></div>
 </div>
 </div>
 {{< /rawhtml >}}
@@ -103,7 +104,7 @@ Process Containment 패턴의 핵심
 
 ---
 
-## 3. Solution
+## 3. securityContext — 개발자가 세우는 울타리
 
 ### 3.1 securityContext — 두 레벨과 우선순위
 
@@ -120,7 +121,7 @@ Pod 레벨      spec.securityContext              → 볼륨 + 모든 컨테이�
 
 참고로 "컨테이너의 권한"이라는 표현은 줄임말이다. 커널의 세계에는 컨테이너라는 단위가 없고 프로세스만 있어서, securityContext로 적는 모든 것 — UID, capability, seccomp 필터, SELinux 라벨 — 은 최종적으로 **컨테이너 안에서 도는 프로세스에** 붙는다. 패턴 이름이 Container가 아니라 **Process** Containment인 이유이며, 이 관점은 3.4에서 자세히 편다.
 
-한 가지 원칙을 미리 깔아둔다 — 일반 앱 개발자가 이 세세한 설정을 전부 손으로 만질 필요는 **없어야 정상**이다. 그런 건 전역 정책으로 검증·강제되는 게 맞고(3.8에서 회수된다), 세밀한 튜닝이 진짜 필요한 건 빌드 시스템이나 노드 접근이 필요한 특수 인프라 컨테이너뿐이다. 이 장은 평범한 클라우드 네이티브 앱에 유용한 공통 설정만 본다.
+한 가지 원칙을 미리 깔아둔다 — 일반 앱 개발자가 이 세세한 설정을 전부 손으로 만질 필요는 **없어야 정상**이다. 그런 건 전역 정책으로 검증·강제되는 게 맞고(4장에서 회수된다), 세밀한 튜닝이 진짜 필요한 건 빌드 시스템이나 노드 접근이 필요한 특수 인프라 컨테이너뿐이다. 이 장은 평범한 클라우드 네이티브 앱에 유용한 공통 설정만 본다.
 
 ### 3.2 root 금지 — runAsUser, runAsNonRoot, 그리고 Init 컨테이너 트릭
 
@@ -393,7 +394,9 @@ securityContext:
 ⑦ seLinuxOptions          이미지 밖 파일 접근    ❌
 ```
 
-### 3.8 PSS와 PSA — 개인의 성실함에서 시스템의 강제로
+---
+
+## 4. PSS와 PSA — 개인의 성실함에서 시스템의 강제로
 
 문제가 하나 남았다. 이 7종 세트를 회사의 수백 개 Pod YAML마다(그것도 Deployment 템플릿 속 깊숙이) 사람이 손으로 넣으면 **반드시 빠뜨린다**. 게다가 넣는 사람은 워크로드 작성자(앱 개발자)인데, 개발자는 조직의 보안 전문가가 아니다. 보안은 가장 약한 고리만큼만 강하다 — 100개 중 99개를 완벽히 잠가도 뚫린 1개로 들어온다. 소방 규정을 입주민 각자에게 맡기는 대신 **건축법 + 소방 점검으로 강제**하듯, 클러스터 차원의 정책이 필요하다.
 
@@ -471,8 +474,12 @@ metadata:
 ③ 수정 완료 확인
 ④ enforce 전환 → 안전하게 강제 🔒
    (PSA는 "생성 시점"에만 검사한다. 그래서 enforce를 켜도 이미 도는 Pod은 멀쩡히
-    계속 돈다 — 문제없어 보인다. 그러다 노드 장애나 스케일아웃으로 Pod이 다시
-    만들어지는 순간 거부되어 그때서야 터진다. 순서를 안 지키면 새벽 장애가 되는 이유다)
+    계속 돈다 — 문제없어 보인다. 그러다 롤아웃·스케일아웃·축출·노드 장애로 Pod이
+    다시 만들어지는 순간 거부되어 그때서야 터진다. 순서를 안 지키면 새벽 장애다)
+⑤ rollout restart → 기존 위반 Pod를 내 손으로 교체 (숨은 마지막 단계)
+   (④까지 해도 이미 도는 미달 Pod는 그대로다. 정책과 현실이 어긋난 구간이
+    남아 있는 것. 어차피 언젠가 재생성될 거라면 새벽 3시가 아니라 업무 시간에
+    직접 눌러서 확인하는 편이 낫다)
 ```
 
 오해하기 쉬운 지점 — 이 순서는 위 사고 시나리오와 모순이 아니다. 새벽 장애의 범인은 enforce 자체가 아니라 **"미달 Pod가 살아 있는 상태에서" enforce를 켠 것**이고, ①~③은 enforce를 피하는 과정이 아니라 **enforce를 켜도 걸릴 Pod가 0개인 상태를 만드는** 과정이다. 어차피 단속 카메라는 켤 건데, 다들 속도를 줄인 뒤에 켜면 딱지가 0장인 것뿐이다.
@@ -480,10 +487,12 @@ metadata:
 그런데 의문이 하나 남는다 — "생성 시점만 검사한다면, audit/warn은 **이미 도는** 위반자를 어떻게 아는가?" 경로가 둘 있다.
 
 ```
-① 라벨을 붙이는/바꾸는 "그 순간" — PSA가 기존 Pod를 1회 전수 스캔해
+① enforce 라벨을 붙이는/바꾸는 "그 순간" — PSA가 기존 Pod를 1회 전수 스캔해
    결과를 경고로 뱉는다 (거부·퇴출은 없음. "existing pods ... violate ..." 식)
+   ※ 이 스캔은 enforce 라벨에만 걸린다. audit/warn 라벨을 붙이는 것만으로는
+     기존 Pod를 훑지 않는다 — 즉 ①은 ②의 병렬 경로가 아니라 지름길이다
 ② 이후 몇 주간 — 배포·오토스케일·노드 교체로 Pod들이 자연히 재생성되며
-   검문소를 지나가고, 그때마다 audit/warn 기록이 쌓여 명단이 완성된다
+   검문소를 지나가고, 그때마다 audit 기록이 쌓여 명단이 완성된다
    (컨테이너 "재시작"은 검사 없음, Pod "재생성"은 검사 발동 — 이 구분이 중요)
 ```
 
@@ -496,30 +505,37 @@ kubectl label --dry-run=server --overwrite ns my-ns \
 #    경고 0건 확인 후 진짜로 전환하면 무사고 ✅
 ```
 
-### 레퍼런스
+정확히 말하면 검문소를 지나는 것은 **Pod가 아니라 Pod의 설계도**다. 돌고 있는 Pod가 검문소로 걸어갈 리는 없다. 지나가는 것은 "이런 스펙으로 Pod 하나 만들어 달라"는 **요청서**이고, 그것이 통과해야 비로소 etcd에 Pod 객체가 생기고 kubelet이 컨테이너를 띄운다. 한 번 태어난 Pod는 죽을 때까지 검문소 근처에 다시 오지 않는다. Pod가 죽어서 새 Pod가 뜨는 것도 그 Pod의 부활이 아니라, 컨트롤러가 "개수가 안 맞네" 하고 **새 요청서를 쓴 것**이다. 컨테이너 재시작이 검사에서 빠지는 이유도 같다 — Pod 객체가 그대로 살아 있으니 아무도 요청서를 쓸 일이 없고, 노드 안에서 조용히 처리되고 끝난다.
 
-{{< rawhtml >}}
-<div style="border-left:2px solid var(--secondary,#888);padding:2px 16px;margin:0.6rem 0 1.2rem;font-size:15px;line-height:1.75;opacity:0.92;">
-  <div>Restricted 프로파일의 성격은 Kubernetes 공식 문서 <strong>"Pod Security Standards"</strong>에 명시되어 있다.</div>
-  <blockquote style="margin:10px 0;padding-left:12px;border-left:2px solid var(--secondary,#888);font-style:italic;">
-    "Heavily restricted policy, following current Pod hardening best practices."
-  </blockquote>
-  <div>[해석] "현재의 Pod 하드닝 모범 사례를 따르는, 강하게 제한된 정책." — 3.8에서 본 "Restricted = 이 장 모범 답안의 강제판"이 이것이다. 같은 문서는 세 프로파일(Privileged/Baseline/Restricted)의 각 항목별 허용·금지 목록을 표로 제공한다.</div>
-  <div style="margin-top:10px;">PodSecurityPolicy는 v1.21에서 사용 중단(deprecated) 선언 후 <strong>v1.25에서 완전히 제거</strong>되었으며, 공식 후계 체제가 PSS + PSA(admission controller)임이 공식 블로그와 문서에 안내되어 있다.</div>
-  <div style="margin-top:10px;">seccomp이 프로세스의 시스템 콜을 제한하는 리눅스 커널 기능이라는 정의와 <code>RuntimeDefault</code> 프로파일 사용법은 공식 튜토리얼 "Restrict a Container's Syscalls with seccomp"에서 확인할 수 있다 — 3.7의 근거다.</div>
-  <div style="margin-top:10px;">Pod Security Admission 문서는 네임스페이스 라벨의 형식(<code>pod-security.kubernetes.io/&lt;MODE&gt;</code>, <code>&lt;MODE&gt;-version</code>)과 세 모드(enforce/audit/warn)의 동작, 그리고 네임스페이스 라벨 변경 시 기존 Pod에 대한 경고 동작을 설명한다 — 3.8의 "라벨 = 설정 메모"와 "1회 전수 스캔"의 근거다.</div>
-  <div style="margin-top:10px;">→ <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/">kubernetes.io — Pod Security Standards</a></div>
-  <div>→ <a href="https://kubernetes.io/docs/concepts/security/pod-security-admission/">kubernetes.io — Pod Security Admission</a></div>
-  <div>→ <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">kubernetes.io — Configure a Security Context</a></div>
-  <div>→ <a href="https://kubernetes.io/docs/tutorials/security/seccomp/">kubernetes.io — Restrict a Container's Syscalls with seccomp</a></div>
-</div>
-{{< /rawhtml >}}
+**명부를 쓰는 것은 PSA가 아니다.** PSA는 "이 요청 위반임"이라는 주석(`pod-security.kubernetes.io/audit-violations`)을 감사 이벤트에 **붙이기만** 한다. 그 이벤트를 실제로 기록하는 것은 API 서버의 **감사(audit) 서브시스템**이고, 파일에 쓸지 웹훅으로 보낼지는 감사 백엔드가 정한다. 둘 다 `kube-apiserver` 안에 있지만 부서가 다르다 — **장부가 없으면 딱지는 그냥 사라진다.** `--audit-policy-file`/`--audit-log-path`가 설정돼 있지 않으면(kubeadm 기본값은 꺼져 있다) audit 모드는 성실히 도장을 찍는데 아무 데도 안 남는다. 관리형 클러스터라면 EKS는 컨트롤 플레인 로깅의 `audit`, GKE는 Cloud Logging, AKS는 `kube-audit` 진단 설정을 켜야 보인다. "audit 라벨만 붙이면 알아서 쌓이겠지"가 안 통하는 이유다.
+
+세 모드의 출력처가 다르다는 점도 여기서 갈린다.
+
+```
+enforce → API 응답으로 거부 (그 자리에서 끝)
+audit   → 감사 로그에 기록      ← 명부는 오직 여기서 쌓인다
+warn    → 요청한 클라이언트에게 경고 1회. 저장 안 됨
+```
+
+그래서 ②의 몇 주간 명부를 만드는 것은 실질적으로 **`audit` 하나**다. Pod를 만드는 주체는 사람이 아니라 ReplicaSet 컨트롤러이므로, 그때의 `warn`은 컨트롤러에게 날아가고 아무도 보지 못한다. 쿠버네티스가 **warn/audit을 워크로드 리소스(Deployment 등)에도 적용**하는 이유가 이것이다 — `kubectl apply` 하는 **사람**의 화면에 띄우려는 것이다. 반대로 `enforce`는 워크로드 리소스에 적용되지 않고 결과물인 Pod에만 걸린다. 그래서 미달 Deployment는 `apply`가 성공하고, 정작 Pod만 안 뜬다. `kubectl get deploy`는 멀쩡한데 `get pod`가 비어 있는, 원인 찾기 성가신 형태다(범인은 `kubectl describe rs`의 `FailedCreate`에 있다).
+
+한 가지 더 — **enforce를 켠 뒤에도 명부는 계속 쌓인다.** 위의 이중 잣대(`enforce: baseline` + `audit/warn: restricted`)를 쓰면, restricted 기준으로는 위반이지만 baseline은 통과하는 Pod가 정상적으로 뜨면서 동시에 기록된다. **막는 선과 재는 선을 다르게 두는 것**이고, 이것이 다음 등급으로 올라가기 위한 승급 심사 자료가 된다.
+
+```
+1단계  enforce: 없음      audit/warn: baseline     ← baseline 위반자 파악
+2단계  enforce: baseline  audit/warn: restricted   ← baseline 강제 + restricted 조사
+3단계  enforce: restricted                          ← 최종
+```
+
+마지막으로, **PSA는 고쳐주지 않는다.** 공식 문서의 표현 그대로 "non-mutating admission controller"이며, 미달 Pod에 `runAsNonRoot: true`를 대신 채워 넣는 일 따위는 하지 않는다. 전임자 PSP는 `defaultAllowPrivilegeEscalation`·`defaultAddCapabilities` 같은 필드로 **기본값을 주입해 통과시켰지만**, PSA는 그 기능을 의도적으로 버렸다. 몰래 고쳐주면 매니페스트와 실제 Pod가 달라지고, 다른 클러스터로 옮겼을 때 동작이 달라지기 때문이다. PSA는 "YAML에 적힌 게 전부"를 지킨다.
+
+그 대가는 안 고치면 **아무도 낫게 해주지 않는다**는 것이다. 컨트롤러는 백오프를 두고 무한히 재시도하고, 타임아웃도 자동 롤백도 없다. 다만 피해 양상은 상황마다 다르다 — 롤아웃 중이라면 새 ReplicaSet이 0개에서 멈출 뿐 **기존 Pod는 살아 있어** 서비스는 유지된다(그래서 ⑤를 업무 시간에 직접 하는 게 안전하다). 반면 노드 장애나 축출로 Pod가 죽는 상황에서는 죽은 만큼 채워지지 않아 replica가 **10 → 9 → 8로 서서히 침식**된다. 한 번에 터지지 않아 알람도 늦고, 이것이 "새벽 장애"의 실제 모습이다. 급하면 `enforce`를 한 등급 낮추거나 라벨을 떼서 일단 열고, 고친 뒤 다시 켜는 것이 순서다. 자동으로 값을 채워 넣고 싶다면 그것은 PSA의 일이 아니라 Kyverno·Gatekeeper 같은 **mutating 웹훅**의 몫이다(어드미션은 mutating을 먼저, validating을 나중에 돌리므로 그 조합이 성립한다).
 
 ---
 
-## 4. Discussion
+## 5. Discussion
 
-### 4.1 컨테이너는 울타리다 — 단, 제대로 설정했을 때만
+### 5.1 컨테이너는 울타리다 — 단, 제대로 설정했을 때만
 
 현실의 골칫거리는 **레거시 앱**이다. 쿠버네티스 보안 통제를 염두에 두지 않고 만들어진 앱 — root로만 돌고, 자기 디렉터리에 파일을 쓰고, 80번 포트를 하드코딩한 — 을 컨테이너에 욱여넣으면, 보안 정책이 엄격한 배포판/환경(OpenShift 등)에서는 배포 자체가 줄줄이 거부된다. 이 장의 지식이 필요한 이유가 그것이다 — 뭐가 왜 막히는지 알아야 앱을 고치든(비특권 포트로 변경, 파일 쓰기 제거) 정책 예외를 신청하든 제대로 판단할 수 있다.
 
@@ -546,7 +562,7 @@ VM                완전 별도 커널. 전통적 최강 격리
 
 강해질수록 속도·밀도를 내주므로(VM을 버리고 컨테이너로 온 이유가 다시 청구된다), **돌리는 코드의 신뢰도에 따라 층을 고르는** 것이다.
 
-### 4.2 Shift Left — 보안을 왼쪽으로
+### 5.2 Shift Left — 보안을 왼쪽으로
 
 마지막은 문화 이야기다. 개발 과정을 시간 축으로 그리면:
 
@@ -598,3 +614,29 @@ root      → runAsNonRoot로 거부 + allowPrivilegeEscalation:false로 승급 
 > 위험한 시스템 콜은 차단되고, 자기 이미지 밖은 쳐다보지도 못하게 —
 > 최소 권한의 말뚝 일곱 개를 겹쳐 세운 뒤, 그 울타리를 PSS/PSA 정책으로 클러스터 전체에 강제하라.
 > 그러면 보안 침해를 포함해, **컨테이너 안에서 일어난 일은 컨테이너 안에 머문다.**
+
+---
+
+## 6. References
+
+{{< rawhtml >}}
+<div style="border-left:2px solid var(--secondary,#888);padding:2px 16px;margin:0.6rem 0 1.2rem;font-size:15px;line-height:1.75;opacity:0.92;">
+  <div>Restricted 프로파일의 성격은 Kubernetes 공식 문서 <strong>"Pod Security Standards"</strong>에 명시되어 있다.</div>
+  <blockquote style="margin:10px 0;padding-left:12px;border-left:2px solid var(--secondary,#888);font-style:italic;">
+    "Heavily restricted policy, following current Pod hardening best practices."
+  </blockquote>
+  <div>[해석] "현재의 Pod 하드닝 모범 사례를 따르는, 강하게 제한된 정책." — 4장에서 본 "Restricted = 이 장 모범 답안의 강제판"이 이것이다. 같은 문서는 세 프로파일(Privileged/Baseline/Restricted)의 각 항목별 허용·금지 목록을 표로 제공한다.</div>
+  <div style="margin-top:10px;">PodSecurityPolicy는 v1.21에서 사용 중단(deprecated) 선언 후 <strong>v1.25에서 완전히 제거</strong>되었으며, 공식 후계 체제가 PSS + PSA(admission controller)임이 공식 블로그와 문서에 안내되어 있다.</div>
+  <div style="margin-top:10px;">seccomp이 프로세스의 시스템 콜을 제한하는 리눅스 커널 기능이라는 정의와 <code>RuntimeDefault</code> 프로파일 사용법은 공식 튜토리얼 "Restrict a Container's Syscalls with seccomp"에서 확인할 수 있다 — 3.7의 근거다.</div>
+  <div style="margin-top:10px;">세 모드의 출력처(<code>enforce</code>=거부, <code>audit</code>="the addition of an audit annotation to the event recorded in the audit log", <code>warn</code>="a user-facing warning"), <code>enforce</code>가 워크로드 리소스에는 적용되지 않는다는 점("enforce mode is not applied to workload resources, only to the resulting pod objects"), 그리고 <code>enforce</code> 라벨 추가/변경 시 기존 Pod를 전수 검사해 경고로 돌려준다는 동작("the admission plugin will test each pod in the namespace against the new policy")이 각각 공식 문서에 명시되어 있다. PSA가 <strong>non-mutating</strong>이라는 점과 PSP의 기본값 주입 기능이 사라졌다는 점은 마이그레이션 문서에 있다 — "Pod Security Admission is a non-mutating admission controller, meaning it won't modify pods before validating them."</div>
+  <div style="margin-top:10px;">→ <a href="https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-namespace-labels/">kubernetes.io — Enforce Pod Security Standards with Namespace Labels</a></div>
+  <div>→ <a href="https://kubernetes.io/docs/tasks/configure-pod-container/migrate-from-psp/">kubernetes.io — Migrate from PodSecurityPolicy to PodSecurity Admission</a></div>
+  <div style="margin-top:10px;">Pod Security Admission 문서는 네임스페이스 라벨의 형식(<code>pod-security.kubernetes.io/&lt;MODE&gt;</code>, <code>&lt;MODE&gt;-version</code>)과 세 모드(enforce/audit/warn)의 동작, 그리고 네임스페이스 라벨 변경 시 기존 Pod에 대한 경고 동작을 설명한다 — 4장의 "라벨 = 설정 메모"와 "1회 전수 스캔"의 근거다.</div>
+  <div style="margin-top:10px;">→ <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/">kubernetes.io — Pod Security Standards</a></div>
+  <div>→ <a href="https://kubernetes.io/docs/concepts/security/pod-security-admission/">kubernetes.io — Pod Security Admission</a></div>
+  <div>→ <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">kubernetes.io — Configure a Security Context</a></div>
+  <div>→ <a href="https://kubernetes.io/docs/tutorials/security/seccomp/">kubernetes.io — Restrict a Container's Syscalls with seccomp</a></div>
+</div>
+{{< /rawhtml >}}
+
+---
