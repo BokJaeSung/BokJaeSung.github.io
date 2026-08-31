@@ -32,6 +32,13 @@ summary: "검사는 언젠가 뚫린다고 가정하고, securityContext 7종 �
     <div><a href="#37-seccomp과-selinux--커널-차원의-마지막-두-필터" style="color:var(--secondary,inherit);text-decoration:none;">3.7 seccomp과 SELinux — 커널 차원의 마지막 두 필터</a></div>
   </div>
   <div><a href="#4-pss와-psa--개인의-성실함에서-시스템의-강제로" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. PSS와 PSA — 개인의 성실함에서 시스템의 강제로</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#41-pss와-psa--기준집과-점검관" style="color:var(--secondary,inherit);text-decoration:none;">4.1 PSS와 PSA — 기준집과 점검관</a></div>
+    <div><a href="#42-psa의-적용--네임스페이스-라벨로-거는-정책" style="color:var(--secondary,inherit);text-decoration:none;">4.2 PSA의 적용 — 네임스페이스 라벨로 거는 정책</a></div>
+    <div><a href="#43-도입-순서--기록-먼저-강제는-나중에" style="color:var(--secondary,inherit);text-decoration:none;">4.3 도입 순서 — 기록 먼저, 강제는 나중에</a></div>
+    <div><a href="#44-명부는-누가-쓰는가--세-모드의-출력처" style="color:var(--secondary,inherit);text-decoration:none;">4.4 명부는 누가 쓰는가 — 세 모드의 출력처</a></div>
+    <div><a href="#45-psa는-고쳐주지-않는다--non-mutating이라는-선택" style="color:var(--secondary,inherit);text-decoration:none;">4.5 PSA는 고쳐주지 않는다 — non-mutating이라는 선택</a></div>
+  </div>
   <div><a href="#5-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Discussion</a></div>
   <div style="padding-left:20px;font-size:15px;">
     <div><a href="#51-컨테이너는-울타리다--단-제대로-설정했을-때만" style="color:var(--secondary,inherit);text-decoration:none;">5.1 컨테이너는 울타리다 — 단, 제대로 설정했을 때만</a></div>
@@ -398,6 +405,8 @@ securityContext:
 
 ## 4. PSS와 PSA — 개인의 성실함에서 시스템의 강제로
 
+### 4.1 PSS와 PSA — 기준집과 점검관
+
 문제가 하나 남았다. 이 7종 세트를 회사의 수백 개 Pod YAML마다(그것도 Deployment 템플릿 속 깊숙이) 사람이 손으로 넣으면 **반드시 빠뜨린다**. 게다가 넣는 사람은 워크로드 작성자(앱 개발자)인데, 개발자는 조직의 보안 전문가가 아니다. 보안은 가장 약한 고리만큼만 강하다 — 100개 중 99개를 완벽히 잠가도 뚫린 1개로 들어온다. 소방 규정을 입주민 각자에게 맡기는 대신 **건축법 + 소방 점검으로 강제**하듯, 클러스터 차원의 정책이 필요하다.
 
 그 답이 **Pod Security Standards(PSS)** + **Pod Security Admission(PSA)**이다. (구버전의 PodSecurityPolicy는 **v1.25에서 제거**되고 이 체제로 대체됐다.)
@@ -433,6 +442,8 @@ Restricted  = Baseline 전부  +  추가 규칙   ← 포함 관계
 
 공항으로 치면 Privileged = 정비사 출입증(활주로까지 통행), Baseline = 일반 승객 검색대(흉기만 걸러냄), Restricted = 국빈 행사장 검문이다. 그리고 눈여겨볼 것 — Restricted가 요구하는 필드(`allowPrivilegeEscalation`, `runAsNonRoot`, `runAsUser`...)는 **전부 이 장 앞에서 배운 설정들**이다. 즉 Restricted = 이 장 모범 답안의 강제판이다.
 
+### 4.2 PSA의 적용 — 네임스페이스 라벨로 거는 정책
+
 **PSA의 적용** — 별도 리소스 없이 **네임스페이스 라벨**로 「등급 + 위반 시 행동」을 지정한다.
 
 "라벨로 정책을 건다"가 낯설다면 — 라벨은 원래 아무 힘 없는 **분류용 포스트잇**(`app: nginx`, `team: payment`)이고, 셀렉터가 그걸 보고 대상을 골라내는 용도다(Service→Pod 연결이 대표 사례). PSA는 그 시스템을 빌려 쓴다: `pod-security.kubernetes.io/` 접두사가 붙은 라벨만 **"자기 앞으로 온 설정 메모"**로 읽는 것이다(접두사 = 수신인 주소). 라벨 자체는 여전히 아무 일도 안 한다 — 팻말을 보고 행동하는 것은 API 서버 속 PSA 컨트롤러다. 호텔 문고리의 "Do Not Disturb" 팻말과 그것을 지키기로 약속된 청소부의 관계와 같다. "별도 리소스 없이"가 강조된 이유는 전임자와의 대비다 — PSP는 전용 리소스 작성 + RBAC 연결이 필요했지만, PSA는 기존 문고리에 팻말만 건다.
@@ -465,6 +476,8 @@ metadata:
 이 예제의 **이중 잣대**가 영리하다 — 최소선(baseline)은 강제하고, 목표(restricted)는 경고로 유도한다. "최소한은 무조건 지켜. 그리고 목표를 향해 가라고 계속 잔소리할게." 개발자가 경고를 보고 하나씩 고치면, 다 고쳐진 시점에 enforce를 restricted로 올리면 된다.
 
 `version` 라벨은 표준의 특정 버전을 고정한다 — 클러스터를 업그레이드하면 표준의 세부 내용도 바뀔 수 있어서, 고정하지 않으면(기본값 latest) 어제 멀쩡히 배포되던 Pod가 오늘 갑자기 거부되는 사고가 난다. "건축법 기준"이 아니라 "**2025년판 건축법 기준**"으로 심사한다고 못 박는 것이다.
+
+### 4.3 도입 순서 — 기록 먼저, 강제는 나중에
 
 기존 네임스페이스에 적용할 때의 모범 순서도 이제 익숙한 패턴이다 — SELinux의 permissive → enforcing과 같은 "**기록 먼저, 강제는 나중에**"다.
 
@@ -505,6 +518,8 @@ kubectl label --dry-run=server --overwrite ns my-ns \
 #    경고 0건 확인 후 진짜로 전환하면 무사고 ✅
 ```
 
+### 4.4 명부는 누가 쓰는가 — 세 모드의 출력처
+
 정확히 말하면 검문소를 지나는 것은 **Pod가 아니라 Pod의 설계도**다. 돌고 있는 Pod가 검문소로 걸어갈 리는 없다. 지나가는 것은 "이런 스펙으로 Pod 하나 만들어 달라"는 **요청서**이고, 그것이 통과해야 비로소 etcd에 Pod 객체가 생기고 kubelet이 컨테이너를 띄운다. 한 번 태어난 Pod는 죽을 때까지 검문소 근처에 다시 오지 않는다. Pod가 죽어서 새 Pod가 뜨는 것도 그 Pod의 부활이 아니라, 컨트롤러가 "개수가 안 맞네" 하고 **새 요청서를 쓴 것**이다. 컨테이너 재시작이 검사에서 빠지는 이유도 같다 — Pod 객체가 그대로 살아 있으니 아무도 요청서를 쓸 일이 없고, 노드 안에서 조용히 처리되고 끝난다.
 
 **명부를 쓰는 것은 PSA가 아니다.** PSA는 "이 요청 위반임"이라는 주석(`pod-security.kubernetes.io/audit-violations`)을 감사 이벤트에 **붙이기만** 한다. 그 이벤트를 실제로 기록하는 것은 API 서버의 **감사(audit) 서브시스템**이고, 파일에 쓸지 웹훅으로 보낼지는 감사 백엔드가 정한다. 둘 다 `kube-apiserver` 안에 있지만 부서가 다르다 — **장부가 없으면 딱지는 그냥 사라진다.** `--audit-policy-file`/`--audit-log-path`가 설정돼 있지 않으면(kubeadm 기본값은 꺼져 있다) audit 모드는 성실히 도장을 찍는데 아무 데도 안 남는다. 관리형 클러스터라면 EKS는 컨트롤 플레인 로깅의 `audit`, GKE는 Cloud Logging, AKS는 `kube-audit` 진단 설정을 켜야 보인다. "audit 라벨만 붙이면 알아서 쌓이겠지"가 안 통하는 이유다.
@@ -526,6 +541,8 @@ warn    → 요청한 클라이언트에게 경고 1회. 저장 안 됨
 2단계  enforce: baseline  audit/warn: restricted   ← baseline 강제 + restricted 조사
 3단계  enforce: restricted                          ← 최종
 ```
+
+### 4.5 PSA는 고쳐주지 않는다 — non-mutating이라는 선택
 
 마지막으로, **PSA는 고쳐주지 않는다.** 공식 문서의 표현 그대로 "non-mutating admission controller"이며, 미달 Pod에 `runAsNonRoot: true`를 대신 채워 넣는 일 따위는 하지 않는다. 전임자 PSP는 `defaultAllowPrivilegeEscalation`·`defaultAddCapabilities` 같은 필드로 **기본값을 주입해 통과시켰지만**, PSA는 그 기능을 의도적으로 버렸다. 몰래 고쳐주면 매니페스트와 실제 Pod가 달라지고, 다른 클러스터로 옮겼을 때 동작이 달라지기 때문이다. PSA는 "YAML에 적힌 게 전부"를 지킨다.
 

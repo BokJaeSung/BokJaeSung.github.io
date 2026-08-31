@@ -34,6 +34,13 @@ summary: "NetworkPolicy와 Istio AuthorizationPolicy로 파드 간 통신을 제
     <div><a href="#38-도구--녹화inspektor-gadget와-감사cilium" style="color:var(--secondary,inherit);text-decoration:none;">3.8 도구 — 녹화(Inspektor Gadget)와 감사(Cilium)</a></div>
   </div>
   <div><a href="#4-authorizationpolicy--봉투-안을-보는-방화벽" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">4. AuthorizationPolicy — 봉투 안을 보는 방화벽</a></div>
+  <div style="padding-left:20px;font-size:15px;">
+    <div><a href="#41-포트로는-부족하다--서비스-메시가-봉투를-여는-이유" style="color:var(--secondary,inherit);text-decoration:none;">4.1 포트로는 부족하다 — 서비스 메시가 봉투를 여는 이유</a></div>
+    <div><a href="#42-신원은-어디서-오나--serviceaccount와-mtls" style="color:var(--secondary,inherit);text-decoration:none;">4.2 신원은 어디서 오나 — ServiceAccount와 mTLS</a></div>
+    <div><a href="#43-해부--selector-action-rules" style="color:var(--secondary,inherit);text-decoration:none;">4.3 해부 — selector, action, rules</a></div>
+    <div><a href="#44-deny와-평가-순서--custom--deny--allow" style="color:var(--secondary,inherit);text-decoration:none;">4.4 DENY와 평가 순서 — CUSTOM → DENY → ALLOW</a></div>
+    <div><a href="#45-설정-문서라는-점-그리고-두-검문소-디버깅" style="color:var(--secondary,inherit);text-decoration:none;">4.5 설정 문서라는 점, 그리고 두 검문소 디버깅</a></div>
+  </div>
   <div><a href="#5-discussion" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">5. Discussion</a></div>
   <div style="padding-left:20px;font-size:15px;">
     <div><a href="#51-rbac과-헷갈리지-말-것--쿠버네티스-조작-권한-vs-앱끼리-통신-권한" style="color:var(--secondary,inherit);text-decoration:none;">5.1 RBAC과 헷갈리지 말 것 — 조작 권한 vs 통신 권한</a></div>
@@ -562,6 +569,8 @@ eBPF는 리눅스 커널 안에 **샌드박스된 미니 프로그램을 안전�
 
 ## 4. AuthorizationPolicy — 봉투 안을 보는 방화벽
 
+### 4.1 포트로는 부족하다 — 서비스 메시가 봉투를 여는 이유
+
 NetworkPolicy로 "frontend는 backend 8080에 접근 가능"까지 했다. 그런데 backend가 이런 API를 갖고 있다면?
 
 ```
@@ -583,6 +592,8 @@ GET    /admin/users    ← 관리자만
 서비스 메시는 암호화·재시도·로깅·권한처럼 **모든 앱이 똑같이 해야 하는 일**을 앱 밖으로 빼서 공통 부품(사이드카 프록시, 주로 Envoy)이 대신하게 한다. 앱은 `http://backend`로 보낼 뿐인데 실제로는 프록시가 가로채 처리한다. (파드마다 프록시가 붙어 무거운 탓에, Istio ambient 모드나 Cilium처럼 노드당 프록시 하나·eBPF로 가로채는 방식이 최근 흐름이다.) 책은 Istio를 예로 들되 Istio 전체가 아니라 **CRD 하나 — `AuthorizationPolicy`**만 본다.
 
 CRD(CustomResourceDefinition)는 쿠버네티스에 새 리소스 **종류**를 등록하는 방법이다. Istio를 깔면 `AuthorizationPolicy`, `VirtualService` 같은 종류가 새로 생겨 `kubectl apply`로 똑같이 쓸 수 있다. 그 YAML 안의 `source`, `operation`은 CRD가 아니라 그 종류의 **필드**(칸)다 — Pod의 `containers`, `image`가 별도 리소스가 아닌 것과 같다.
+
+### 4.2 신원은 어디서 오나 — ServiceAccount와 mTLS
 
 먼저 이 인가가 어떤 신원 위에서 도는지 흐름부터 보자.
 
@@ -610,6 +621,8 @@ CRD(CustomResourceDefinition)는 쿠버네티스에 새 리소스 **종류**를 
 ```
 
 용어를 짚어두자. **인증(authentication)**은 "너 누구야?", **인가(authorization)**는 "너 이거 해도 돼?"이며 순서가 있다. **인증서**는 "나 frontend야"를 증명하는 위조 불가능한 디지털 신분증이고, **TLS**는 서버만 신분증을 보여주는 암호화, **mTLS**(mutual)는 **양쪽 다** 보여주는 것이다. NetworkPolicy가 "이 IP에서 왔으니 frontend겠지"라고 IP → 파드 → 라벨로 역추적하는 데 반해(IP는 속일 수 있다), Istio는 인증서를 직접 보니 못 속인다. **ServiceAccount**는 파드가 쓰는 계정(사람용 User와 별개)이고 그 이름이 신원에 박힌다.
+
+### 4.3 해부 — selector, action, rules
 
 이제 리소스 자체. 구조는 NetworkPolicy와 놀랄 만큼 닮았다 — 대상 고르고(`selector`), 액션 정하고(`action`), 규칙 적는다(`rules`).
 
@@ -651,6 +664,8 @@ NetworkPolicy로는 못 하던 것 셋이 이 한 장에 들어 있다.
 | `AUDIT` | 통과시키되 로그만 (Cilium 감사 모드와 같은 발상) |
 | `CUSTOM` | 외부 서버(OAuth 등)에 물어봄 |
 
+### 4.4 DENY와 평가 순서 — CUSTOM → DENY → ALLOW
+
 `DENY`가 생기면 3.3에서 미룬 충돌 문제가 돌아오는데, Istio는 우선순위를 못 박아 푼다 — **`CUSTOM → DENY → ALLOW`**, DENY가 하나라도 걸리면 ALLOW가 있어도 막힌다. 유연함을 얻는 대신 규칙 하나를 더 외우는 셈이다. 규칙의 논리 구조는 NetworkPolicy와 같다 — 규칙 여러 개는 OR, 한 규칙 안의 `from`/`to`/`when`은 AND, 한 필드 안의 값 여러 개(`methods: [GET, POST]`)는 OR. (책 본문의 "모든 규칙이 만족되어야 한다"는 규칙 하나 안의 조건을 말하려던 표현으로 보이며, 규칙 목록 전체가 AND라면 규칙을 두 개 적는 순간 거의 아무것도 안 맞게 된다.)
 
 당연히 여기도 **deny-all이 먼저**다. 24-6은 허용만 적었으므로 기본이 다 열려 있으면 의미가 없다.
@@ -666,6 +681,8 @@ spec: {}       # selector 없음(모든 파드) + action 기본 ALLOW + rules �
 ```
 
 `spec: {}` 한 줄이 클러스터 전체를 잠근다 — NetworkPolicy의 `ingress: []`와 같은 원리("ALLOW인데 허용할 게 없음")에 `istio-system`의 전역 효과가 합쳐진 것이다. 운영 중이라면 `action: AUDIT`으로 먼저 돌려 뭐가 막힐지 보고 진짜 deny-all로 바꾸는 게 안전하다.
+
+### 4.5 설정 문서라는 점, 그리고 두 검문소 디버깅
 
 두 가지를 덧붙여 둔다. 첫째, 이 YAML은 **실행되는 프로그램이 아니라 설정 문서**다 — Deployment처럼 파드가 생기지 않는다. `kubectl apply`로 저장되면 `istiod`(28장의 Operator 패턴)가 감지해 각 사이드카에 규칙을 뿌리고, 사이드카가 요청마다 검사한다. 벽에 붙이는 공지문과 그걸 읽고 집행하는 경비원의 관계다(NetworkPolicy도 `kubectl apply → API 서버 → CNI가 읽어 커널 규칙으로 변환`으로 같은 구조). 둘째, 사이드카가 주입되지 않은 파드는 AuthorizationPolicy가 검사하지 못한다 — 그래서 NetworkPolicy deny-all이 밑에서 받쳐줘야 하며, 책이 "둘을 함께 쓰라"고 하는 이유다.
 
