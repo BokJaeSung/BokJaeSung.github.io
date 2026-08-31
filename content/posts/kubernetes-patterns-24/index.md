@@ -7,7 +7,7 @@ cover:
   image: 'images/cover.jpg'
   alt: 'K8sPatterns.24 Network Segmentation'
   relative: true
-summary: "네임스페이스는 폴더일 뿐 방화벽이 아니다. NetworkPolicy로 IP·포트 층에, AuthorizationPolicy로 HTTP 층에 앱 방화벽을 두 겹 세우고, deny-all에서 시작해 필요한 문만 하나씩 여는 법."
+summary: "NetworkPolicy와 Istio AuthorizationPolicy로 파드 간 통신을 제한하는 방법. 기본 차단에서 시작해 필요한 경로만 허용한다."
 ---
 
 ## 0. Contents
