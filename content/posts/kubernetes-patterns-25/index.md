@@ -236,6 +236,82 @@ RBAC은 "누가 무엇을 할 수 있는가"를 아주 세밀하게 정할 수 �
 꺼내는 열쇠는 집주인만 갖고 있다         → 개인키는 클러스터 안에만
 ```
 
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 390" style="width:100%;min-width:600px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sealed Secrets 아키텍처: 클러스터 밖에서 공개키로 Secret을 암호화해 SealedSecret으로 Git에 올리고, 클러스터 안 오퍼레이터가 개인키로 복호화해 Secret을 만든다">
+  <defs>
+    <marker id="ss-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+    <path id="ss-doc" d="M0,0 h130 v40 c-21.7,0 -21.7,8 -43.3,8 c-21.7,0 -21.7,-8 -43.3,-8 c-21.7,0 -21.7,8 -43.3,8 z"/>
+  </defs>
+
+  <!-- Cluster -->
+  <rect x="300" y="40" width="420" height="320" rx="6" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="510" y="62" text-anchor="middle" font-size="14" font-weight="600" fill="var(--content,#333)">Cluster</text>
+
+  <!-- Secret (밖) -->
+  <g transform="translate(110,95)">
+    <use href="#ss-doc" fill="#fbe0c4"/>
+    <text x="65" y="26" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">Secret</text>
+  </g>
+
+  <!-- Git -->
+  <rect x="95" y="166" width="160" height="120" rx="4" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <g transform="translate(110,186)">
+    <use href="#ss-doc" fill="#e8952f"/>
+    <text x="65" y="26" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">SealedSecret</text>
+  </g>
+  <text x="175" y="272" text-anchor="middle" font-size="13" fill="var(--content,#333)">Git</text>
+
+  <!-- SealedSecret (클러스터) -->
+  <g transform="translate(330,186)">
+    <use href="#ss-doc" fill="#e8952f"/>
+    <text x="65" y="26" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">SealedSecret</text>
+  </g>
+
+  <!-- Secret (클러스터) -->
+  <g transform="translate(330,286)">
+    <use href="#ss-doc" fill="#fbe0c4"/>
+    <text x="65" y="26" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">Secret</text>
+  </g>
+
+  <!-- Operator -->
+  <rect x="560" y="70" width="140" height="270" rx="4" fill="#5b9bd5"/>
+  <text x="630" y="92" text-anchor="middle" font-size="13.5" font-weight="600" fill="#fff">Operator</text>
+  <rect x="580" y="105" width="100" height="56" rx="3" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="630" y="128" text-anchor="middle" font-size="12" fill="#1b3f63">Public</text>
+  <text x="630" y="145" text-anchor="middle" font-size="12" fill="#1b3f63">key</text>
+  <rect x="580" y="245" width="100" height="56" rx="3" fill="#1f5fa8" stroke="#0e3a6b"/>
+  <text x="630" y="268" text-anchor="middle" font-size="12" fill="#fff">Private</text>
+  <text x="630" y="285" text-anchor="middle" font-size="12" fill="#fff">key</text>
+
+  <!-- 실선 화살표 -->
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#ss-ar)">
+    <path d="M175,143 V180"/>
+    <path d="M255,210 H326"/>
+    <path d="M556,315 H466"/>
+  </g>
+  <!-- 점선 화살표 -->
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" stroke-dasharray="6 4" marker-end="url(#ss-ar)">
+    <path d="M578,133 H246"/>
+    <path d="M556,205 H466"/>
+    <path d="M395,234 V280"/>
+  </g>
+
+  <g font-size="12" fill="var(--content,#333)" font-style="italic">
+    <text x="412" y="125" text-anchor="middle">Encrypt</text>
+    <text x="511" y="197" text-anchor="middle">Watch</text>
+    <text x="432" y="262" text-anchor="middle">Decrypt</text>
+    <text x="511" y="307" text-anchor="middle">Create</text>
+  </g>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  Sealed Secrets 아키텍처 — 밖에서 공개키로 잠그고, 안에서 개인키로 연다
+</div>
+</div>
+{{< /rawhtml >}}
+
 부품은 두 개이고, 둘 다 있어야 동작한다.
 
 | 부품 | 어디에 | 역할 |
@@ -437,6 +513,77 @@ SecretStore (1개)  ←──┬── ExternalSecret: db-password
                       └── ExternalSecret: smtp-cred
 ```
 
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 360" style="width:100%;min-width:600px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="External Secrets 아키텍처: Git의 ExternalSecret을 적용하면 오퍼레이터가 SecretStore를 참조해 외부 SMS에서 값을 가져와 Secret을 만든다">
+  <defs>
+    <marker id="es-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+    <path id="es-doc" d="M0,0 h130 v44 c-21.7,0 -21.7,8 -43.3,8 c-21.7,0 -21.7,-8 -43.3,-8 c-21.7,0 -21.7,8 -43.3,8 z"/>
+  </defs>
+
+  <!-- Cluster -->
+  <rect x="200" y="30" width="400" height="300" rx="6" fill="none"
+        stroke="var(--secondary,#888)" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text x="400" y="52" text-anchor="middle" font-size="14" font-weight="600" fill="var(--content,#333)">Cluster</text>
+
+  <!-- Git -->
+  <rect x="20" y="150" width="150" height="120" rx="4" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <g transform="translate(30,170)">
+    <use href="#es-doc" fill="#e8952f"/>
+    <text x="65" y="27" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">ExternalSecret</text>
+  </g>
+  <text x="95" y="256" text-anchor="middle" font-size="13" fill="var(--content,#333)">Git</text>
+
+  <!-- SecretStore -->
+  <g transform="translate(232,80)">
+    <use href="#es-doc" fill="#c0392b"/>
+    <text x="65" y="27" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">SecretStore</text>
+    <text x="112" y="46" text-anchor="middle" font-size="13">🔑</text>
+  </g>
+
+  <!-- ExternalSecret (in cluster) -->
+  <g transform="translate(232,178)">
+    <use href="#es-doc" fill="#e8952f"/>
+    <text x="65" y="27" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">ExternalSecret</text>
+  </g>
+
+  <!-- Secret -->
+  <g transform="translate(232,266)">
+    <use href="#es-doc" fill="#fbe0c4"/>
+    <text x="65" y="27" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">Secret</text>
+  </g>
+
+  <!-- Operator -->
+  <rect x="450" y="75" width="110" height="230" rx="4" fill="#5b9bd5"/>
+  <text x="505" y="196" text-anchor="middle" font-size="13.5" font-weight="600" fill="#fff">Operator</text>
+
+  <!-- SMS -->
+  <rect x="650" y="150" width="80" height="60" rx="4" fill="#c0392b"/>
+  <text x="690" y="185" text-anchor="middle" font-size="13.5" font-weight="600" fill="#fff">SMS</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#es-ar)">
+    <path d="M170,204 H228"/>
+    <path d="M450,106 H368"/>
+    <path d="M450,204 H368"/>
+    <path d="M450,292 H368"/>
+    <path d="M560,180 H646"/>
+  </g>
+
+  <g font-size="12" fill="var(--content,#333)" font-style="italic">
+    <text x="199" y="196" text-anchor="middle">kubectl apply</text>
+    <text x="409" y="198" text-anchor="middle">Watch</text>
+    <text x="409" y="286" text-anchor="middle">Create</text>
+    <text x="603" y="172" text-anchor="middle">Fetch secret</text>
+  </g>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  External Secrets 아키텍처 — Git에는 주소만, 값은 SMS에서
+</div>
+</div>
+{{< /rawhtml >}}
+
 ```yaml
 # ① 은행 주소와 출입증 등록 — 아직 아무 비밀번호도 안 가져온다
 apiVersion: external-secrets.io/v1beta1
@@ -527,6 +674,62 @@ Sealed Secrets   → 클러스터 안 오퍼레이터가 품
 External Secrets → 클러스터 안 오퍼레이터가 가져옴
 sops             → 클러스터는 아무것도 모른다
 ```
+
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 700 340" style="width:100%;min-width:560px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="sops 아키텍처: 로컬에서 KMS 키로 Secret을 암호화해 Git에 두고, 적용 직전 같은 키로 복호화해 클러스터에 넣는다">
+  <defs>
+    <marker id="sp-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+    <path id="sp-doc" d="M0,0 h130 v40 c-21.7,0 -21.7,8 -43.3,8 c-21.7,0 -21.7,-8 -43.3,-8 c-21.7,0 -21.7,8 -43.3,8 z"/>
+  </defs>
+
+  <!-- Secret (평문) -->
+  <g transform="translate(60,40)">
+    <use href="#sp-doc" fill="#fbe0c4"/>
+    <text x="65" y="26" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">Secret</text>
+  </g>
+
+  <!-- KMS -->
+  <rect x="300" y="40" width="110" height="52" rx="4" fill="#8e44ad"/>
+  <text x="355" y="72" text-anchor="middle" font-size="13.5" font-weight="600" fill="#fff">KMS</text>
+
+  <!-- Git -->
+  <rect x="40" y="180" width="180" height="120" rx="4" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <g transform="translate(60,200)">
+    <use href="#sp-doc" fill="#e8952f"/>
+    <text x="65" y="20" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">Secret</text>
+    <text x="65" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">(encrypted)</text>
+  </g>
+  <text x="130" y="288" text-anchor="middle" font-size="13" fill="var(--content,#333)">Git</text>
+
+  <!-- Cluster -->
+  <rect x="420" y="180" width="230" height="120" rx="6" fill="none"
+        stroke="var(--secondary,#888)" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <g transform="translate(470,200)">
+    <use href="#sp-doc" fill="#fbe0c4"/>
+    <text x="65" y="26" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">Secret</text>
+  </g>
+  <text x="535" y="288" text-anchor="middle" font-size="13" fill="var(--content,#333)">Cluster</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#sp-ar)">
+    <path d="M125,88 V194"/>
+    <path d="M220,240 H466"/>
+    <path d="M195,90 L295,80"/>
+    <path d="M355,232 V98"/>
+  </g>
+
+  <g font-size="12" fill="var(--content,#333)" font-style="italic">
+    <text x="185" y="140" text-anchor="middle">sops --encrypt</text>
+    <text x="300" y="228" text-anchor="middle">sops --decrypt</text>
+  </g>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  sops — 값만 잠가 Git에 두고, 적용 직전 같은 열쇠로 연다
+</div>
+</div>
+{{< /rawhtml >}}
 
 그리고 sops는 쿠버네티스 전용이 아니다. 그냥 파일 암호화 도구라서 Terraform 변수, Ansible 설정, 앱의 `config.yaml`, 개인 메모에도 쓴다. 쿠버네티스 매니페스트는 여러 용도 중 하나일 뿐이다.
 
@@ -747,21 +950,75 @@ kubectl get secret -o yaml   # 관리자가 치면 그냥 다 보인다
 
 CSI(Container Storage Interface)는 쿠버네티스가 정해둔 스토리지 붙이는 규격이다. USB 규격 같은 것으로, 이 규격만 지키면 뭐든 볼륨으로 마운트할 수 있다. 원래는 EBS, NFS 같은 디스크용이었는데 누군가 "비밀번호도 파일처럼 마운트하면 되겠네"라고 생각한 결과가 Secrets Store CSI Driver다.
 
-그림으로 보면 3단 구조다.
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 720 400" style="width:100%;min-width:600px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Secrets Store CSI Driver 아키텍처: CSI 드라이버와 SMS provider가 금고에서 값을 가져와 파드 볼륨으로 투영한다">
+  <defs>
+    <marker id="cs-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+    <path id="cs-doc" d="M0,0 h130 v40 c-21.7,0 -21.7,8 -43.3,8 c-21.7,0 -21.7,-8 -43.3,-8 c-21.7,0 -21.7,8 -43.3,8 z"/>
+  </defs>
 
-```
-        ┌─────────────── Cluster ────────────────┐
-        │                                        │
-        │  Kubernetes CSI ←→ Secret Store        │
-        │   (쿠버네티스 내장)   CSI Driver         │
-        │        │                 ↕             │
-        │        │            SMS provider ──────┼──▶ Vault / AWS
-        │        │ Volume projection             │      (Fetch data)
-        │        ▼                               │
-        │      [Pod] ─── References ──▶ SecretProviderClass ──▶ (Key-values ref)
-        │       App container                    │
-        └────────────────────────────────────────┘
-```
+  <rect x="20" y="30" width="500" height="350" rx="6" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="270" y="52" text-anchor="middle" font-size="14" font-weight="600" fill="var(--content,#333)">Cluster</text>
+
+  <rect x="50" y="70" width="130" height="50" rx="4" fill="#5b9bd5"/>
+  <text x="115" y="90" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Kubernetes</text>
+  <text x="115" y="107" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">CSI</text>
+
+  <rect x="300" y="70" width="140" height="50" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="370" y="90" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1b3f63">Secret Store</text>
+  <text x="370" y="107" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1b3f63">CSI Driver</text>
+
+  <rect x="300" y="170" width="140" height="46" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="370" y="198" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1b3f63">SMS provider</text>
+
+  <!-- Pod -->
+  <rect x="50" y="230" width="160" height="130" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <text x="130" y="252" text-anchor="middle" font-size="13" font-weight="600" fill="#5a3d18">Pod</text>
+  <ellipse cx="90" cy="279" rx="18" ry="7" fill="#4caf82"/>
+  <rect x="72" y="279" width="36" height="26" fill="#4caf82"/>
+  <ellipse cx="90" cy="305" rx="18" ry="7" fill="#3d9670"/>
+  <rect x="70" y="322" width="120" height="26" rx="3" fill="#e6b3d9" stroke="#a05590"/>
+  <text x="130" y="340" text-anchor="middle" font-size="12" font-weight="600" fill="#5a2050">App container</text>
+  <path d="M108,292 H196" stroke="var(--content,#444)" stroke-width="1.4" fill="none"/>
+  <path d="M130,292 V318" stroke="var(--content,#444)" stroke-width="1.4" fill="none" marker-end="url(#cs-ar)"/>
+
+  <!-- SecretProviderClass -->
+  <g transform="translate(300,268)">
+    <use href="#cs-doc" fill="#4caf82"/>
+    <text x="65" y="26" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">SecretProviderClass</text>
+  </g>
+
+  <!-- Vault -->
+  <rect x="570" y="170" width="120" height="60" rx="4" fill="#c0392b"/>
+  <text x="630" y="195" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">HashiCorp</text>
+  <text x="630" y="212" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Vault</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#cs-ar)">
+    <path d="M186,95 H294"/>
+    <path d="M304,95 H190" />
+    <path d="M370,126 V164"/>
+    <path d="M370,164 V126"/>
+    <path d="M90,126 V272"/>
+    <path d="M212,292 H296"/>
+    <path d="M446,193 H566"/>
+    <path d="M446,290 H630 V236"/>
+  </g>
+
+  <g font-size="12" fill="var(--content,#333)" font-style="italic">
+    <text x="152" y="180" text-anchor="middle">Volume projection</text>
+    <text x="254" y="284" text-anchor="middle">References</text>
+    <text x="506" y="185" text-anchor="middle">Fetch data</text>
+    <text x="530" y="282" text-anchor="middle">Key-values ref</text>
+  </g>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  Secrets Store CSI Driver — 금고의 값을 파드 볼륨으로 투영한다
+</div>
+</div>
+{{< /rawhtml >}}
 
 | 상자 | 정체 | 하는 일 |
 |---|---|---|
@@ -1066,6 +1323,74 @@ spec:
   containers:
   - name: my-app        # 내 앱만 쓴다. 사이드카는 자동으로 붙는다
 ```
+
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 400" style="width:100%;min-width:620px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vault Injector 아키텍처: 파드를 적용하면 인젝터가 사이드카를 끼워 넣고, 그 사이드카가 SMS에서 값을 받아 앱 컨테이너에 공유한다">
+  <defs>
+    <marker id="vi-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+    <path id="vi-doc" d="M0,0 h150 v66 c-25,0 -25,8 -50,8 c-25,0 -25,-8 -50,-8 c-25,0 -25,8 -50,8 z"/>
+  </defs>
+
+  <!-- Pod (작성한 YAML) -->
+  <g transform="translate(20,60)">
+    <use href="#vi-doc" fill="#fbe0c4" stroke="#d9a86a"/>
+    <text x="75" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="#5a3d18">Pod</text>
+    <rect x="14" y="30" width="122" height="26" rx="3" fill="#e6b3d9" stroke="#a05590"/>
+    <text x="75" y="48" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a2050">App container</text>
+  </g>
+
+  <!-- Cluster -->
+  <rect x="250" y="30" width="380" height="340" rx="6" fill="none"
+        stroke="var(--secondary,#888)" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text x="440" y="52" text-anchor="middle" font-size="14" font-weight="600" fill="var(--content,#333)">Cluster</text>
+
+  <rect x="280" y="72" width="120" height="50" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="340" y="92" text-anchor="middle" font-size="12" font-weight="600" fill="#1b3f63">Kubernetes</text>
+  <text x="340" y="109" text-anchor="middle" font-size="12" font-weight="600" fill="#1b3f63">API server</text>
+
+  <rect x="470" y="72" width="130" height="50" rx="4" fill="#4caf82"/>
+  <text x="535" y="92" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">Vault Sidecar</text>
+  <text x="535" y="109" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">Agent Injector</text>
+
+  <rect x="670" y="72" width="80" height="50" rx="4" fill="#c0392b"/>
+  <text x="710" y="103" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">SMS</text>
+
+  <!-- 만들어진 Pod -->
+  <path d="M300,220 h250 v120 c-41.7,0 -41.7,10 -83.3,10 c-41.7,0 -41.7,-10 -83.3,-10 c-41.7,0 -41.7,10 -83.3,10 z"
+        fill="#fbe0c4" stroke="#d9a86a"/>
+  <text x="420" y="243" text-anchor="middle" font-size="13" font-weight="600" fill="#5a3d18">Pod</text>
+  <rect x="390" y="255" width="130" height="26" rx="3" fill="#e6b3d9" stroke="#a05590"/>
+  <text x="455" y="273" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a2050">App container</text>
+  <rect x="390" y="295" width="130" height="26" rx="3" fill="#4caf82"/>
+  <text x="455" y="313" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">Vault Sidecar</text>
+  <ellipse cx="345" cy="277" rx="16" ry="6" fill="#4caf82"/>
+  <rect x="329" y="277" width="32" height="24" fill="#4caf82"/>
+  <ellipse cx="345" cy="301" rx="16" ry="6" fill="#3d9670"/>
+
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#vi-ar)">
+    <path d="M176,97 H276"/>
+    <path d="M400,97 H466"/>
+    <path d="M470,110 H406"/>
+    <path d="M604,97 H666"/>
+    <path d="M340,126 V214"/>
+    <path d="M386,277 H366"/>
+    <path d="M386,308 H366"/>
+  </g>
+
+  <g font-size="12" fill="var(--content,#333)" font-style="italic">
+    <text x="226" y="88" text-anchor="middle">kubectl apply</text>
+    <text x="434" y="88" text-anchor="middle">Inject sidecar</text>
+    <text x="360" y="176" text-anchor="middle">Create</text>
+  </g>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  Vault Injector — 어노테이션만 보고 사이드카를 대신 끼워 넣는다
+</div>
+</div>
+{{< /rawhtml >}}
 
 동작 원리는 mutating webhook — 파드가 만들어지는 중간에 끼어들어 명세를 수정하는 것이다.
 
