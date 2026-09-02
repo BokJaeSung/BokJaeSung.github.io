@@ -716,12 +716,12 @@ sops             → 클러스터는 아무것도 모른다
   <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#sp-ar)">
     <path d="M125,88 V194"/>
     <path d="M220,240 H466"/>
-    <path d="M195,90 L295,80"/>
+    <path d="M214,178 L297,94"/>
     <path d="M355,232 V98"/>
   </g>
 
   <g font-size="12" fill="var(--content,#333)" font-style="italic">
-    <text x="185" y="140" text-anchor="middle">sops --encrypt</text>
+    <text x="180" y="146" text-anchor="middle">sops --encrypt</text>
     <text x="300" y="228" text-anchor="middle">sops --decrypt</text>
   </g>
 </svg>
