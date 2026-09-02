@@ -19,7 +19,7 @@ summary: "Secret은 암호화가 아니라 인코딩이다. Sealed Secrets·Exte
   <div><a href="#2-problem" style="color:var(--primary,inherit);text-decoration:none;font-weight:600;">2. Problem</a></div>
   <div style="padding-left:20px;font-size:15px;">
     <div><a href="#21-secret은-암호화가-아니다--base64는-숨김이지-잠금이-아니다" style="color:var(--secondary,inherit);text-decoration:none;">2.1 Secret은 암호화가 아니다 — base64는 숨김이지 잠금이 아니다</a></div>
-    <div><a href="#22-클러스터-밖에서는-발가벗겨진다--gitops가-터뜨린-문제" style="color:var(--secondary,inherit);text-decoration:none;">2.2 클러스터 밖에서는 발가벗겨진다 — GitOps가 터뜨린 문제</a></div>
+    <div><a href="#22-클러스터-밖에서는-평문과-같다--gitops가-드러낸-문제" style="color:var(--secondary,inherit);text-decoration:none;">2.2 클러스터 밖에서는 평문과 같다 — GitOps가 드러낸 문제</a></div>
     <div><a href="#23-클러스터-안도-안전하지-않다--관리자라는-신뢰-경계" style="color:var(--secondary,inherit);text-decoration:none;">2.3 클러스터 안도 안전하지 않다 — 관리자라는 신뢰 경계</a></div>
     <div><a href="#24-세-가지-노출--무엇을-막고-싶은가" style="color:var(--secondary,inherit);text-decoration:none;">2.4 세 가지 노출 — 무엇을 막고 싶은가</a></div>
   </div>
@@ -117,7 +117,7 @@ mypassword123
 
 문제는 이 울타리가 클러스터 안에서만 유효하다는 것이다.
 
-### 2.2 클러스터 밖에서는 발가벗겨진다 — GitOps가 터뜨린 문제
+### 2.2 클러스터 밖에서는 평문과 같다 — GitOps가 드러낸 문제
 
 ```bash
 kubectl get secret db-secret -o yaml > secret.yaml
@@ -334,10 +334,10 @@ kubeseal --cert pub-cert.pem < secret.yaml > sealed.yaml    # 클러스터 없�
 |---|---|---|
 | 어디에 | 아무 데나, Git에도 OK | 클러스터 안에만 |
 | 할 수 있는 것 | 잠그기만 | 풀기 |
-| 유출되면 | 문제 없음 | 큰일 |
+| 유출되면 | 문제 없음 | 치명적 |
 | 잃어버리면 | 다시 받으면 됨 | 복구 불가 |
 
-공개키는 자유롭게 뿌리고, 개인키 하나만 목숨 걸고 지킨다. 보안이 한 점으로 모이는 것이 이 설계의 핵심이자, 동시에 그 한 점을 잃으면 끝이라는 위험이기도 하다.
+공개키는 자유롭게 배포하고, 개인키 하나만 엄격히 지킨다. 보안이 한 점으로 모이는 것이 이 설계의 핵심이자, 동시에 그 한 점을 잃으면 복구할 수 없다는 위험이기도 하다.
 
 #### 3.2.2 스코프 — 이 편지를 어디서 열 수 있게 할까
 
@@ -1215,7 +1215,7 @@ Secure Configuration 의 몫: 뚫린 파드가 "쥐려는 물건" 자체를 숨�
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 전제      → Secret 은 암호화가 아니라 base64 인코딩이다. 한 줄이면 풀린다
-문제      → 클러스터 밖에서는 발가벗겨지고(GitOps), 안에서는 관리자가 다 본다
+문제      → 클러스터 밖에서는 평문과 같고(GitOps), 안에서는 관리자가 다 본다
 노출 3종  → ① Git ② 사람(복호화 권한자) ③ 클러스터 관리자 — 뭘 막고 싶은지부터 정해라
 1겹       → Out-of-cluster: 잠가서 내보내고 결국 Secret 으로 착지 → 앱 수정 불필요
   Sealed    우편함. 공개키로 잠그고 클러스터 개인키로 푼다. 개인키 백업이 생명
