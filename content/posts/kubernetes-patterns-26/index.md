@@ -358,6 +358,44 @@ Ignore  클러스터는 돌지만, 그동안 정책 검사가 통째로 건너�
 
 주체(subject)는 **요청에 결부된 신원**이다. 사람 그 자체가 아니라 요청에 붙어 있는 정보라는 점이 중요하다 — 같은 사람이라도 노트북에서 `kubectl`을 치면 사람 주체지만, CI 파이프라인에서 스크립트를 돌리면 서비스 어카운트 주체다. **요청 단위로 판단한다.**
 
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 300" style="width:100%;min-width:600px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="사람 사용자는 클러스터 밖에서 kubectl 로, 파드는 안에서 서비스 어카운트로 API 서버에 요청한다">
+  <defs>
+    <marker id="sub-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+  </defs>
+
+  <rect x="20" y="52" width="150" height="52" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="95" y="84" text-anchor="middle" font-size="13" font-weight="600" fill="#1b3f63">User</text>
+
+  <rect x="290" y="20" width="450" height="260" rx="6" fill="none"
+        stroke="var(--secondary,#888)" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text x="515" y="42" text-anchor="middle" font-size="13" font-weight="600" fill="var(--content,#333)">Cluster</text>
+
+  <rect x="330" y="56" width="370" height="52" rx="4" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="515" y="88" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--content,#333)">API server</text>
+
+  <rect x="380" y="160" width="270" height="104" rx="5" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="515" y="182" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">Node</text>
+  <rect x="404" y="192" width="222" height="60" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="515" y="210" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1b3f63">Pod</text>
+  <rect x="424" y="218" width="182" height="26" rx="3" fill="#f7e08a" stroke="#c9a92c"/>
+  <text x="515" y="236" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a4a10">Service account</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.8" fill="none" marker-end="url(#sub-ar)">
+    <path d="M170,78 H326"/>
+    <path d="M515,192 V112"/>
+  </g>
+  <text x="248" y="68" text-anchor="middle" font-size="11.5" font-style="italic" fill="var(--content,#333)">kubectl</text>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  주체는 둘 — 밖에서 오는 사람, 안에서 오는 파드. API 서버 입장에선 둘 다 그저 요청이다
+</div>
+</div>
+{{< /rawhtml >}}
+
 종류는 셋이고, 성격이 극단적으로 갈린다.
 
 | | User | Group | ServiceAccount |
@@ -694,13 +732,6 @@ RBAC 에는 거부(deny) 규칙이 없다.
 
 Role을 `apply`해도 **아무 일도 일어나지 않는다.** 아직 아무에게도 안 붙었기 때문이다.
 
-```
-주체 (alice)          권한 (Role: pod-reader)
-        └──── RoleBinding ────┘
-                  ▲
-          이 선을 긋는 게 "권한을 붙인다"
-```
-
 {{< rawhtml >}}
 <div style="overflow-x:auto;margin:1.4rem 0;">
 <svg viewBox="0 0 760 360" style="width:100%;min-width:620px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RBAC 구조: 주체와 Role은 서로 모르고, RoleBinding이 둘을 이어 줄 때만 권한이 생긴다">
@@ -778,6 +809,43 @@ roleRef:                         # ❸ 하나만. 변경 불가
 ```
 
 주체와 Role은 **다대다**다. `subjects`는 배열이고 `roleRef`는 단수라, 한 주체에 여러 Role을 주려면 RoleBinding을 여러 개 만든다.
+
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 300" style="width:100%;min-width:600px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RoleBinding 이 주체와 Role 을 잇고, 주체와 Role 사이는 다대다 관계다">
+  <defs>
+    <marker id="mn-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+  </defs>
+
+  <rect x="60" y="20" width="640" height="260" rx="6" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="680" y="44" text-anchor="end" font-size="13" font-weight="600" fill="var(--content,#333)">Scope: Namespace</text>
+
+  <rect x="290" y="56" width="180" height="52" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="380" y="88" text-anchor="middle" font-size="13" font-weight="600" fill="#1b3f63">RoleBinding</text>
+
+  <rect x="100" y="196" width="150" height="52" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="175" y="228" text-anchor="middle" font-size="13" font-weight="600" fill="#1b3f63">Subject</text>
+
+  <rect x="470" y="170" width="200" height="86" rx="4" fill="#a8cdea" stroke="#2f6ea8"/>
+  <rect x="460" y="162" width="200" height="86" rx="4" fill="#a8cdea" stroke="#2f6ea8"/>
+  <text x="560" y="184" text-anchor="middle" font-size="13" font-weight="600" fill="#12324f">Role</text>
+  <rect x="482" y="196" width="156" height="34" rx="3" fill="#e9f2fa" stroke="#2f6ea8"/>
+  <text x="560" y="218" text-anchor="middle" font-size="11" fill="#12324f">"resource : verb, verb ..."</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.8" fill="none" marker-end="url(#mn-ar)">
+    <path d="M350,112 L200,192"/>
+    <path d="M420,112 L520,158"/>
+  </g>
+  <path d="M254,222 H452" stroke="var(--content,#444)" stroke-width="1.6" stroke-dasharray="6 5" fill="none"/>
+  <text x="353" y="212" text-anchor="middle" font-size="12" font-style="italic" fill="var(--content,#333)">M : N</text>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  주체와 Role 은 다대다 — 그 사이에 실선으로 놓이는 것이 RoleBinding 이다
+</div>
+</div>
+{{< /rawhtml >}}
 
 `roleRef`가 **변경 불가**인 게 의도적이다. "파드 읽기"용 바인딩이 어느 날 슬쩍 "전체 관리자"로 바뀌는 사고를 막는다. 수정하려면 지우고 다시 만들어야 한다.
 
@@ -871,6 +939,141 @@ roleRef:
 ```
 
 오퍼레이터를 한 곳에 두고 **관리할 네임스페이스마다 RoleBinding을 하나씩** 만든다. YAML은 늘지만 권한은 딱 그 네임스페이스들에만 열리고, 새 네임스페이스가 생겨도 자동으로 퍼지지 않는다. 그 명시성이 안전장치가 된다.
+
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 330" style="width:100%;min-width:620px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="같은 ClusterRole 을 네임스페이스마다 RoleBinding 으로 붙이면 권한은 그 네임스페이스들에만 열린다">
+  <defs>
+    <marker id="cr-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+  </defs>
+
+  <rect x="290" y="14" width="190" height="46" rx="4" fill="#c0392b"/>
+  <text x="385" y="43" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">ClusterRole: view-pod</text>
+
+  <!-- dev-1 -->
+  <rect x="20" y="96" width="320" height="104" rx="5" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="180" y="118" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">Namespace dev-1</text>
+  <rect x="40" y="130" width="130" height="52" rx="4" fill="#cbe8d8" stroke="#4caf82"/>
+  <text x="105" y="161" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1e4b38">Pods</text>
+  <rect x="190" y="130" width="130" height="52" rx="4" fill="#2e9c6d"/>
+  <text x="255" y="161" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">RoleBinding</text>
+
+  <!-- dev-2 -->
+  <rect x="420" y="96" width="320" height="104" rx="5" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="580" y="118" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">Namespace dev-2</text>
+  <rect x="440" y="130" width="130" height="52" rx="4" fill="#2e9c6d"/>
+  <text x="505" y="161" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">RoleBinding</text>
+  <rect x="590" y="130" width="130" height="52" rx="4" fill="#cbe8d8" stroke="#4caf82"/>
+  <text x="655" y="161" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1e4b38">Pods</text>
+
+  <!-- test ns -->
+  <rect x="255" y="228" width="250" height="86" rx="5" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="380" y="250" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">Namespace: test</text>
+  <rect x="275" y="260" width="210" height="42" rx="4" fill="#5b9bd5"/>
+  <text x="380" y="286" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">ServiceAccount: test-sa</text>
+
+  <!-- roleRef 실선: RoleBinding -> ClusterRole -->
+  <g stroke="var(--content,#444)" stroke-width="1.8" fill="none" marker-end="url(#cr-ar)">
+    <path d="M300,268 V64"/>
+    <path d="M460,268 V64"/>
+  </g>
+  <!-- subject 점선: SA <-> Pods (양방향) -->
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" stroke-dasharray="6 5"
+     marker-start="url(#cr-ar)" marker-end="url(#cr-ar)">
+    <path d="M271,272 L113,190"/>
+    <path d="M489,272 L647,190"/>
+  </g>
+  <g font-size="11.5" fill="var(--content,#333)" font-style="italic">
+    <text x="150" y="252" text-anchor="middle">get, list</text>
+    <text x="610" y="252" text-anchor="middle">get, list</text>
+  </g>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  ClusterRole 하나를 여러 RoleBinding 이 참조한다 — 정의는 재사용, 범위는 dev-1 과 dev-2 뿐
+</div>
+</div>
+{{< /rawhtml >}}
+
+이 그림을 ClusterRoleBinding 으로 한 줄 바꾸면 어떻게 되는지가 다음이다.
+
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 360" style="width:100%;min-width:640px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ClusterRoleBinding 하나면 모든 네임스페이스의 파드가 열리고, 앞으로 생길 네임스페이스까지 포함된다">
+  <defs>
+    <marker id="crb-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+  </defs>
+
+  <!-- 네임스페이스 4개 -->
+  <g>
+    <rect x="20" y="20" width="150" height="106" rx="5" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+    <text x="95" y="42" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">Namespace dev-1</text>
+    <rect x="42" y="56" width="106" height="50" rx="4" fill="#cbe8d8" stroke="#4caf82"/>
+    <text x="95" y="86" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1e4b38">Pods</text>
+
+    <rect x="200" y="20" width="150" height="106" rx="5" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+    <text x="275" y="42" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">Namespace dev-2</text>
+    <rect x="222" y="56" width="106" height="50" rx="4" fill="#cbe8d8" stroke="#4caf82"/>
+    <text x="275" y="86" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1e4b38">Pods</text>
+
+    <rect x="400" y="20" width="150" height="106" rx="5" fill="none" stroke="var(--secondary,#aaa)" stroke-width="1.5"/>
+    <text x="475" y="42" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--secondary,#888)">Namespace ...</text>
+    <rect x="422" y="56" width="106" height="50" rx="4" fill="none" stroke="var(--secondary,#aaa)"/>
+    <text x="475" y="86" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--secondary,#888)">Pods</text>
+
+    <rect x="580" y="20" width="150" height="106" rx="5" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+    <text x="655" y="42" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">Namespace dev-N</text>
+    <rect x="602" y="56" width="106" height="50" rx="4" fill="#cbe8d8" stroke="#4caf82"/>
+    <text x="655" y="86" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1e4b38">Pods</text>
+  </g>
+  <g font-size="16" font-weight="700" fill="var(--content,#444)">
+    <text x="375" y="80" text-anchor="middle">···</text>
+    <text x="565" y="80" text-anchor="middle">···</text>
+  </g>
+
+  <!-- test ns -->
+  <rect x="150" y="228" width="300" height="100" rx="5" fill="none" stroke="var(--content,#444)" stroke-width="1.5"/>
+  <text x="300" y="250" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">Namespace: test</text>
+  <rect x="172" y="262" width="256" height="46" rx="4" fill="#5b9bd5"/>
+  <text x="300" y="290" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">ServiceAccount: test-sa</text>
+
+  <!-- ClusterRole / Binding -->
+  <rect x="540" y="176" width="200" height="46" rx="4" fill="#c0392b"/>
+  <text x="640" y="205" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">ClusterRole: view-pod</text>
+  <rect x="540" y="262" width="200" height="46" rx="4" fill="#5b9bd5"/>
+  <text x="640" y="291" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">ClusterRoleBinding</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.8" fill="none" marker-end="url(#crb-ar)">
+    <path d="M640,262 V226"/>
+    <path d="M540,285 H432"/>
+  </g>
+
+  <!-- 점선: 모든 ns 로 -->
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" stroke-dasharray="6 5" marker-end="url(#crb-ar)">
+    <path d="M172,285 H95 V132"/>
+    <path d="M172,275 H130 V216 H275 V132"/>
+    <path d="M428,272 H468 V216 H475 V132"/>
+    <path d="M428,262 V216 H520 V150 H655 V132"/>
+  </g>
+  <g font-size="11.5" fill="var(--content,#333)" font-style="italic">
+    <text x="86" y="206" text-anchor="end">get, list</text>
+    <text x="240" y="210" text-anchor="middle">get, list</text>
+    <text x="470" y="208" text-anchor="middle">get, list</text>
+    <text x="592" y="144" text-anchor="middle">get, list</text>
+  </g>
+
+  <text x="300" y="352" text-anchor="middle" font-size="12.5" fill="var(--content,#333)">
+    바인딩 하나로 회색 네임스페이스 — 아직 만들지도 않은 것까지 — 전부 열린다
+  </text>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  ClusterRoleBinding — 같은 ClusterRole 인데 범위가 클러스터 전체로 바뀐다
+</div>
+</div>
+{{< /rawhtml >}}
 
 ### 5.4 집계 — 파이프는 그대로 두고 물통을 채운다
 
