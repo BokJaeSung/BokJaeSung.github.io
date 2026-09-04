@@ -7,7 +7,7 @@ cover:
   image: 'images/cover.jpg'
   alt: 'K8sPatterns.26 Access Control'
   relative: true
-summary: "API 서버로 가는 모든 요청은 인증·인가·어드미션 세 관문을 지난다. RBAC로 권한을 쪼개, 파드 하나가 뚫려도 피해가 거기서 끝나게 한다."
+summary: "API 서버로 가는 모든 요청은 인증·인가·어드미션 세 관문을 지난다. Role과 RoleBinding을 분리해 권한을 설계하고, ClusterRole의 범위는 정의가 아니라 바인딩이 정한다는 것까지."
 ---
 
 ## 0. Contents
