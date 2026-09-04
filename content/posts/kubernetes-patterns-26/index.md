@@ -163,21 +163,6 @@ API 서버        = 정문 안내 데스크 — 창문도 뒷문도 없다
 
 쿠버네티스 API 서버로 들어오는 **모든** 요청은 세 단계를 순서대로 지난다.
 
-```
-kubectl / 오퍼레이터
-        │
-        ▼
-┌──────────────── API 서버 ────────────────┐
-│                                          │
-│  Authentication → Authorization →        │
-│                   Admission Control      │
-│                                          │
-└──────────────────────────────────────────┘
-        │
-        ▼
-   etcd 에 기록
-```
-
 {{< rawhtml >}}
 <div style="overflow-x:auto;margin:1.4rem 0;">
 <svg viewBox="0 0 760 320" style="width:100%;min-width:620px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="API 서버의 세 관문: 모든 요청이 인증, 인가, 어드미션 컨트롤을 순서대로 지난 뒤에야 etcd에 기록된다">
