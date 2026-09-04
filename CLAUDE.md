@@ -145,6 +145,153 @@ fix: APS.05 다크테마 색상 수정
 
 ---
 
+## K8sPatterns 시리즈 스타일 레퍼런스 (K8sPatterns.25 기준)
+
+『Kubernetes Patterns』 각 장을 한 편으로 정리하는 시리즈. 책 내용을 옮겨 적는 게 아니라
+**"왜 이렇게 설계됐는가"를 비유와 함정 중심으로 재구성**하는 것이 이 시리즈의 성격이다.
+
+### frontmatter
+```yaml
+series: ["K8sPatterns"]          # ← 시리즈 내비게이션용, 반드시 첫 줄
+title: "K8sPatterns.25 Secure Configuration"   # 접두어 + 책의 영문 패턴명
+tags: ["kubernetes", "cloud-native", "devops", ...]  # 앞 3개는 고정
+summary: "한글 한 문장. 이 장의 결론을 미리 말해버린다."   # 이 시리즈만 한글 허용
+```
+
+### 문서 구조
+
+```
+0. Contents          목차 박스 (rawhtml)
+1. Overview          ASCII 요약 다이어그램 + 도입 2문단
+2. Problem           2.1~2.4  왜 이 패턴이 필요한가
+3. {첫 번째 축}       3.1~3.x  해법 A 계열
+4. {두 번째 축}       4.1~4.x  해법 B 계열
+5. Discussion        5.1~5.x  + "### 핵심 메시지"
+6. References        rawhtml 인용 박스
+```
+
+- **3·4장은 "Solution"이라고 쓰지 않고 내용으로 이름 짓는다**
+  (예: `3. Out-of-Cluster Encryption — 잠가서 내보내기` / `4. Centralized Secret Management — 아예 저장하지 않기`)
+- 해법이 한 갈래뿐이면 3장 하나로 두고 4장은 만들지 않는다
+- 큰 절 안의 세부는 `#### 3.2.1` 처럼 3단계까지 내려간다.
+  **판단 기준: 다른 도구와 나란히 설 수 있으면 3.x, 특정 도구의 내부 이야기면 3.2.x**
+- 목차 3단계 항목은 `padding-left:18px; font-size:14px` 로 한 칸 더 들여쓴다
+- `### 핵심 메시지`와 References의 항목은 목차에 넣지 않는다
+
+### 섹션 제목
+- `번호 + 영문 키워드 — 한글 요약` 형식. 대시(`—`) 뒤가 그 절의 결론이다
+  - `3.2 Sealed Secrets — 우편함 방식`
+  - `3.5 deny-all로 시작하라 — 빈 리스트와 빈 규칙의 함정`
+- 제목만 훑어도 장 전체가 읽히도록 쓴다
+
+### Overview의 ASCII 요약
+코드블록 안에 장 전체를 한 장으로 압축한다. 제목 + `━` 구분선 + 흐름.
+
+```
+{패턴명} 패턴의 핵심
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{한 줄 요지}
+
+  기본 상태: ...  ← 문제의 출발점
+                        │  왜 문제인지 한 줄
+                        ▼
+  1겹: ...
+  ├─ ...
+  └─ ...
+                        ▼
+  {결론 한 줄} 🔒
+```
+
+- 이어지는 도입 문단은 **앞 장과 연결**하며 시작한다
+  (예: "24장이 뚫린 파드의 손이 옆으로 뻗지 못하게 막는 이야기였다면, 25장은 그 손이 쥐려는 물건 자체를 숨기는 이야기다.")
+
+### 핵심 메시지 (Discussion 끝)
+코드블록 안에 `축 → 내용` 형식으로 정리하고, 바로 아래 `>` 인용구로 한 문단 결론.
+
+```
+{패턴명} 의 몫: {한 줄}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+전제      → ...
+문제      → ...
+1겹       → ...
+  하위      들여쓰기로 도구별 한 줄
+함정      → ...
+결론      → ...
+```
+
+### 문체
+- **볼드(`**`)를 쓰지 않는다.** 강조는 문장 구조로 한다
+- 단정적으로, 짧게. 대시(`—`)로 부연을 붙이는 리듬
+- 과장 금지: "발가벗겨진다", "목숨 걸고", "지옥", "큰일" 같은 표현 대신
+  "평문과 같다", "엄격히 지킨다", "복구할 수 없다"
+- 책에 대한 평가를 넣어도 된다 ("책의 총평도 솔직하다", "책이 눈에 띄는 오탈자는")
+
+### 이 시리즈만의 장치
+- **비유를 하나 정해 절 끝까지 밀고 간다** — 우편함(Sealed Secrets), 은행 주소+카드/출금 요청서(SecretStore/ExternalSecret), 금고(SMS), 검문소(PSA), 개찰구
+- **함정 문단** — "여기서 두 가지 함정.", "실무 팁 하나 —" 로 시작해 실제로 겪는 에러 메시지까지 적는다
+  (예: `no key could decrypt secret` 이 뜨면 십중팔구 스코프 문제다)
+- **공격 시나리오** — 왜 이 제약이 있는지 설명할 때 악용 흐름을 코드블록으로 보여준다
+- **비교표** — `| 구분 | A | B |` 형식. 판단 기준이 되는 축을 세로로
+- **앞 장 상호참조** — "23장 3.5의 capability와 정확히 같은 함정이고, 답도 같다"
+  시리즈를 관통하는 원리(기록 먼저·강제는 나중에, 기본값 뒤집기)를 반복해서 연결한다
+
+### 코드블록
+- `yaml` / `bash` 명시. 주석으로 포인트 표시 — `# ★ 실무 비권장 (4.1.1)`
+- 개념 다이어그램은 언어 없는 ``` 블록에 ASCII로
+- 한글은 모노스페이스에서 폭이 어긋나므로 **ASCII 박스 안에는 한글을 넣지 않는다**
+
+### 책 그림 재현 (인라인 SVG)
+책의 Figure는 이미지 파일이 아니라 인라인 SVG로 그린다.
+
+```html
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 380" style="width:100%;min-width:600px;height:auto;font-family:inherit;"
+     xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{그림 설명}">
+  <defs>
+    <marker id="xx-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/></marker>
+    <path id="xx-doc" d="M0,0 h130 v40 c-21.7,0 -21.7,8 -43.3,8 c-21.7,0 -21.7,-8 -43.3,-8 c-21.7,0 -21.7,8 -43.3,8 z"/>
+  </defs>
+  ...
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  {캡션 — 그림이 말하는 결론}
+</div>
+</div>
+{{< /rawhtml >}}
+```
+
+- 팔레트: 리소스 문서 `#e8952f`(주황) / `#fbe0c4`(연주황, 글자 `#5a3d18`) / `#4caf82`(초록)
+  컴포넌트 `#5b9bd5`(파랑) / `#cfe3f5`(연파랑, 글자 `#1b3f63`) / 외부 서비스 `#c0392b`(빨강) / KMS `#8e44ad`
+- 글자·화살표는 `var(--content)`, 점선 테두리는 `var(--secondary)` — 다크·라이트 양쪽 대응
+- **한 페이지에 여러 그림이 있으므로 `marker`/`path` id에 그림별 접두사를 붙인다** (`es-`, `ss-`, `sp-`, `cs-`, `vi-`)
+- 화살표는 반드시 도형 경계에 붙인다 (도형 끝에서 4~6px 띄우고 화살촉이 닿게)
+- 그림을 넣었으면 같은 내용의 ASCII 다이어그램은 지운다
+
+### References
+`rawhtml` 인용 박스에 **원문 영어 + [해석] + 본문 어느 절의 근거인지**를 함께 적는다.
+
+```html
+{{< rawhtml >}}
+<div style="border-left:2px solid var(--secondary,#888);padding:2px 16px;margin:0.6rem 0 1.2rem;font-size:15px;line-height:1.75;opacity:0.92;">
+  <div>{무엇이 어디에 명시되어 있는지}</div>
+  <blockquote style="margin:10px 0;padding-left:12px;border-left:2px solid var(--secondary,#888);font-style:italic;">
+    "{원문 인용}"
+  </blockquote>
+  <div>[해석] "{번역}" — {본문 3.5의 근거다}</div>
+  <div style="margin-top:10px;">→ <a href="...">{사이트 — 문서명}</a></div>
+</div>
+{{< /rawhtml >}}
+```
+
+- 책의 오탈자·부정확한 서술을 발견하면 여기에 적는다
+- 공식 문서를 1순위로. 블로그를 인용할 땐 어느 섹션인지까지 특정한다
+
+---
+
 ## 포스트 작성 시 체크리스트
 
 - [ ] `content/posts/{슬러그}/index.md` 생성
