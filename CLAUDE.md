@@ -292,6 +292,128 @@ summary: "한글 한 문장. 이 장의 결론을 미리 말해버린다."   # �
 
 ---
 
+## 위키 문서 작성 규칙 (`content/wiki/`)
+
+여러 포스트에서 반복해 설명하게 되는 배경지식을 모아두는 곳.
+**포스트와는 다른 문법으로 쓴다** — 포스트가 "읽는 글"이라면 위키는 "찾아보는 글"이다.
+
+| | 포스트 | 위키 |
+|---|---|---|
+| 제목 | 주장·결론형 (`3.2 Sealed Secrets — 우편함 방식`) | 용어 자체 (`apiVersion`) |
+| 첫 문장 | 서사 도입 | `X는 ~이다` 정의문 |
+| 섹션 제목 | 대시 뒤에 결론 | 명사구. 주장 금지 |
+| 문체 | 설득·비유 | 서술 |
+| 읽는 법 | 처음부터 | 목차에서 골라 점프 |
+| 갱신 | 쓰고 나면 거의 안 고침 | 계속 고쳐 씀 |
+
+### 파일 위치와 frontmatter
+
+`content/wiki/{용어}.md` — 파일명은 소문자, URL이 곧 용어가 되게 (`/wiki/apiversion/`)
+
+```yaml
+---
+title: "apiVersion"                    # 용어 자체. "~하는 법", "~이란" 금지
+summary: "쿠버네티스 매니페스트 첫 줄에 오는 필드. 그룹과 버전 두 조각으로 이루어진다."
+categories: ["쿠버네티스", "API"]       # 분류
+tags: ["kubernetes", "api", "manifest"]
+---
+```
+
+- **`date`/`lastmod` 를 쓰지 않는다.** 시각 없이 날짜만 적으면 자정으로 해석되고,
+  `date` 가 없을 때 Hugo 가 `lastmod` 를 발행일로 삼아 **미래 글로 판정해 빌드에서 누락**된다
+- `summary` 는 검색 결과 카드에 그대로 노출되므로 한 문장 정의로 쓴다
+
+### 문서 구조
+
+```text
+1. 개요        정의문 + 최소 예시 + (필요하면) 그림 1개
+2. 구조        대상을 쪼개서 설명
+3. …           대상별 섹션. 하위는 3.1. 형식
+n. 관련 문서   아직 없는 항목도 (예정) 으로 미리 적어둔다
+n. 출처        공식 문서 링크
+```
+
+- 번호를 붙인다 (`## 1. 개요`). 포스트의 `0. Contents` 목차 박스는 만들지 않는다
+- 하위 절은 `### 3.1.` 처럼 **끝에 점**을 찍는다 (나무위키 형식)
+- 마지막 두 섹션은 항상 `관련 문서` → `출처`
+
+### 섹션 제목 — 명사구로
+
+```
+✅  5. 그룹당 단일 등록          3.2. 명명 규칙의 예외      4. 확인 명령
+❌  5. 그룹은 자리가 하나다       3.2. 흔한 오해            4. 확인 방법
+                ↑ 주장                  ↑ 화자 시점            ↑ 방법론 냄새
+```
+
+### 그림 — 문서당 1개, 개요에
+
+위키는 스캔하는 문서라 그림이 많으면 훑기 어려워진다. **표로 안 되는 것만** 그린다.
+SVG 규칙(팔레트·테마 변수·id 접두사·화살표 접합)은 K8sPatterns 섹션의 것을 그대로 따른다.
+
+```html
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 250" style="width:100%;min-width:600px;height:auto;font-family:inherit;"
+     xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{그림 설명}">
+  <defs>
+    <marker id="av-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/></marker>
+  </defs>
+  ...
+  <text x="400" y="236" text-anchor="middle" font-size="12" fill="var(--content,#333)">{한 줄 요지}</text>
+</svg>
+</div>
+{{< /rawhtml >}}
+```
+
+- 위키는 캡션 `<div>` 를 붙이지 않는다 (포스트와 다른 점). 대신 그림 안 마지막 줄에 요지를 넣는다
+- 개요의 정의문이 말한 것을 그림이 그대로 보여줄 때만 넣는다.
+  `apiVersion` 의 경우 "API 서버가 이 값을 보고 어디로 넘길지·무엇을 허용할지 정한다"를
+  두 상자로 분리해 보여주는 그림이 그 역할을 한다
+
+### 포스트에서 링크 걸기
+
+```markdown
+[APIService](/wiki/apiversion/#5-그룹당-단일-등록)는 이름이 `<버전>.<그룹>` 으로 고정되니,
+그룹마다 어댑터를 하나만 붙일 수 있다.
+```
+
+- **한 글에서 첫 등장 1회만** 건다. 29장에 `사이드카` 가 56회 나오는데 전부 링크되면 본문이 도배된다
+- 해당 섹션 앵커(`#5-그룹당-단일-등록`)까지 지정해 필요한 단락으로 바로 떨어지게 한다
+- 링크를 걸면 본문에서 그 배경지식을 **한 줄로 줄일 수 있다** — 곁길로 새지 않는 게 목적
+
+### 검색
+
+`/wiki/` 진입 즉시 검색창이 뜨고, 입력이 있으면 전체 목록이 숨는다.
+
+| 파일 | 역할 |
+|---|---|
+| `layouts/wiki/list.html` | 검색창 + 전체 목록. 입력 여부로 목록 토글 |
+| `layouts/partials/head.html` | 테마 조건 오버라이드 — wiki 섹션에서도 검색 JS 로드 |
+| `layouts/_default/index.json` | 인덱스를 위키로 한정. `content` 필드 제외 |
+| `assets/js/fastsearch.js` | 검색 결과에 `summary` 표시 |
+
+```toml
+[params.fuseOpts]
+  keys = ["title"]            # 제목만 매칭. 본문 검색 안 함
+  threshold = 0.0             # 퍼지 끔 — 입력 글자가 순서대로 이어져야 함
+  minMatchCharLength = 2
+```
+
+**주의 — 인덱스 템플릿에 `.Scratch` 를 쓰지 않는다.** `.Scratch` 는 페이지 객체에 붙어
+렌더링이 끝나도 살아남으므로, 개발 서버의 부분 재빌드에서 항목이 중복 누적된다.
+지역 변수 + `append` 를 쓴다.
+
+```go-html-template
+{{- $index := slice -}}
+{{- range where site.RegularPages "Section" "wiki" -}}
+  {{- $index = $index | append (dict "title" .Title "permalink" .Permalink "summary" .Summary) -}}
+{{- end -}}
+{{- $index | jsonify -}}
+```
+
+---
+
 ## 포스트 작성 시 체크리스트
 
 - [ ] `content/posts/{슬러그}/index.md` 생성

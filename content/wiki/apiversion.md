@@ -14,6 +14,51 @@ apiVersion: apps/v1
 kind: Deployment
 ```
 
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 250" style="width:100%;min-width:600px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="apiVersion 이 요청 경로를 결정하는 과정: kubectl 이 보낸 매니페스트의 apiVersion 을 API 서버가 읽어 해당 그룹의 핸들러로 넘기고, 그 버전의 스키마로 검증한 뒤 etcd 에 저장한다">
+  <defs>
+    <marker id="av-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+  </defs>
+
+  <rect x="20" y="86" width="150" height="62" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <text x="95" y="110" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">매니페스트</text>
+  <text x="95" y="132" text-anchor="middle" font-size="11.5" fill="#5a3d18">apiVersion: apps/v1</text>
+
+  <rect x="250" y="30" width="300" height="180" rx="6" fill="none" stroke="var(--content,#444)" stroke-width="1.6"/>
+  <text x="400" y="54" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--content,#333)">API 서버</text>
+
+  <rect x="276" y="72" width="112" height="46" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="332" y="92" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1b3f63">그룹으로</text>
+  <text x="332" y="108" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1b3f63">핸들러 선택</text>
+
+  <rect x="412" y="72" width="112" height="46" rx="4" fill="#5b9bd5"/>
+  <text x="468" y="92" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">버전으로</text>
+  <text x="468" y="108" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">스키마 검증</text>
+
+  <text x="332" y="150" text-anchor="middle" font-size="11" fill="var(--secondary,#888)">apps · batch</text>
+  <text x="332" y="166" text-anchor="middle" font-size="11" fill="var(--secondary,#888)">rbac · networking …</text>
+  <text x="468" y="150" text-anchor="middle" font-size="11" fill="var(--secondary,#888)">v1 · v2</text>
+  <text x="468" y="166" text-anchor="middle" font-size="11" fill="var(--secondary,#888)">v1beta1 · v1alpha1</text>
+
+  <rect x="632" y="86" width="108" height="62" rx="4" fill="#8e44ad"/>
+  <text x="686" y="123" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">etcd</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.7" fill="none" marker-end="url(#av-ar)">
+    <path d="M170,95 H272"/>
+    <path d="M388,95 H408"/>
+    <path d="M524,95 H628"/>
+  </g>
+
+  <text x="220" y="86" text-anchor="middle" font-size="11" font-style="italic" fill="var(--content,#333)">apply</text>
+  <text x="578" y="86" text-anchor="middle" font-size="11" font-style="italic" fill="var(--content,#333)">저장</text>
+  <text x="400" y="236" text-anchor="middle" font-size="12" fill="var(--content,#333)">그룹이 어디로 갈지를, 버전이 어떤 필드를 허용할지를 정한다</text>
+</svg>
+</div>
+{{< /rawhtml >}}
+
 ## 2. 구조
 
 ```
