@@ -324,7 +324,7 @@ Validating(검증)  보기만 하고 통과/거부만 정한다
 
 먼저 다 고쳐놓고 최종 결과물을 검사해야 말이 되니 이 순서다.
 
-내장 컨트롤러 외에 **웹훅으로 직접 규칙을 붙일 수 있다.** `ValidatingWebhookConfiguration`, `MutatingWebhookConfiguration`이라는 전용 리소스로 등록하는데, 여기서 ABAC와의 대비가 다시 나온다 — 파일 수정 후 재시작이 필요했던 ABAC와 달리 이건 **리소스라 `kubectl apply`로 즉시 반영**된다. 문서 제목이 *Dynamic* Admission Control인 이유다.
+내장 컨트롤러 외에 [웹훅으로 직접 규칙을 붙일 수 있다](/wiki/admission-webhook/). `ValidatingWebhookConfiguration`, `MutatingWebhookConfiguration`이라는 전용 리소스로 등록하는데, 여기서 ABAC와의 대비가 다시 나온다 — 파일 수정 후 재시작이 필요했던 ABAC와 달리 이건 **리소스라 `kubectl apply`로 즉시 반영**된다. 문서 제목이 *Dynamic* Admission Control인 이유다.
 
 조직 정책이 실제로 강제되는 지점이 여기다. "모든 컨테이너는 limit을 명시해야 한다"는 규칙이 문서에만 있으면 아무도 안 지키지만, 어드미션 컨트롤러에 넣으면 정문에서 자동 집행된다. 요즘은 코드를 직접 짜기보다 OPA Gatekeeper나 Kyverno로 정책만 선언한다.
 
