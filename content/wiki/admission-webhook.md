@@ -192,7 +192,7 @@ webhooks:
 
 - **apiVersion** — `admissionregistration.k8s.io/v1` 그룹 → [apiVersion](/wiki/apiversion/)
 - **Sidecar** — 주입되는 대상 → [Sidecar](/wiki/sidecar/)
-- **CRD** — 사용자 정의 리소스와 웹훅의 관계 *(예정)*
+- [CRD](/wiki/crd/) — 웹훅이 검증·변형하는 사용자 정의 리소스
 
 ## 9. 출처
 

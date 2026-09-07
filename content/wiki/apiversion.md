@@ -166,8 +166,9 @@ kubectl get apiservice | grep metrics
 
 ## 7. 관련 문서
 
-- **APIService** — 확장 API를 등록하는 리소스 *(예정)*
-- **CRD** — 새 리소스 종류를 정의하는 방법 *(예정)*
+- [CRD](/wiki/crd/) — 새 리소스 종류를 정의하는 방법
+- [Admission Webhook](/wiki/admission-webhook/) — `admissionregistration.k8s.io` 그룹의 리소스
+- **API Aggregation** — 확장 API 를 등록하는 `APIService` *(예정)*
 
 ## 8. 출처
 
