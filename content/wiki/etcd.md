@@ -21,25 +21,25 @@ Pod, Deployment, Secret, ConfigMap, 노드 목록, RBAC 규칙 — `kubectl get`
     </marker>
   </defs>
 
-  <rect x="20" y="34" width="130" height="40" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <rect x="20" y="34" width="130" height="40" rx="4" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
   <text x="85" y="59" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d18">kubectl</text>
-  <rect x="20" y="90" width="130" height="40" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <rect x="20" y="90" width="130" height="40" rx="4" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
   <text x="85" y="115" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d18">스케줄러</text>
-  <rect x="20" y="146" width="130" height="40" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <rect x="20" y="146" width="130" height="40" rx="4" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
   <text x="85" y="171" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d18">컨트롤러</text>
-  <rect x="20" y="202" width="130" height="40" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <rect x="20" y="202" width="130" height="40" rx="4" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
   <text x="85" y="227" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d18">kubelet</text>
 
-  <rect x="270" y="70" width="150" height="136" rx="5" fill="#cfe3f5" stroke="#2f6ea8" stroke-width="1.6"/>
+  <rect x="270" y="70" width="150" height="136" rx="5" fill="none" stroke="#2f6ea8" stroke-width="1.5" stroke-width="1.6"/>
   <text x="345" y="128" text-anchor="middle" font-size="13" font-weight="600" fill="#1b3f63">API 서버</text>
   <text x="345" y="150" text-anchor="middle" font-size="10.5" fill="#1b3f63">유일한 통로</text>
 
-  <ellipse cx="620" cy="86" rx="70" ry="18" fill="#8e44ad"/>
-  <rect x="550" y="86" width="140" height="106" fill="#8e44ad"/>
-  <ellipse cx="620" cy="192" rx="70" ry="18" fill="#7a3a96"/>
-  <text x="620" y="128" text-anchor="middle" font-size="14" font-weight="600" fill="#fff">etcd</text>
-  <text x="620" y="152" text-anchor="middle" font-size="10" fill="#e8d5f0">Pod · Secret · RBAC</text>
-  <text x="620" y="168" text-anchor="middle" font-size="10" fill="#e8d5f0">노드 · ConfigMap …</text>
+  <ellipse cx="620" cy="86" rx="70" ry="18" fill="none" stroke="#8e44ad" stroke-width="1.5"/>
+  <rect x="550" y="86" width="140" height="106" fill="none" stroke="#8e44ad" stroke-width="1.5"/>
+  <ellipse cx="620" cy="192" rx="70" ry="18" fill="none" stroke="#8e44ad" stroke-width="1.5"/>
+  <text x="620" y="128" text-anchor="middle" font-size="14" font-weight="600" fill="#2f6ea8">etcd</text>
+  <text x="620" y="152" text-anchor="middle" font-size="10" fill="#8e44ad">Pod · Secret · RBAC</text>
+  <text x="620" y="168" text-anchor="middle" font-size="10" fill="#8e44ad">노드 · ConfigMap …</text>
 
   <g stroke="var(--content,#444)" stroke-width="1.5" fill="none" marker-end="url(#et-ar)">
     <path d="M150,54 H200 V132 H266"/>
@@ -71,22 +71,22 @@ etcd 를 읽을 수 있다는 것은 클러스터의 root 라는 뜻이다. RBAC
   <text x="190" y="26" text-anchor="middle" font-size="12.5" font-weight="600" fill="#2e9c6d">정상 경로</text>
   <text x="560" y="26" text-anchor="middle" font-size="12.5" font-weight="600" fill="#c0392b">etcd 직접 접근</text>
 
-  <rect x="60" y="46" width="120" height="40" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <rect x="60" y="46" width="120" height="40" rx="4" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
   <text x="120" y="71" text-anchor="middle" font-size="11" font-weight="600" fill="#5a3d18">사용자</text>
-  <rect x="60" y="106" width="120" height="40" rx="4" fill="#5b9bd5"/>
-  <text x="120" y="131" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">RBAC 검사</text>
-  <rect x="60" y="166" width="120" height="40" rx="4" fill="#4caf82"/>
-  <text x="120" y="191" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">허용된 것만</text>
+  <rect x="60" y="106" width="120" height="40" rx="4" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
+  <text x="120" y="131" text-anchor="middle" font-size="11" font-weight="600" fill="#2f6ea8">RBAC 검사</text>
+  <rect x="60" y="166" width="120" height="40" rx="4" fill="none" stroke="#2e9c6d" stroke-width="1.5"/>
+  <text x="120" y="191" text-anchor="middle" font-size="11" font-weight="600" fill="#2f6ea8">허용된 것만</text>
   <path d="M120,86 V102" stroke="var(--content,#444)" stroke-width="1.5" fill="none"/>
   <path d="M120,146 V162" stroke="var(--content,#444)" stroke-width="1.5" fill="none"/>
   <text x="120" y="228" text-anchor="middle" font-size="10.5" fill="#2e9c6d">문을 통해 들어간다</text>
 
   <line x1="330" y1="40" x2="330" y2="240" stroke="var(--secondary,#888)" stroke-width="1" stroke-dasharray="4 4"/>
 
-  <rect x="430" y="46" width="140" height="40" rx="4" fill="#c0392b"/>
-  <text x="500" y="71" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">노드 접근 권한자</text>
-  <rect x="430" y="166" width="140" height="40" rx="4" fill="#8e44ad"/>
-  <text x="500" y="191" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">etcd 데이터 전부</text>
+  <rect x="430" y="46" width="140" height="40" rx="4" fill="none" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="500" y="71" text-anchor="middle" font-size="11" font-weight="600" fill="#2f6ea8">노드 접근 권한자</text>
+  <rect x="430" y="166" width="140" height="40" rx="4" fill="none" stroke="#8e44ad" stroke-width="1.5"/>
+  <text x="500" y="191" text-anchor="middle" font-size="11" font-weight="600" fill="#2f6ea8">etcd 데이터 전부</text>
   <path d="M500,86 V162" stroke="#c0392b" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
   <text x="600" y="128" font-size="10.5" fill="#c0392b">RBAC 를 지나지 않는다</text>
   <text x="500" y="228" text-anchor="middle" font-size="10.5" fill="#c0392b">담을 넘는다</text>

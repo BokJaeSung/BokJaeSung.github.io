@@ -40,17 +40,17 @@ aliases_search: ["사이드카", "사이드카 패턴", "sidecar pattern", "사�
   <line x1="340" y1="40" x2="340" y2="266" stroke="var(--secondary,#888)" stroke-width="1" stroke-dasharray="4 4"/>
 
   <g>
-    <rect x="400" y="48" width="230" height="72" rx="5" fill="#fbe0c4" stroke="#d9a86a"/>
+    <rect x="400" y="48" width="230" height="72" rx="5" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
     <rect x="414" y="62" width="94" height="44" rx="3" fill="#e6b3d9" stroke="#a05590"/>
     <text x="461" y="89" text-anchor="middle" font-size="11" font-weight="600" fill="#5a2050">Java 앱</text>
-    <rect x="520" y="62" width="96" height="44" rx="3" fill="#4caf82"/>
-    <text x="568" y="89" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">로그 수집기</text>
+    <rect x="520" y="62" width="96" height="44" rx="3" fill="none" stroke="#2e9c6d" stroke-width="1.5"/>
+    <text x="568" y="89" text-anchor="middle" font-size="11" font-weight="600" fill="#2f6ea8">로그 수집기</text>
 
-    <rect x="400" y="132" width="230" height="72" rx="5" fill="#fbe0c4" stroke="#d9a86a"/>
+    <rect x="400" y="132" width="230" height="72" rx="5" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
     <rect x="414" y="146" width="94" height="44" rx="3" fill="#e6b3d9" stroke="#a05590"/>
     <text x="461" y="173" text-anchor="middle" font-size="11" font-weight="600" fill="#5a2050">Go 앱</text>
-    <rect x="520" y="146" width="96" height="44" rx="3" fill="#4caf82"/>
-    <text x="568" y="173" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">로그 수집기</text>
+    <rect x="520" y="146" width="96" height="44" rx="3" fill="none" stroke="#2e9c6d" stroke-width="1.5"/>
+    <text x="568" y="173" text-anchor="middle" font-size="11" font-weight="600" fill="#2f6ea8">로그 수집기</text>
 
     <text x="515" y="230" text-anchor="middle" font-size="11" fill="#2e9c6d">같은 이미지를 그냥 갖다 붙인다</text>
     <text x="515" y="250" text-anchor="middle" font-size="10.5" fill="var(--secondary,#888)">앱 코드는 손대지 않는다</text>
@@ -81,16 +81,16 @@ spec:
 {{< rawhtml >}}
 <div style="overflow-x:auto;margin:1.4rem 0;">
 <svg viewBox="0 0 760 250" style="width:100%;min-width:620px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pod 안에서 앱과 사이드카가 네트워크, 볼륨, 수명을 공유하는 구조">
-  <rect x="130" y="24" width="500" height="160" rx="6" fill="#fbe0c4" stroke="#d9a86a" stroke-width="1.6"/>
+  <rect x="130" y="24" width="500" height="160" rx="6" fill="none" stroke="#d9a86a" stroke-width="1.5" stroke-width="1.6"/>
   <text x="380" y="47" text-anchor="middle" font-size="13" font-weight="600" fill="#5a3d18">Pod — IP 하나를 나눠 쓴다</text>
 
   <rect x="160" y="62" width="180" height="50" rx="4" fill="#e6b3d9" stroke="#a05590"/>
   <text x="250" y="92" text-anchor="middle" font-size="12" font-weight="600" fill="#5a2050">App container</text>
 
-  <rect x="420" y="62" width="180" height="50" rx="4" fill="#4caf82"/>
-  <text x="510" y="92" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">Sidecar</text>
+  <rect x="420" y="62" width="180" height="50" rx="4" fill="none" stroke="#2e9c6d" stroke-width="1.5"/>
+  <text x="510" y="92" text-anchor="middle" font-size="12" font-weight="600" fill="#2f6ea8">Sidecar</text>
 
-  <rect x="160" y="132" width="440" height="34" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <rect x="160" y="132" width="440" height="34" rx="4" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
   <text x="380" y="154" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1b3f63">공유 볼륨 /var/log — 한쪽이 쓰면 다른 쪽이 읽는다</text>
 
   <path d="M250,112 V128" stroke="var(--content,#444)" stroke-width="1.5" fill="none"/>

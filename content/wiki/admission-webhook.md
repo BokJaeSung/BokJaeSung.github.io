@@ -21,31 +21,31 @@ aliases_search: ["어드미션 웹훅", "어드미션", "admission", "mutating",
     </marker>
   </defs>
 
-  <rect x="16" y="86" width="86" height="52" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <rect x="16" y="86" width="86" height="52" rx="4" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
   <text x="59" y="108" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d18">kubectl</text>
   <text x="59" y="125" text-anchor="middle" font-size="10" fill="#5a3d18">apply</text>
 
   <rect x="130" y="34" width="470" height="156" rx="6" fill="none" stroke="var(--content,#444)" stroke-width="1.6"/>
   <text x="365" y="56" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--content,#333)">API 서버</text>
 
-  <rect x="146" y="88" width="86" height="48" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <rect x="146" y="88" width="86" height="48" rx="4" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
   <text x="189" y="110" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1b3f63">인증·인가</text>
   <text x="189" y="126" text-anchor="middle" font-size="9.5" fill="#1b3f63">누구·자격</text>
 
-  <rect x="248" y="88" width="96" height="48" rx="4" fill="#4caf82"/>
-  <text x="296" y="110" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff">Mutating</text>
-  <text x="296" y="126" text-anchor="middle" font-size="9.5" fill="#e9f7f1">고친다</text>
+  <rect x="248" y="88" width="96" height="48" rx="4" fill="none" stroke="#2e9c6d" stroke-width="1.5"/>
+  <text x="296" y="110" text-anchor="middle" font-size="10.5" font-weight="600" fill="#2f6ea8">Mutating</text>
+  <text x="296" y="126" text-anchor="middle" font-size="9.5" fill="#2e9c6d">고친다</text>
 
-  <rect x="360" y="88" width="96" height="48" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <rect x="360" y="88" width="96" height="48" rx="4" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
   <text x="408" y="110" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1b3f63">스키마 검증</text>
   <text x="408" y="126" text-anchor="middle" font-size="9.5" fill="#1b3f63">내장</text>
 
-  <rect x="472" y="88" width="112" height="48" rx="4" fill="#5b9bd5"/>
-  <text x="528" y="110" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff">Validating</text>
-  <text x="528" y="126" text-anchor="middle" font-size="9.5" fill="#eaf3fb">통과 / 거부만</text>
+  <rect x="472" y="88" width="112" height="48" rx="4" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
+  <text x="528" y="110" text-anchor="middle" font-size="10.5" font-weight="600" fill="#2f6ea8">Validating</text>
+  <text x="528" y="126" text-anchor="middle" font-size="9.5" fill="#2f6ea8">통과 / 거부만</text>
 
-  <rect x="640" y="86" width="104" height="52" rx="4" fill="#8e44ad"/>
-  <text x="692" y="117" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">etcd</text>
+  <rect x="640" y="86" width="104" height="52" rx="4" fill="none" stroke="#8e44ad" stroke-width="1.5"/>
+  <text x="692" y="117" text-anchor="middle" font-size="12" font-weight="600" fill="#2f6ea8">etcd</text>
 
   <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#aw-ar)">
     <path d="M102,112 H142"/>

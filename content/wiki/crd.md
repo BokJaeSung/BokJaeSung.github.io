@@ -27,28 +27,28 @@ kubectl describe vpa my-app        # autoscaling.k8s.io 가 만든 종류
     </marker>
   </defs>
 
-  <rect x="20" y="34" width="150" height="50" rx="4" fill="#4caf82"/>
-  <text x="95" y="55" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">① CRD 등록</text>
-  <text x="95" y="72" text-anchor="middle" font-size="10" fill="#e9f7f1">kind: Foo 라는 게 있다</text>
+  <rect x="20" y="34" width="150" height="50" rx="4" fill="none" stroke="#2e9c6d" stroke-width="1.5"/>
+  <text x="95" y="55" text-anchor="middle" font-size="11.5" font-weight="600" fill="#2f6ea8">① CRD 등록</text>
+  <text x="95" y="72" text-anchor="middle" font-size="10" fill="#2e9c6d">kind: Foo 라는 게 있다</text>
 
-  <rect x="20" y="146" width="150" height="50" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <rect x="20" y="146" width="150" height="50" rx="4" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
   <text x="95" y="167" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d18">② 객체 생성</text>
   <text x="95" y="184" text-anchor="middle" font-size="10" fill="#5a3d18">kind: Foo 짜리 YAML</text>
 
-  <rect x="250" y="60" width="200" height="110" rx="6" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <rect x="250" y="60" width="200" height="110" rx="6" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
   <text x="350" y="88" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1b3f63">API 서버</text>
   <text x="350" y="112" text-anchor="middle" font-size="10.5" fill="#1b3f63">스키마 검증 · 저장</text>
   <text x="350" y="132" text-anchor="middle" font-size="10.5" fill="#1b3f63">kubectl 지원</text>
   <text x="350" y="152" text-anchor="middle" font-size="10.5" fill="#1b3f63">RBAC · 감사 로그</text>
 
-  <rect x="530" y="34" width="210" height="52" rx="4" fill="#8e44ad"/>
-  <text x="635" y="55" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">etcd 에 저장</text>
-  <text x="635" y="72" text-anchor="middle" font-size="10" fill="#e8d5f0">여기까지가 CRD 의 전부</text>
+  <rect x="530" y="34" width="210" height="52" rx="4" fill="none" stroke="#8e44ad" stroke-width="1.5"/>
+  <text x="635" y="55" text-anchor="middle" font-size="11.5" font-weight="600" fill="#2f6ea8">etcd 에 저장</text>
+  <text x="635" y="72" text-anchor="middle" font-size="10" fill="#8e44ad">여기까지가 CRD 의 전부</text>
 
-  <rect x="530" y="132" width="210" height="66" rx="4" fill="#5b9bd5"/>
-  <text x="635" y="156" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">③ 컨트롤러 (별도)</text>
-  <text x="635" y="174" text-anchor="middle" font-size="10" fill="#eaf3fb">보고 있다가 실제 자원을 만든다</text>
-  <text x="635" y="190" text-anchor="middle" font-size="10" fill="#eaf3fb">없으면 아무 일도 안 일어난다</text>
+  <rect x="530" y="132" width="210" height="66" rx="4" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
+  <text x="635" y="156" text-anchor="middle" font-size="11.5" font-weight="600" fill="#2f6ea8">③ 컨트롤러 (별도)</text>
+  <text x="635" y="174" text-anchor="middle" font-size="10" fill="#2f6ea8">보고 있다가 실제 자원을 만든다</text>
+  <text x="635" y="190" text-anchor="middle" font-size="10" fill="#2f6ea8">없으면 아무 일도 안 일어난다</text>
 
   <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#cr-ar)">
     <path d="M170,66 H246"/>

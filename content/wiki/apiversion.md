@@ -24,28 +24,28 @@ kind: Deployment
     </marker>
   </defs>
 
-  <rect x="20" y="86" width="150" height="62" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <rect x="20" y="86" width="150" height="62" rx="4" fill="none" stroke="#d9a86a" stroke-width="1.5"/>
   <text x="95" y="110" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">매니페스트</text>
   <text x="95" y="132" text-anchor="middle" font-size="11.5" fill="#5a3d18">apiVersion: apps/v1</text>
 
   <rect x="250" y="30" width="300" height="180" rx="6" fill="none" stroke="var(--content,#444)" stroke-width="1.6"/>
   <text x="400" y="54" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--content,#333)">API 서버</text>
 
-  <rect x="276" y="72" width="112" height="46" rx="4" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <rect x="276" y="72" width="112" height="46" rx="4" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
   <text x="332" y="92" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1b3f63">그룹으로</text>
   <text x="332" y="108" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1b3f63">핸들러 선택</text>
 
-  <rect x="412" y="72" width="112" height="46" rx="4" fill="#5b9bd5"/>
-  <text x="468" y="92" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">버전으로</text>
-  <text x="468" y="108" text-anchor="middle" font-size="11.5" font-weight="600" fill="#fff">스키마 검증</text>
+  <rect x="412" y="72" width="112" height="46" rx="4" fill="none" stroke="#2f6ea8" stroke-width="1.5"/>
+  <text x="468" y="92" text-anchor="middle" font-size="11.5" font-weight="600" fill="#2f6ea8">버전으로</text>
+  <text x="468" y="108" text-anchor="middle" font-size="11.5" font-weight="600" fill="#2f6ea8">스키마 검증</text>
 
   <text x="332" y="150" text-anchor="middle" font-size="11" fill="var(--secondary,#888)">apps · batch</text>
   <text x="332" y="166" text-anchor="middle" font-size="11" fill="var(--secondary,#888)">rbac · networking …</text>
   <text x="468" y="150" text-anchor="middle" font-size="11" fill="var(--secondary,#888)">v1 · v2</text>
   <text x="468" y="166" text-anchor="middle" font-size="11" fill="var(--secondary,#888)">v1beta1 · v1alpha1</text>
 
-  <rect x="632" y="86" width="108" height="62" rx="4" fill="#8e44ad"/>
-  <text x="686" y="123" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">etcd</text>
+  <rect x="632" y="86" width="108" height="62" rx="4" fill="none" stroke="#8e44ad" stroke-width="1.5"/>
+  <text x="686" y="123" text-anchor="middle" font-size="13" font-weight="600" fill="#2f6ea8">etcd</text>
 
   <g stroke="var(--content,#444)" stroke-width="1.7" fill="none" marker-end="url(#av-ar)">
     <path d="M170,95 H272"/>
