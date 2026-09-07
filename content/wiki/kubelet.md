@@ -380,7 +380,7 @@ kubelet 이 멈춰도 **이미 돌던 컨테이너는 계속 돈다.** 런타임
 - [Probe](/wiki/probe/) — kubelet 이 실행하는 헬스 체크
 - [PersistentVolume / PVC](/wiki/persistent-volume/) — kubelet 이 마운트한다
 - [etcd](/wiki/etcd/) — kubelet 은 여기에 직접 접근하지 않는다
-- **CRI** — 컨테이너 런타임 인터페이스 *(예정)*
+- [CRI / containerd](/wiki/cri/) — 매니저 아래의 주방. 런타임 층이 어떻게 나뉘는지
 
 ## 10. 출처
 
