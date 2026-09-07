@@ -1,0 +1,36 @@
+{{- define "main" }}
+
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+</header>
+
+{{- /* 검색창 — 섹션 진입 즉시 사용 가능 */}}
+<div id="searchbox">
+  <input id="searchInput" autofocus
+         placeholder="{{ .Params.placeholder | default `용어 검색` }}"
+         aria-label="search" type="search" autocomplete="off" maxlength="64">
+  <ul id="searchResults" aria-label="search results"></ul>
+</div>
+
+{{- /* 전체 문서 목록 — 검색어를 입력하면 숨는다 */}}
+<div id="wikiAll" class="wiki-all">
+  {{- range .Pages.ByTitle }}
+  <a class="wiki-item" href="{{ .Permalink }}">
+    <span class="wiki-item-title">{{ .Title }}</span>
+    {{- with .Summary }}<span class="wiki-item-desc">{{ . | plainify | truncate 90 }}</span>{{ end }}
+  </a>
+  {{- end }}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var input = document.getElementById('searchInput');
+  var all = document.getElementById('wikiAll');
+  if (!input || !all) return;
+  var sync = function () { all.style.display = input.value.trim() ? 'none' : ''; };
+  input.addEventListener('input', sync);
+  sync();
+});
+</script>
+
+{{- end }}

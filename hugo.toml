@@ -3,6 +3,21 @@ languageCode = 'ko-kr'
 title = 'History'
 theme = 'PaperMod'
 
+[outputs]
+  home = ["HTML", "RSS", "JSON"]      # JSON = 검색 인덱스
+
+[params.fuseOpts]
+  isCaseSensitive = false
+  shouldSort = true
+  includeMatches = false
+  findAllMatches = false
+  minMatchCharLength = 2      # 1글자로는 검색 안 됨
+  threshold = 0.0             # 0 = 퍼지 매칭 끔. 입력한 글자가 순서대로 이어져야 함
+  distance = 100
+  ignoreLocation = true       # 위치 무관 — 제목 어디에 있든 부분일치 허용
+  location = 0
+  keys = ["title"]            # 문서명만 매칭 — 본문은 검색하지 않는다
+
 [taxonomies]
   tag = "tags"
   category = "categories"
@@ -59,3 +74,8 @@ theme = 'PaperMod'
     name = 'Series'
     url = '/series/'
     weight = 30
+
+  [[menu.main]]
+    name = 'Wiki'
+    url = '/wiki/'
+    weight = 40

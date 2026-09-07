@@ -347,3 +347,85 @@
 .post-content table tbody tr:hover {
   background-color: var(--code-bg) !important;
 }
+
+/* ── 위키 ────────────────────────────────────────── */
+
+/* 검색 입력창 */
+#searchbox input {
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--primary);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+#searchbox input::placeholder {
+  color: var(--secondary);
+  opacity: .6;
+}
+
+#searchbox input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(128, 128, 128, .12);
+}
+
+/* 문서 카드 — 검색 결과와 전체 목록이 같은 모양 */
+.wiki-all,
+#searchResults {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 1.6rem 0 0;
+  padding: 0;
+}
+
+.wiki-item,
+#searchResults li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  list-style: none;
+  position: relative;
+  font-weight: 400;
+  text-decoration: none !important;
+  color: var(--content);
+  transition: border-color .18s;
+}
+
+.wiki-item:hover,
+#searchResults li:hover,
+#searchResults .focus {
+  border-color: var(--primary);
+  transform: none;
+}
+
+/* 제목 줄 */
+.wiki-item-title,
+#searchResults .entry-header {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0;
+}
+
+.wiki-item-desc {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  line-height: 1.55;
+}
+
+/* 검색 결과의 오버레이 링크 */
+#searchResults a {
+  position: absolute;
+  inset: 0;
+  outline: none;
+}
