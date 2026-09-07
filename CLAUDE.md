@@ -312,12 +312,28 @@ summary: "한글 한 문장. 이 장의 결론을 미리 말해버린다."   # �
 
 ```yaml
 ---
-title: "apiVersion"                    # 용어 자체. "~하는 법", "~이란" 금지
-summary: "쿠버네티스 매니페스트 첫 줄에 오는 필드. 그룹과 버전 두 조각으로 이루어진다."
-categories: ["쿠버네티스", "API"]       # 분류
-tags: ["kubernetes", "api", "manifest"]
+title: "Sidecar"                       # 영문 원어가 기본. "~하는 법", "~이란" 금지
+summary: "앱 컨테이너 옆에 붙어 부가 기능을 담당하는 컨테이너. 같은 Pod 안에서 볼륨과 네트워크를 공유한다."
+categories: ["쿠버네티스", "패턴"]      # 분류
+tags: ["kubernetes", "pattern"]
+aliases_search: ["사이드카", "사이드카 패턴", "sidecar pattern"]
 ---
 ```
+
+**제목은 영문 원어를 기본으로 한다.** 원어가 정확하고 URL이 깔끔하며,
+한글 표기는 사람마다 달라진다(사이드카 / 사이드 카 / 싸이드카).
+한글·약어·다른 표기는 `aliases_search` 로 받는다 — 문서는 하나로 유지된다.
+
+```yaml
+title: "Admission Webhook"
+aliases_search: ["어드미션 웹훅", "어드미션", "mutating", "validating"]
+
+title: "etcd"                          # 원어가 소문자면 소문자 그대로
+aliases_search: ["에티시디"]
+```
+
+- `aliases_search` 는 검색에만 쓰이고 화면에는 안 보인다
+- 예외 — 한글 이름이 압도적으로 통용되는 경우에만 한글 제목 (`컨테이너 런타임` 등)
 
 - **`date`/`lastmod` 를 쓰지 않는다.** 시각 없이 날짜만 적으면 자정으로 해석되고,
   `date` 가 없을 때 Hugo 가 `lastmod` 를 발행일로 삼아 **미래 글로 판정해 빌드에서 누락**된다
@@ -395,7 +411,7 @@ SVG 규칙(팔레트·테마 변수·id 접두사·화살표 접합)은 K8sPatte
 
 ```toml
 [params.fuseOpts]
-  keys = ["title"]            # 제목만 매칭. 본문 검색 안 함
+  keys = ["title", "alias"]   # 제목 + aliases_search. 본문 검색 안 함
   threshold = 0.0             # 퍼지 끔 — 입력 글자가 순서대로 이어져야 함
   minMatchCharLength = 2
 ```

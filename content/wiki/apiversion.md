@@ -3,6 +3,7 @@ title: "apiVersion"
 summary: "쿠버네티스 매니페스트 첫 줄에 오는 필드. 그룹과 버전 두 조각으로 이루어진다."
 categories: ["쿠버네티스", "API"]
 tags: ["kubernetes", "api", "manifest"]
+aliases_search: ["api version", "API 그룹", "api group", "apigroup", "에이피버전"]
 ---
 
 ## 1. 개요

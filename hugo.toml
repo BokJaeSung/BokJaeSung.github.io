@@ -16,7 +16,7 @@ theme = 'PaperMod'
   distance = 100
   ignoreLocation = true       # 위치 무관 — 제목 어디에 있든 부분일치 허용
   location = 0
-  keys = ["title"]            # 문서명만 매칭 — 본문은 검색하지 않는다
+  keys = ["title", "alias"]   # 문서명 + 별칭(영문/한글 대응). 본문은 검색하지 않는다
 
 [taxonomies]
   tag = "tags"

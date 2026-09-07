@@ -1,9 +1,14 @@
 {{- /* 검색 인덱스 — 위키 문서만. 제목만 검색하므로 content 는 담지 않는다.
-       Scratch 대신 slice 를 직접 만들어 개발 서버 재빌드 시 누적되지 않게 한다 */ -}}
+       Scratch 대신 slice 를 써서 개발 서버 재빌드 시 중복 누적을 막는다 */ -}}
 {{- $index := slice -}}
 {{- range where site.RegularPages "Section" "wiki" -}}
   {{- if not .Params.searchHidden -}}
-    {{- $index = $index | append (dict "title" .Title "permalink" .Permalink "summary" .Summary) -}}
+    {{- $aliases := delimit (.Params.aliases_search | default slice) " " -}}
+    {{- $index = $index | append (dict
+        "title" .Title
+        "alias" $aliases
+        "permalink" .Permalink
+        "summary" .Summary) -}}
   {{- end -}}
 {{- end -}}
 {{- $index | jsonify -}}
