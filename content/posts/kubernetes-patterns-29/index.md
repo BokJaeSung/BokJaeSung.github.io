@@ -895,6 +895,62 @@ spec:
     updateMode: "Off"                     # 추천만 해라, 손대지 마라
 ```
 
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 360" style="width:100%;min-width:640px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="VPA 구조: Recommender 가 사용량 히스토리로 requests 를 추천하고, Updater 가 Pod 를 쫓아내면 Admission plugin 이 새로 뜨는 Pod 에 추천값을 끼워 넣는다">
+  <defs>
+    <marker id="vp-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+  </defs>
+
+  <rect x="20" y="150" width="130" height="56" rx="4" fill="#fbe0c4" stroke="#d9a86a"/>
+  <text x="85" y="174" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">VPA 리소스</text>
+  <text x="85" y="192" text-anchor="middle" font-size="10.5" fill="#5a3d18">updateMode</text>
+
+  <rect x="215" y="34" width="160" height="60" rx="4" fill="#4caf82"/>
+  <text x="295" y="58" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Recommender</text>
+  <text x="295" y="77" text-anchor="middle" font-size="10.5" fill="#e9f7f1">8일 히스토그램 · 높은 백분위</text>
+
+  <rect x="215" y="150" width="160" height="56" rx="4" fill="#4caf82"/>
+  <text x="295" y="174" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Updater</text>
+  <text x="295" y="192" text-anchor="middle" font-size="10.5" fill="#e9f7f1">돌던 Pod 를 쫓아냄</text>
+
+  <rect x="215" y="262" width="160" height="60" rx="4" fill="#5b9bd5"/>
+  <text x="295" y="286" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Admission plugin</text>
+  <text x="295" y="305" text-anchor="middle" font-size="10.5" fill="#eaf3fb">Mutating 웹훅 (26장 3.4)</text>
+
+  <rect x="470" y="120" width="180" height="118" rx="5" fill="#cfe3f5" stroke="#2f6ea8"/>
+  <text x="560" y="146" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1b3f63">새로 뜨는 Pod</text>
+  <rect x="490" y="160" width="140" height="30" rx="3" fill="#fff" stroke="#2f6ea8"/>
+  <text x="560" y="180" text-anchor="middle" font-size="10.5" fill="#1b3f63">내 YAML: cpu 100m</text>
+  <rect x="490" y="198" width="140" height="30" rx="3" fill="#fbe0c4" stroke="#d9a86a"/>
+  <text x="560" y="218" text-anchor="middle" font-size="10.5" font-weight="600" fill="#5a3d18">실제: cpu 350m</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#vp-ar)">
+    <path d="M150,168 H211"/>
+    <path d="M295,150 V98"/>
+    <path d="M295,206 V258"/>
+    <path d="M379,292 H466 V242"/>
+    <path d="M470,140 H379 V98"/>
+  </g>
+
+  <g font-size="11" fill="var(--content,#333)" font-style="italic">
+    <text x="180" y="160" text-anchor="middle">모드</text>
+    <text x="336" y="126" text-anchor="middle">추천값</text>
+    <text x="336" y="236" text-anchor="middle">쫓겨난 자리에</text>
+    <text x="424" y="284" text-anchor="middle">requests 주입</text>
+    <text x="424" y="132" text-anchor="middle">사용량 관측</text>
+  </g>
+
+  <text x="380" y="350" text-anchor="middle" font-size="12" fill="var(--content,#333)">Deployment YAML 은 그대로다 — 생성 시점에 웹훅이 고쳐서 돌려준다</text>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  VPA — 추천하는 쪽, 쫓아내는 쪽, 끼워 넣는 쪽이 나뉘어 있다
+</div>
+</div>
+{{< /rawhtml >}}
+
 HPA YAML과 거의 똑같이 생겼고 차이는 `updateMode` 하나다. 그리고 HPA와 달리 **VPA는 설치해야 한다.** 세 부품으로 되어 있다.
 
 | 부품 | 역할 | 일하는 모드 |
@@ -1133,6 +1189,49 @@ CA: 노드 3개 추가       → 다 놈
 3. HPA 켜기       ← 이제부터 자동
 4. CA             ← 자리 모자라면 노드 추가
 ```
+
+{{< rawhtml >}}
+<div style="overflow-x:auto;margin:1.4rem 0;">
+<svg viewBox="0 0 760 330" style="width:100%;min-width:640px;height:auto;font-family:inherit;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="확장 수준: 앱 튜닝이 맨 아래 기초이고 그 위로 VPA, HPA, CA 가 쌓인다. 밑에서 안 쓰면 위에서 아무리 줘도 낭비다">
+  <defs>
+    <marker id="lv-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--content,#444)"/>
+    </marker>
+  </defs>
+
+  <rect x="150" y="30" width="420" height="52" rx="4" fill="#c0392b"/>
+  <text x="290" y="61" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">CA — 노드 개수</text>
+  <text x="470" y="61" text-anchor="middle" font-size="10.5" fill="#f6d5d1">자리 모자랄 때</text>
+
+  <rect x="150" y="94" width="420" height="52" rx="4" fill="#5b9bd5"/>
+  <text x="290" y="125" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">HPA · Knative · KEDA — Pod 개수</text>
+  <text x="470" y="125" text-anchor="middle" font-size="10.5" fill="#eaf3fb">이제부터 계속</text>
+
+  <rect x="150" y="158" width="420" height="52" rx="4" fill="#4caf82"/>
+  <text x="290" y="189" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">VPA — Pod 크기 (requests)</text>
+  <text x="470" y="189" text-anchor="middle" font-size="10.5" fill="#e9f7f1">처음 한 번 + 이후</text>
+
+  <rect x="150" y="222" width="420" height="56" rx="4" fill="#fbe0c4" stroke="#d9a86a" stroke-width="2"/>
+  <text x="290" y="246" text-anchor="middle" font-size="12.5" font-weight="600" fill="#5a3d18">앱 튜닝 — 프로세스 안 (스레드, 힙)</text>
+  <text x="290" y="266" text-anchor="middle" font-size="10.5" fill="#5a3d18">사람이 · 처음 한 번 · 이 장이 다루지 않는 층</text>
+  <text x="470" y="252" text-anchor="middle" font-size="10.5" fill="#5a3d18">기초 공사</text>
+
+  <g stroke="var(--content,#444)" stroke-width="1.6" fill="none" marker-end="url(#lv-ar)">
+    <path d="M110,258 V86"/>
+  </g>
+  <text x="86" y="176" text-anchor="middle" font-size="11.5" font-style="italic" fill="var(--content,#333)">쌓는</text>
+  <text x="86" y="192" text-anchor="middle" font-size="11.5" font-style="italic" fill="var(--content,#333)">순서</text>
+
+  <text x="620" y="150" text-anchor="middle" font-size="11.5" font-style="italic" fill="#c0392b">밑에서 안 쓰면</text>
+  <text x="620" y="168" text-anchor="middle" font-size="11.5" font-style="italic" fill="#c0392b">위는 낭비</text>
+
+  <text x="380" y="310" text-anchor="middle" font-size="12" fill="var(--content,#333)">앱이 스레드 1개만 쓰면 CPU 4개도, Pod 10개도, 노드 3대도 전부 논다</text>
+</svg>
+<div style="text-align:center;font-size:13px;opacity:0.75;margin-top:6px;color:var(--content,#333);">
+  확장 수준 — 아래가 튼튼해야 위가 의미를 갖는다
+</div>
+</div>
+{{< /rawhtml >}}
 
 1, 2는 기초 공사고 3부터가 일상 운영이다.
 
