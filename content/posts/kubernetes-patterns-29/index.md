@@ -398,7 +398,7 @@ kube-apiserver ──▶ Service(ClusterIP) ──▶ 어댑터 Pod ──▶ �
 외부:   설치 → 인증 + 소스 설정 필요
 ```
 
-**그리고 이 절의 가장 중요한 제약** — APIService는 이름으로 식별되니, **그룹마다 어댑터를 하나만** 붙일 수 있다.
+**그리고 이 절의 가장 중요한 제약** — [APIService](/wiki/apiversion/#5-그룹당-단일-등록)는 이름이 `<버전>.<그룹>` 으로 고정되니, **그룹마다 어댑터를 하나만** 붙일 수 있다.
 
 ```bash
 kubectl apply -f aws-adapter-apiservice.yaml     # 이미 KEDA 가 external 자리를 점유 중
@@ -951,7 +951,7 @@ spec:
 </div>
 {{< /rawhtml >}}
 
-HPA YAML과 거의 똑같이 생겼고 차이는 `updateMode` 하나다. 그리고 HPA와 달리 **VPA는 설치해야 한다.** 세 부품으로 되어 있다.
+HPA YAML과 거의 똑같이 생겼고 차이는 `updateMode` 하나다. 그리고 HPA와 달리 **VPA는 설치해야 한다.** `autoscaling.k8s.io/v1` 처럼 `k8s.io` 도메인이 붙어 있어도 내장이라는 뜻은 아니다([apiVersion](/wiki/apiversion/)). 세 부품으로 되어 있다.
 
 | 부품 | 역할 | 일하는 모드 |
 |---|---|---|
